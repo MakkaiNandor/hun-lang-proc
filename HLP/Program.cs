@@ -11,8 +11,14 @@ namespace HLP
 
             while (true)
             {
+                Console.WriteLine("\n~~~~~ Bemenet ~~~~~");
                 var input = Console.ReadLine();
-                processor.Analyze(input);
+                var result = processor.Analyze(input);
+
+                /*foreach (var item in result)
+                {
+                    Console.WriteLine(item.ToString());
+                }*/
             }
         }
     }

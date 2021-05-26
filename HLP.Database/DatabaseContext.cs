@@ -8,11 +8,13 @@ namespace HLP.Database
 {
     public class DatabaseContext
     {
-        private static readonly string WordsFilePath = "./Data/szavak.txt";
+        private static readonly string WordsFilePath = "./Data/teszt.txt";
         private static readonly string AffixesFilePath = "./Data/toldalekok.txt";
         private static readonly string CodesFilePath = "./Data/kodok.txt";
 
         private static DatabaseContext DBInstance = null;
+
+        public static readonly List<string> Nomens = new List<string>() { "MN", "FN", "NM" };
 
         public static DatabaseContext GetDatabaseContext()
         {
@@ -42,7 +44,7 @@ namespace HLP.Database
                 while (!reader.EndOfStream)
                 {
                     var values = reader.ReadLine().Split(',');
-                    this.Words.Add(new DBWord
+                    Words.Add(new DBWord
                     {
                         WordText = values[0],
                         WordTypes = values[1].Split('|').ToList()
@@ -59,7 +61,7 @@ namespace HLP.Database
                 while (!reader.EndOfStream)
                 {
                     var values = reader.ReadLine().Split(',');
-                    this.Affixes.Add(new DBAffix
+                    Affixes.Add(new DBAffix
                     {
                         AffixText = values[0],
                         AffixType = values[1],
@@ -79,7 +81,7 @@ namespace HLP.Database
                 while (!reader.EndOfStream)
                 {
                     var values = reader.ReadLine().Split(',');
-                    this.Codes.Add(new DBCode
+                    Codes.Add(new DBCode
                     {
                         CodeText = values[0],
                         AffixType = values[1],

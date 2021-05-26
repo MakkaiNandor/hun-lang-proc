@@ -12,9 +12,19 @@ namespace HLP.Database.Models
         public string WordTypeAfter { get; set; }
         public string Code { get; set; }
 
+        public bool IsPrefix()
+        {
+            return AffixType == "P" || AffixType == "I";
+        }
+
+        public bool IsSuffix()
+        {
+            return !IsPrefix();
+        }
+
         public override string ToString()
         {
-            return $"<DBAffix Affix='{AffixText}' AffixType='{AffixType}' WordTypeBefore='{WordTypeBefore}' WordTypeAfter='{WordTypeAfter}' Code='{Code}'>";
+            return $"{AffixText} [{AffixType}]";
         }
     }
 }
