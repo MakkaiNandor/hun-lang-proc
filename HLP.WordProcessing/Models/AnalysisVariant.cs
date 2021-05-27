@@ -10,6 +10,8 @@ namespace HLP.WordProcessing.Models
     {
         public string Stem { get; private set; }
         public string Type { get; private set; }
+        public List<string> PossiblePrefixTypes { get; }
+        public List<string> PossibleSuffixTypes { get; }
         public List<DBAffix> Prefixes { get; }
         public List<DBAffix> Suffixes { get; }
 
@@ -17,6 +19,8 @@ namespace HLP.WordProcessing.Models
         {
             Stem = word;
             Type = type;
+            PossiblePrefixTypes = new List<string> { "P", "I" };
+            PossibleSuffixTypes = new List<string> { "K", "J", "R" };
             Prefixes = new List<DBAffix>();
             Suffixes = new List<DBAffix>();
         }
@@ -25,51 +29,17 @@ namespace HLP.WordProcessing.Models
         {
             Stem = other.Stem;
             Type = other.Type;
+            PossiblePrefixTypes = new List<string>(other.PossiblePrefixTypes);
+            PossibleSuffixTypes = new List<string>(other.PossibleSuffixTypes);
             Prefixes = new List<DBAffix>(other.Prefixes);
             Suffixes = new List<DBAffix>(other.Suffixes);
-        }
-
-        public List<string> GetPossiblePrefixTypes()
-        {
-            var result = new List<string>();
-            var prefixTypes = Prefixes.Select(a => a.AffixType).ToList();
-            var suffixTypes = Suffixes.Select(a => a.AffixType).ToList();
-            if (!prefixTypes.Contains("P"))
-            {
-                result.Add("P");
-            }
-            if (!prefixTypes.Contains("I"))
-            {
-                result.Add("I");
-            }
-            return result;
-        }
-
-        public List<string> GetPossibleSuffixTypes()
-        {
-            var result = new List<string>();
-            var prefixTypes = Prefixes.Select(a => a.AffixType).ToList();
-            var suffixTypes = Suffixes.Select(a => a.AffixType).ToList();
-            if (!suffixTypes.Contains("R"))
-            {
-                result.Add("R");
-            }
-            if (!suffixTypes.Contains("R") && !(Type == "IGE" && suffixTypes.Contains("J")))
-            {
-                result.Add("J");
-            }
-            if (!suffixTypes.Contains("J") && !suffixTypes.Contains("R"))
-            {
-                result.Add("K");
-            }
-            return result;
         }
 
         public void RemovePrefix(DBAffix prefix)
         {
             Stem = Stem.Substring(prefix.AffixText.Length);
-            Type = prefix.WordTypeBefore;
             Prefixes.Add(prefix);
+            PossiblePrefixTypes.Remove(prefix.AffixType);
         }
 
         public void RemoveSuffix(DBAffix suffix)
@@ -77,6 +47,24 @@ namespace HLP.WordProcessing.Models
             Stem = Stem.Substring(0, Stem.Length - suffix.AffixText.Length);
             Type = suffix.WordTypeBefore;
             Suffixes.Insert(0, suffix);
+            switch (suffix.AffixType)
+            {
+                case "R":
+                    PossibleSuffixTypes.Remove("R");
+                    break;
+                case "J":
+                    PossibleSuffixTypes.Remove("R");
+                    if (Type == "IGE")
+                    {
+                        PossibleSuffixTypes.Remove("J");
+                    }
+                    break;
+                case "K":
+                    PossibleSuffixTypes.Remove("R");
+                    PossibleSuffixTypes.Remove("J");
+                    break;
+                default: break;
+            }
         }
 
         public override string ToString()

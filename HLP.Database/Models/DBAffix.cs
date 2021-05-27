@@ -24,7 +24,7 @@ namespace HLP.Database.Models
 
         public override string ToString()
         {
-            return $"{AffixText} [{AffixType}]";
+            return $"{AffixText} [{AffixType}] ({WordTypeBefore} -> {WordTypeAfter})";
         }
     }
 }

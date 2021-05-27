@@ -24,8 +24,6 @@ namespace HLP.WordProcessing
 
             Console.WriteLine("\n~~~~~ Kimenet ~~~~~");
 
-            var count = 0;
-
             foreach (var word in inputText.SplitToWords())
             {
                 //Console.WriteLine($"{++count}. {word}");
@@ -55,60 +53,32 @@ namespace HLP.WordProcessing
             if (DBContext.Words.Any(w => 
                 w.WordText == variant.Stem && 
                 (variant.Type == "NSZ" ? 
-                    w.WordTypes.Intersect(DatabaseContext.Nomens).Count() > 0 : 
-                    w.WordTypes.Contains(variant.Type))
+                w.WordTypes.Intersect(DatabaseContext.Nomens).Count() > 0 : 
+                (variant.Type == "" || w.WordTypes.Contains(variant.Type)))
             ))
             {
                 //Console.WriteLine($"\tEredmény: {variant}");
                 result.Variants.Add(variant);
             }
 
-            var possiblePrefixTypes = variant.GetPossiblePrefixTypes();
+            //var prefixes = DBContext.Affixes.GetPossiblePrefixes(variant);
+            var suffixes = DBContext.Affixes.GetPossibleSuffixes(variant);
 
-            //Console.WriteLine($"{string.Join(", ", possiblePrefixTypes)}");
+            //Console.WriteLine($"{variant} ~~ ({string.Join(", ", variant.PossiblePrefixTypes)}) ~~ {string.Join(", ", prefixes)}");
+            //Console.WriteLine($"{variant} ~~ ({string.Join(", ", variant.PossibleSuffixTypes)}) ~~ {string.Join(", ", suffixes)}");
 
-            if (possiblePrefixTypes.Count() > 0)
+            /*foreach (var prefix in prefixes)
             {
-                var possiblePrefixes = DBContext.Affixes.Where(a =>
-                    possiblePrefixTypes.Contains(a.AffixType) &&
-                    (variant.Type == "NSZ" ? (a.WordTypeAfter == "NSZ" || DatabaseContext.Nomens.Contains(a.WordTypeAfter)) :
-                    (variant.Type != "" ? a.WordTypeAfter == variant.Type : true)) &&
-                    variant.Stem.StartsWith(a.AffixText) &&
-                    variant.Stem.Length > a.AffixText.Length
-                );
+                var newVariant = new AnalysisVariant(variant);
+                newVariant.RemovePrefix(prefix);
+                AnalyzeOneWord(newVariant, result);
+            }*/
 
-                //Console.WriteLine($"{string.Join(", ", possiblePrefixes)}");
-
-                foreach (var prefix in possiblePrefixes)
-                {
-                    var newVariant = new AnalysisVariant(variant);
-                    newVariant.RemovePrefix(prefix);
-                    AnalyzeOneWord(newVariant, result);
-                }
-            }
-
-            var possibleSuffixTypes = variant.GetPossibleSuffixTypes();
-
-            //Console.WriteLine($"{string.Join(", ", possibleSuffixTypes)}");
-
-            if (possibleSuffixTypes.Count() > 0)
+            foreach (var suffix in suffixes)
             {
-                var possibleSuffixes = DBContext.Affixes.Where(a =>
-                    possibleSuffixTypes.Contains(a.AffixType) &&
-                    (variant.Type == "NSZ" ? (a.WordTypeAfter == "NSZ" || DatabaseContext.Nomens.Contains(a.WordTypeAfter)) : 
-                    (variant.Type != "" ? a.WordTypeAfter == variant.Type : true)) &&
-                    variant.Stem.EndsWith(a.AffixText) &&
-                    variant.Stem.Length > a.AffixText.Length
-                );
-
-                //Console.WriteLine($"{string.Join(", ", possibleSuffixes)}");
-
-                foreach (var suffix in possibleSuffixes)
-                {
-                    var newVariant = new AnalysisVariant(variant);
-                    newVariant.RemoveSuffix(suffix);
-                    AnalyzeOneWord(newVariant, result);
-                }
+                var newVariant = new AnalysisVariant(variant);
+                newVariant.RemoveSuffix(suffix);
+                AnalyzeOneWord(newVariant, result);
             }
 
             // TODO: Igekötő és/vagy prefixum eltávolítása

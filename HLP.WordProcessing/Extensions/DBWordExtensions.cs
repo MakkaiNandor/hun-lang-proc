@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HLP.WordProcessing.Models
+namespace HLP.WordProcessing.Extensions
 {
-    public class Affix
+    static class DBWordExtensions
     {
 
     }
