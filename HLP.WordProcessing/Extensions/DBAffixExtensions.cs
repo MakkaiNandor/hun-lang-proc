@@ -26,7 +26,8 @@ namespace HLP.WordProcessing.Extensions
                 variant.PossibleSuffixTypes.Contains(a.AffixType) &&
                 variant.Stem.EndsWith(a.AffixText) &&
                 variant.Stem.Substring(0, variant.Stem.Length - a.AffixText.Length).HasVowel() &&
-                a.IsCompatibleWith(variant.Type)
+                a.IsCompatibleWith(variant.Type) &&
+                variant.IsGood(a)
             ).ToList();
         }
 

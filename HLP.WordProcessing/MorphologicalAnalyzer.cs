@@ -32,7 +32,7 @@ namespace HLP.WordProcessing
 
                 var variant = new AnalysisVariant(word);
 
-                AnalyzeOneWord(variant, analysisResult);
+                AnalyzeOneWord(variant, analysisResult, 1);
 
                 result.Add(analysisResult);
 
@@ -48,43 +48,44 @@ namespace HLP.WordProcessing
             return result;
         }
 
-        private void AnalyzeOneWord(AnalysisVariant variant, AnalysisResult result)
+        private void AnalyzeOneWord(AnalysisVariant variant, AnalysisResult result, int level)
         {
-            if (DBContext.Words.Any(w => 
-                w.WordText == variant.Stem && 
-                (variant.Type == "NSZ" ? 
-                w.WordTypes.Intersect(DatabaseContext.Nomens).Count() > 0 : 
-                (variant.Type == "" || w.WordTypes.Contains(variant.Type)))
-            ))
+            if (DBContext.Words.ContainsWord(variant))
             {
-                //Console.WriteLine($"\tEredmény: {variant}");
+                Console.WriteLine($"{level}. {variant}");
                 result.Variants.Add(variant);
             }
 
-            //var prefixes = DBContext.Affixes.GetPossiblePrefixes(variant);
-            var suffixes = DBContext.Affixes.GetPossibleSuffixes(variant);
+            var prefixes = DBContext.Affixes.GetPossiblePrefixes(variant);
 
-            //Console.WriteLine($"{variant} ~~ ({string.Join(", ", variant.PossiblePrefixTypes)}) ~~ {string.Join(", ", prefixes)}");
-            //Console.WriteLine($"{variant} ~~ ({string.Join(", ", variant.PossibleSuffixTypes)}) ~~ {string.Join(", ", suffixes)}");
-
-            /*foreach (var prefix in prefixes)
+            foreach (var prefix in prefixes)
             {
                 var newVariant = new AnalysisVariant(variant);
                 newVariant.RemovePrefix(prefix);
-                AnalyzeOneWord(newVariant, result);
-            }*/
+                AnalyzeOneWord(newVariant, result, level+1);
+            }
+
+            var suffixes = DBContext.Affixes.GetPossibleSuffixes(variant);
+
+            Console.WriteLine($"{level}. {string.Join(", ", suffixes)}");
 
             foreach (var suffix in suffixes)
             {
                 var newVariant = new AnalysisVariant(variant);
                 newVariant.RemoveSuffix(suffix);
-                AnalyzeOneWord(newVariant, result);
-            }
+                AnalyzeOneWord(newVariant, result, level+1);
+                //Console.WriteLine("new" + newVariant);
 
-            // TODO: Igekötő és/vagy prefixum eltávolítása
-            // TODO: Rag eltávolítása
-            // TODO: Jelzők eltávolítása
-            // TODO: Képzők eltávolítása
+                if (!suffix.AffixText.StartsWithVowel() &&
+                    newVariant.Stem.EndsWithPreVowel() &&
+                    newVariant.Stem.HasTwoVowelsAtLeast())
+                {
+                    var preVowelVariant = new AnalysisVariant(variant);
+                    preVowelVariant.RemoveSuffix(new DBAffix(suffix, newVariant.Stem.Last().ToString()));
+                    AnalyzeOneWord(preVowelVariant, result, level+1);
+                    //Console.WriteLine("pre" + preVowelVariant);
+                }
+            }
         }
 
         private List<string> SplitCompoundWord(string word, int index)

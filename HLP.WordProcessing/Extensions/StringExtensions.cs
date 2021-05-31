@@ -24,5 +24,33 @@ namespace HLP.WordProcessing.Extensions
         {
             return DatabaseContext.Vowels.Any(v => text.Contains(v));
         }
+
+        public static bool HasTwoVowelsAtLeast(this string text)
+        {
+            var count = 0;
+            foreach(var letter in text)
+            {
+                if (DatabaseContext.Vowels.Contains(letter.ToString()))
+                {
+                    ++count;
+                }
+            }
+            //Console.WriteLine($"<Fn:HasTwoVowelsAtLeast ~ {text} has {count} vowels>");
+            return count >= 2;
+        }
+
+        public static bool StartsWithVowel(this string text)
+        {
+            var result = DatabaseContext.Vowels.Contains(text[0].ToString());
+            //Console.WriteLine($"<Fn:StartsWithVowel ~ {text} {result}>");
+            return result;
+        }
+
+        public static bool EndsWithPreVowel(this string text)
+        {
+            var result = DatabaseContext.PreVowels.Contains(text.Last().ToString());
+            //Console.WriteLine($"<Fn:EndsWithPreVowel ~ {text} {result}>");
+            return result;
+        }
     }
 }

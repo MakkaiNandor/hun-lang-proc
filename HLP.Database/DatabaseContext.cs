@@ -16,6 +16,7 @@ namespace HLP.Database
 
         public static readonly List<string> Nomens = new List<string>() { "MN", "FN", "NM" };
         public static readonly List<string> Vowels = new List<string>() { "a", "á", "e", "é", "i", "í", "o", "ó", "ö", "ő", "u", "ú", "ü", "ű" };
+        public static readonly List<string> PreVowels = new List<string>() { "a", "á", "e", "é", "o", "ó", "ö", "ő" };
 
         public static DatabaseContext GetDatabaseContext()
         {

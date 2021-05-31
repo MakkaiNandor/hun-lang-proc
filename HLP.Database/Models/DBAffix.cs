@@ -12,6 +12,17 @@ namespace HLP.Database.Models
         public string WordTypeAfter { get; set; }
         public string Code { get; set; }
 
+        public DBAffix() { }
+
+        public DBAffix(DBAffix other, string preVowel = null)
+        {
+            AffixText = preVowel != null ? other.AffixText.Insert(0, preVowel) : other.AffixText;
+            AffixType = other.AffixType;
+            WordTypeBefore = other.WordTypeBefore;
+            WordTypeAfter = other.WordTypeAfter;
+            Code = other.Code;
+        }
+
         public bool IsPrefix()
         {
             return AffixType == "P" || AffixType == "I";

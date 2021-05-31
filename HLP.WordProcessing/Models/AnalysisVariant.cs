@@ -39,6 +39,10 @@ namespace HLP.WordProcessing.Models
         {
             Stem = Stem.Substring(prefix.AffixText.Length);
             Prefixes.Add(prefix);
+            if (prefix.AffixType == "I")
+            {
+                PossiblePrefixTypes.Remove("P");
+            }
             PossiblePrefixTypes.Remove(prefix.AffixType);
         }
 
@@ -65,6 +69,15 @@ namespace HLP.WordProcessing.Models
                     break;
                 default: break;
             }
+        }
+
+        public bool IsGood(DBAffix suffix)
+        {
+            if (Suffixes.Count() == 0)
+            {
+                return true;
+            }
+            return Suffixes.Last().AffixText != suffix.AffixText;
         }
 
         public override string ToString()
