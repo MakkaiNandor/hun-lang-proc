@@ -1,0 +1,78 @@
+﻿@page "/wordproc"
+
+<h1>Szóelemzés</h1>
+
+<p><i>Morfológiai elemző modul</i></p>
+
+<a href="wordproc/#" @onclick="ToggleCollapse">
+    <span class="oi @Icon"></span> részletek
+</a>
+
+@if (Collapse)
+{
+    <p>A <b>morfológiai elemző</b> modul egy vagy több szót vár bemenetként, minden szóra elvégzi az elemzést és visszatéríti a lehetséges megoldásokat. A megoldások tartalmazzák a szótövet, ennek szófaját, valamint az ehhez kapcsolódó toldalékokat.</p>
+}
+
+<hr />
+
+<div class="row">
+    <label class="col-1 col-form-label">Bemenet:</label>
+    <div class="col-5">
+        <input type="text" class="form-control" @bind="Input" placeholder="egy vagy több szó" />
+    </div>
+    <div class="col-1">
+        <button class="btn btn-primary" @onclick="OnAnalyzeClicked">Elemzés</button>
+    </div>
+    <div class="col-1">
+        <button class="btn btn-primary" @onclick="OnResetClicked">Visszaállít</button>
+    </div>
+</div>
+
+@foreach (var result in Result)
+{
+    <hr />
+    <div class="row">
+        <div class="col-2">
+            @result.OriginalWord
+        </div>
+        <div class="col">
+            @foreach (var variant in result.Variants)
+            {
+                <p>@variant</p>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    bool Collapse { get; set; } = false;
+    string Icon { get; set; } = "oi-chevron-right";
+    string Input { get; set; } = "";
+    List<AnalysisResult> Result { get; set; } = new List<AnalysisResult>();
+    MorphologicalAnalyzer Analyzer { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Analyzer = new MorphologicalAnalyzer();
+    }
+
+    void ToggleCollapse()
+    {
+        Collapse = !Collapse;
+        Icon = Collapse ? "oi-chevron-bottom" : "oi-chevron-right";
+    }
+
+    void OnAnalyzeClicked()
+    {
+        if (Input.Length > 0)
+        {
+            Result = Analyzer.Analyze(Input);
+        }
+    }
+
+    void OnResetClicked()
+    {
+        Input = "";
+        Result.Clear();
+    }
+}
