@@ -22,7 +22,7 @@ namespace HLP.WordProcessing.Extensions
 
         public static bool HasVowel(this string text)
         {
-            return DatabaseContext.Vowels.Any(v => text.Contains(v));
+            return Alphabet.Vowels.Any(v => text.Contains(v));
         }
 
         public static bool HasTwoVowelsAtLeast(this string text)
@@ -30,7 +30,7 @@ namespace HLP.WordProcessing.Extensions
             var count = 0;
             foreach(var letter in text)
             {
-                if (DatabaseContext.Vowels.Contains(letter.ToString()))
+                if (Alphabet.Vowels.Contains(letter.ToString()))
                 {
                     ++count;
                 }
@@ -41,14 +41,14 @@ namespace HLP.WordProcessing.Extensions
 
         public static bool StartsWithVowel(this string text)
         {
-            var result = DatabaseContext.Vowels.Contains(text[0].ToString());
+            var result = Alphabet.Vowels.Contains(text[0].ToString());
             //Console.WriteLine($"<Fn:StartsWithVowel ~ {text} {result}>");
             return result;
         }
 
         public static bool EndsWithPreVowel(this string text)
         {
-            var result = DatabaseContext.PreVowels.Contains(text.Last().ToString());
+            var result = Alphabet.PreVowels.Contains(text.Last().ToString());
             //Console.WriteLine($"<Fn:EndsWithPreVowel ~ {text} {result}>");
             return result;
         }

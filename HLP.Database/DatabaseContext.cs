@@ -8,13 +8,13 @@ namespace HLP.Database
 {
     public class DatabaseContext
     {
-        private static readonly string WordsFilePath = "D:/Egyetem/Államvizsga/HunLangProc/HLP.Database/Data/teszt.txt";
+        private static readonly string WordsFilePath = "D:/Egyetem/Államvizsga/HunLangProc/HLP.Database/Data/szavak.txt";
         private static readonly string AffixesFilePath = "D:/Egyetem/Államvizsga/HunLangProc/HLP.Database/Data/toldalekok.txt";
         private static readonly string CodesFilePath = "D:/Egyetem/Államvizsga/HunLangProc/HLP.Database/Data/kodok.txt";
 
         private static DatabaseContext DBInstance = null;
 
-        public static readonly List<string> Nomens = new List<string>() { "MN", "FN", "NM" };
+        public static readonly List<string> Nomens = new List<string>() { "MN", "FN", "NM", "SZN" };
 
         public static DatabaseContext GetDatabaseContext()
         {
