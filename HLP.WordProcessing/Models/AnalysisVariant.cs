@@ -1,15 +1,14 @@
 ﻿using HLP.Database.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace HLP.WordProcessing.Models
 {
     public class AnalysisVariant
     {
-        public string Stem { get; private set; }
-        public string Type { get; private set; }
+        public string Text { get; set; }
+        public string OriginalText { get; set; }
+        public string Type { get; set; }
         public List<string> PossiblePrefixTypes { get; }
         public List<string> PossibleSuffixTypes { get; }
         public List<DBAffix> Prefixes { get; }
@@ -17,7 +16,8 @@ namespace HLP.WordProcessing.Models
 
         public AnalysisVariant(string word, string type = "")
         {
-            Stem = word;
+            Text = word;
+            OriginalText = word;
             Type = type;
             PossiblePrefixTypes = new List<string> { "P", "I" };
             PossibleSuffixTypes = new List<string> { "K", "J", "R" };
@@ -27,7 +27,8 @@ namespace HLP.WordProcessing.Models
 
         public AnalysisVariant(AnalysisVariant other)
         {
-            Stem = other.Stem;
+            Text = other.Text;
+            OriginalText = other.OriginalText;
             Type = other.Type;
             PossiblePrefixTypes = new List<string>(other.PossiblePrefixTypes);
             PossibleSuffixTypes = new List<string>(other.PossibleSuffixTypes);
@@ -37,7 +38,7 @@ namespace HLP.WordProcessing.Models
 
         public void RemovePrefix(DBAffix prefix)
         {
-            Stem = Stem.Substring(prefix.AffixText.Length);
+            OriginalText = Text = Text.Substring(prefix.AffixText.Length);
             Prefixes.Add(prefix);
             if (prefix.AffixType == "I")
             {
@@ -48,7 +49,7 @@ namespace HLP.WordProcessing.Models
 
         public void RemoveSuffix(DBAffix suffix)
         {
-            Stem = Stem.Substring(0, Stem.Length - suffix.AffixText.Length);
+            OriginalText = Text = Text.Substring(0, Text.Length - suffix.AffixText.Length);
             Type = suffix.WordTypeBefore;
             Suffixes.Insert(0, suffix);
             switch (suffix.AffixType)
@@ -82,7 +83,7 @@ namespace HLP.WordProcessing.Models
 
         public override string ToString()
         {
-            return $"\t{string.Join(" + ", Prefixes)} {(Prefixes.Count() > 0 ? "+" : null)} {Stem} [{Type}] {(Suffixes.Count() > 0 ? "+" : null)} {string.Join(" + ", Suffixes)}";
+            return $"\t{(Prefixes.Any() ? $"{string.Join(" + ", Prefixes)} + " : null)}{OriginalText}({Type}){(Text != OriginalText ? $"={Text}" : null)}{(Suffixes.Any() ? $" + {string.Join(" + ", Suffixes)}" : null)}";
         }
     }
 }

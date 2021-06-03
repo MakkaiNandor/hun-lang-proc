@@ -1,3 +1,4 @@
+Szó,Szófajok
 a,FN|NM|NE|ISZ
 abajgat,IGE
 abál,IGE

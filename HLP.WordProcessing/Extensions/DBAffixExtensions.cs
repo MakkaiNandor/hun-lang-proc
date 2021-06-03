@@ -14,8 +14,8 @@ namespace HLP.WordProcessing.Extensions
         {
             return affixes.Where(a =>
                 variant.PossiblePrefixTypes.Contains(a.AffixType) &&
-                variant.Stem.StartsWith(a.AffixText) &&
-                variant.Stem.Substring(0, variant.Stem.Length - a.AffixText.Length).HasVowel() &&
+                variant.Text.StartsWith(a.AffixText) &&
+                variant.Text.Substring(0, variant.Text.Length - a.AffixText.Length).HasVowel() &&
                 a.IsCompatibleWith(variant.Type)
             ).ToList();
         }
@@ -24,8 +24,8 @@ namespace HLP.WordProcessing.Extensions
         {
             return affixes.Where(a =>
                 variant.PossibleSuffixTypes.Contains(a.AffixType) &&
-                variant.Stem.EndsWith(a.AffixText) &&
-                variant.Stem.Substring(0, variant.Stem.Length - a.AffixText.Length).HasVowel() &&
+                variant.Text.EndsWith(a.AffixText) &&
+                variant.Text.Substring(0, variant.Text.Length - a.AffixText.Length).HasVowel() &&
                 a.IsCompatibleWith(variant.Type) &&
                 variant.IsGood(a)
             ).ToList();

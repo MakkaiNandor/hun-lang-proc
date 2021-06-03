@@ -10,14 +10,32 @@ namespace HLP.WordProcessing.Extensions
 {
     static class DBWordExtensions
     {
-        public static bool ContainsWord(this List<DBWord> words, AnalysisVariant variant)
+        public static List<string> GetCommonTypes(this List<DBWord> words, AnalysisVariant variant)
         {
-            return words.Any(w =>
-                w.WordText == variant.Stem &&
-                (variant.Type == "NSZ" ?
-                w.WordTypes.Intersect(DatabaseContext.Nomens).Any() :
-                (variant.Type == "" || w.WordTypes.Contains(variant.Type)))
-            );
+            var result = new List<string>();
+
+            var word = words.Find(w => w.WordText == variant.Text);
+
+            if (word != null)
+            {
+                switch (variant.Type)
+                {
+                    case "":
+                        result.AddRange(word.WordTypes);
+                        break;
+                    case "NSZ":
+                        result.AddRange(word.WordTypes.Intersect(DatabaseContext.Nomens));
+                        break;
+                    default:
+                        if (word.WordTypes.Contains(variant.Type))
+                        {
+                            result.Add(variant.Type);
+                        }
+                        break;
+                }
+            }
+
+            return result;
         }
     }
 }

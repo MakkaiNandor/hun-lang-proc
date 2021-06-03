@@ -1,5 +1,7 @@
 ﻿using HLP.WordProcessing;
 using System;
+using HLP.WordProcessing.Extensions;
+using System.Collections.Generic;
 
 namespace HLP
 {
@@ -13,12 +15,12 @@ namespace HLP
             {
                 Console.WriteLine("\n~~~~~ Bemenet ~~~~~");
                 var input = Console.ReadLine();
-                var result = processor.Analyze(input);
+                processor.Analyze(input);
 
-                /*foreach (var item in result)
-                {
-                    Console.WriteLine(item.ToString());
-                }*/
+            /*foreach (var item in result)
+            {
+                Console.WriteLine(item.ToString());
+            }*/
             }
         }
     }
