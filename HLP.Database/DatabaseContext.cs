@@ -8,13 +8,16 @@ namespace HLP.Database
 {
     public class DatabaseContext
     {
+        private static readonly string WordTypesFilePath = "D:/Egyetem/Államvizsga/HunLangProc/HLP.Database/Data/szofajok.txt";
         private static readonly string WordsFilePath = "D:/Egyetem/Államvizsga/HunLangProc/HLP.Database/Data/szavak.txt";
-        private static readonly string AffixesFilePath = "D:/Egyetem/Államvizsga/HunLangProc/HLP.Database/Data/toldalekok.txt";
-        private static readonly string CodesFilePath = "D:/Egyetem/Államvizsga/HunLangProc/HLP.Database/Data/kodok.txt";
+        private static readonly string AffixesFilePath = "D:/Egyetem/Államvizsga/HunLangProc/HLP.Database/Data/toldalekok_uj.txt";
+        private static readonly string CodesFilePath = "D:/Egyetem/Államvizsga/HunLangProc/HLP.Database/Data/kodok_uj.txt";
+
+        private static readonly char MainSep = ';';
+        private static readonly char SubSep = '|';
+        private static readonly char SubSubSep = '.';
 
         private static DatabaseContext DBInstance = null;
-
-        public static readonly List<string> Nomens = new List<string>() { "MN", "FN", "NM", "SZN" };
 
         public static DatabaseContext GetDatabaseContext()
         {
@@ -25,15 +28,53 @@ namespace HLP.Database
             return DBInstance;
         }
 
-        public List<DBWord> Words { get; } = new List<DBWord>();
-        public List<DBAffix> Affixes { get; } = new List<DBAffix>();
-        public List<DBCode> Codes { get; } = new List<DBCode>();
+        public List<WordType> WordTypes { get; } = new List<WordType>();
+        public List<Word> Words { get; } = new List<Word>();
+        public List<Affix> Affixes { get; } = new List<Affix>();
+        public List<AffixCode> Codes { get; } = new List<AffixCode>();
 
         private DatabaseContext()
         {
-            LoadWordsFromFile();
-            LoadAffixesFromFile();
+            // Szófajok beolvasása
+            LoadWordTypesFromFile();
+            // Toldalék kódok/típusok beolvasása
             LoadCodesFromFile();
+            // Szavak beolvasása
+            LoadWordsFromFile();
+            // Toldalékok beolvasása
+            LoadAffixesFromFile();
+        }
+
+        public List<string> GetCompatibleWordTypes(string typeCode)
+        {
+            var result = new List<string>();
+
+            var type = WordTypes.Find(t => t.Code == typeCode);
+
+            if (type == null) return result;
+
+            result.Add(typeCode);
+
+            type.Includes.ForEach(t => result.AddRange(this.GetCompatibleWordTypes(t)));
+
+            return result;
+        }
+
+        private void LoadWordTypesFromFile()
+        {
+            using (var reader = new StreamReader(WordTypesFilePath))
+            {
+                reader.ReadLine(); // Skip the header
+                while (!reader.EndOfStream)
+                {
+                    var values = reader.ReadLine().Split(MainSep);
+                    WordTypes.Add(new WordType {
+                        Code = values[0],
+                        Name = values[1],
+                        Includes = values[2].Split(SubSep).ToList()
+                    });
+                }
+            }
         }
 
         private void LoadWordsFromFile()
@@ -43,10 +84,10 @@ namespace HLP.Database
                 reader.ReadLine(); // Skip the header
                 while (!reader.EndOfStream)
                 {
-                    var values = reader.ReadLine().Split(',');
-                    Words.Add(new DBWord {
-                        WordText = values[0],
-                        WordTypes = values[1].Split('|').ToList()
+                    var values = reader.ReadLine().Split(MainSep);
+                    Words.Add(new Word {
+                        Text = values[0],
+                        Types = values[1].Split(SubSep).ToList()
                     });
                 }
             }
@@ -58,14 +99,15 @@ namespace HLP.Database
             {
                 reader.ReadLine(); // Skip the header
                 while (!reader.EndOfStream)
-                {
-                    var values = reader.ReadLine().Split(',');
-                    Affixes.Add(new DBAffix {
-                        AffixText = values[0],
-                        AffixType = values[1],
-                        WordTypeBefore = values[2],
-                        WordTypeAfter = values[3],
-                        Code = values[4]
+                { 
+                    var values = reader.ReadLine().Split(MainSep);
+                    var codes = values[0].Split(SubSubSep);
+                    Affixes.Add(new Affix
+                    {
+                        Text = values[1],
+                        Code = Codes.Find(c => c.Code == codes.Last()),
+                        Requirements = new List<string>(codes.Take(codes.Length - 1)),
+                        Prevowel = values[2] == "1"
                     });
                 }
             }
@@ -78,12 +120,12 @@ namespace HLP.Database
                 reader.ReadLine(); // Skip the header
                 while (!reader.EndOfStream)
                 {
-                    var values = reader.ReadLine().Split(',');
-                    Codes.Add(new DBCode {
-                        CodeText = values[0],
-                        AffixType = values[1],
-                        WordType = values[2],
-                        Requirements = values[3].Split('|').ToList(),
+                    var values = reader.ReadLine().Split(MainSep);
+                    Codes.Add(new AffixCode {
+                        Code= values[0],
+                        Type = values[1],
+                        WordTypeBefore = values[2],
+                        WordTypeAfter = values[3],
                         Description = values[4]
                     });
                 }

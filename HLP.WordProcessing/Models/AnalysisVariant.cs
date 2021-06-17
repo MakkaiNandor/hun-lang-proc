@@ -1,6 +1,7 @@
 ﻿using HLP.Database.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace HLP.WordProcessing.Models
 {
@@ -11,8 +12,8 @@ namespace HLP.WordProcessing.Models
         public string Type { get; set; }
         public List<string> PossiblePrefixTypes { get; }
         public List<string> PossibleSuffixTypes { get; }
-        public List<DBAffix> Prefixes { get; }
-        public List<DBAffix> Suffixes { get; }
+        public List<Affix> Prefixes { get; }
+        public List<Affix> Suffixes { get; }
 
         public AnalysisVariant(string word, string type = "")
         {
@@ -21,8 +22,8 @@ namespace HLP.WordProcessing.Models
             Type = type;
             PossiblePrefixTypes = new List<string> { "P", "I" };
             PossibleSuffixTypes = new List<string> { "K", "J", "R" };
-            Prefixes = new List<DBAffix>();
-            Suffixes = new List<DBAffix>();
+            Prefixes = new List<Affix>();
+            Suffixes = new List<Affix>();
         }
 
         public AnalysisVariant(AnalysisVariant other)
@@ -32,27 +33,27 @@ namespace HLP.WordProcessing.Models
             Type = other.Type;
             PossiblePrefixTypes = new List<string>(other.PossiblePrefixTypes);
             PossibleSuffixTypes = new List<string>(other.PossibleSuffixTypes);
-            Prefixes = new List<DBAffix>(other.Prefixes);
-            Suffixes = new List<DBAffix>(other.Suffixes);
+            Prefixes = new List<Affix>(other.Prefixes);
+            Suffixes = new List<Affix>(other.Suffixes);
         }
 
-        public void RemovePrefix(DBAffix prefix)
+        public void RemovePrefix(Affix prefix)
         {
-            OriginalText = Text = Text.Substring(prefix.AffixText.Length);
+            OriginalText = Text = Text.Substring(prefix.Text.Length);
             Prefixes.Add(prefix);
-            if (prefix.AffixType == "I")
+            if (prefix.Code.Type == "I")
             {
                 PossiblePrefixTypes.Remove("P");
             }
-            PossiblePrefixTypes.Remove(prefix.AffixType);
+            PossiblePrefixTypes.Remove(prefix.Code.Type);
         }
 
-        public void RemoveSuffix(DBAffix suffix)
+        public void RemoveSuffix(Affix suffix)
         {
-            OriginalText = Text = Text.Substring(0, Text.Length - suffix.AffixText.Length);
-            Type = suffix.WordTypeBefore;
+            OriginalText = Text = Text.Substring(0, Text.Length - suffix.Text.Length);
+            Type = suffix.Code.WordTypeBefore;
             Suffixes.Insert(0, suffix);
-            switch (suffix.AffixType)
+            switch (suffix.Code.Type)
             {
                 case "R":
                     PossibleSuffixTypes.Remove("R");
@@ -72,18 +73,37 @@ namespace HLP.WordProcessing.Models
             }
         }
 
-        public bool IsGood(DBAffix suffix)
+        public bool IsGood(Affix suffix)
         {
             if (Suffixes.Count() == 0)
             {
                 return true;
             }
-            return Suffixes.Last().AffixText != suffix.AffixText;
+            return Suffixes.Last().Text != suffix.Text;
+        }
+
+        public string PrintMorphOutput()
+        {
+            var result = new List<string>();
+
+            foreach (var prefix in Prefixes)
+            {
+                result.Add(prefix.Code.Code);
+            }
+
+            result.Add(Type);
+
+            foreach(var suffix in Suffixes)
+            {
+                result.Add(suffix.Code.Code);
+            }
+
+            return string.Join(".", result);
         }
 
         public override string ToString()
         {
-            return $"\t{(Prefixes.Any() ? $"{string.Join(" + ", Prefixes)} + " : null)}{OriginalText}({Type}){(Text != OriginalText ? $"={Text}" : null)}{(Suffixes.Any() ? $" + {string.Join(" + ", Suffixes)}" : null)}";
+            return $"\t{(Prefixes.Any() ? $"{string.Join(" + ", Prefixes)} + " : null)}{OriginalText}({Type}){(Text != OriginalText ? $"={Text}" : null)}{(Suffixes.Any() ? $" + {string.Join(" + ", Suffixes)}" : null)}\n\t{PrintMorphOutput()}";
         }
     }
 }

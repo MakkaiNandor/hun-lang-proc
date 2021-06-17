@@ -1,0 +1,66 @@
+Toldalék_kódja;Toldalék_típusa;Alapszó_szófaja;Származékszó_szófaja;Leírás
+FF;P;MN;MN;felső fok jele
+TF;P;MN;MN;túlzó fok jele
+VV;K;IGE;IGE;igéből igét képző (deverbális verbumképző)
+NV;K;NSZ;IGE;névszóból igét képző (denominális verbumképző)
+VI;K;IGE;IN;igéből igenevet képző
+VFN;K;IGE;FN;igéből főnevet képző (deverbális nomenképző)
+VMN;K;IGE;MN;igéből melléknevet képző (deverbális nomenképző)
+NN;K;NSZ;NSZ;névszóból névszót képző (denominális nomenképző)
+NFN;K;NSZ;FN;névszóból főnevet képző (denominális nomenképző)
+NMN;K;NSZ;MN;névszóból melléknevet képző (denominális nomenképző)
+NSZN;K;NSZ;SZN;névszóból számnevet képző (denominális nomenképző)
+M;J;IGE;IGE;kijelentő mód, múlt idő
+F;J;IGE;IGE;feltételes mód, jelen idő
+P;J;IGE;IGE;felszólító mód, jelen idő
+PL;J;NSZ;NSZ;többesszám jele
+FAM;J;NSZ;NSZ;heterogén többesjel
+PSi;J;NSZ;NSZ;birtoktöbbesítő jel
+POS;J;FN;FN;birtokjel
+PSe1;J;FN;FN;birtokos személyjel, egyes szám első személy
+PSe2;J;FN;FN;birtokos személyjel, egyes szám második személy
+PSe3;J;FN;FN;birtokos személyjel, egyes szám harmadik személy
+PSt1;J;FN;FN;birtokos személyjel, többes szám első személy
+PSt2;J;FN;FN;birtokos személyjel, többes szám második személy
+PSt3;J;FN;FN;birtokos személyjel, többes szám harmadik személy
+FOK;J;MN;MN;fokjel
+KI;J;MN;MN;kiemelőjel
+ACC;R;NSZ;NSZ;esetrag (accusativus)
+DAT;R;NSZ;NSZ;esetrag (dativus)
+ILL;R;NSZ;NSZ;esetrag (illativus)
+INE;R;NSZ;NSZ;esetrag (inessivus)
+ELA;R;NSZ;NSZ;esetrag (elativus)
+ALL;R;NSZ;NSZ;esetrag (allativus)
+ADE;R;NSZ;NSZ;esetrag (adessivus)
+ABL;R;NSZ;NSZ;esetrag (ablativus)
+SUB;R;NSZ;NSZ;esetrag (sublativus)
+SUP;R;NSZ;NSZ;esetrag (superessivus)
+DEL;R;NSZ;NSZ;esetrag (delativus)
+INS;R;NSZ;NSZ;esetrag (instrumentalis)
+FAC;R;NSZ;NSZ;esetrag (factivus)
+FOR;R;NSZ;NSZ;esetrag (formativus)
+TEM;R;NSZ;NSZ;esetrag (temporalis)
+CAU;R;NSZ;NSZ;esetrag (causalis)
+TER;R;NSZ;NSZ;esetrag (terminativus)
+ESS;R;NSZ;NSZ;esetrag (essivus formalis)
+DIS;R;NSZ;NSZ;esetrag (distributivus)
+SOC;R;NSZ;NSZ;esetrag (sociativus)
+FRM;R;NSZ;NSZ;esetrag (formalis)
+DIT;R;NSZ;NSZ;esetrag (distributiv temporalis)
+MES;R;MN;MN;esetrag (modalis-essivus)
+MUL;R;SZN;SZN;esetrag (multiplicativus)
+e1;R;IGE;IGE;általános igeragozás, egyes szám első személy
+e2;R;IGE;IGE;általános igeragozás, egyes szám második személy
+e3;R;IGE;IGE;általános igeragozás, egyes szám harmadik személy
+t1;R;IGE;IGE;általános igeragozás, többes szám első személy
+t2;R;IGE;IGE;általános igeragozás, többes szám második személy
+t3;R;IGE;IGE;általános igeragozás, többes szám harmadik személy
+He1;R;IGE;IGE;határozott igeragozás, egyes szám első személy
+He2;R;IGE;IGE;határozott igeragozás, egyes szám második személy
+He3;R;IGE;IGE;határozott igeragozás, egyes szám harmadik személy
+Ht1;R;IGE;IGE;határozott igeragozás, többes szám első személy
+Ht2;R;IGE;IGE;határozott igeragozás, többes szám második személy
+Ht3;R;IGE;IGE;határozott igeragozás, többes szám harmadik személy
+IKe1;R;IGE;IGE;ikes igeragozás, egyes szám első személy
+IKe2;R;IGE;IGE;ikes igeragozás, egyes szám második személy
+IKe3;R;IGE;IGE;ikes igeragozás, egyes szám harmadik személy

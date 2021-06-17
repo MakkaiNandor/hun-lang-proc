@@ -73,6 +73,10 @@ namespace HLP.WordProcessing
             }
             else
             {
+                variants.Add(variant);
+            }
+            /*else
+            {
                 variants.AddRange(SearchCorrectStem(variant));
                 if (variants.Any())
                 {
@@ -83,18 +87,20 @@ namespace HLP.WordProcessing
                 {
                     variants.Add(variant);
                 }
-            }
+            }*/
+
+            var tmp = false;
 
             foreach (var v in variants)
             {
-                var prefixes = DBContext.Affixes.GetPossiblePrefixes(v);
+                /*var prefixes = DBContext.Affixes.GetPossiblePrefixes(v);
 
                 foreach (var prefix in prefixes)
                 {
                     var newVariant = new AnalysisVariant(v);
                     newVariant.RemovePrefix(prefix);
                     AnalyzeOneWord(newVariant, result, level + 1);
-                }
+                }*/
 
                 var suffixes = DBContext.Affixes.GetPossibleSuffixes(v);
 
@@ -106,18 +112,32 @@ namespace HLP.WordProcessing
                     newVariant.RemoveSuffix(suffix);
                     //Console.WriteLine("new" + newVariant);
 
-                    if (!AnalyzeOneWord(newVariant, result, level + 1) &&
-                        !suffix.AffixText.StartsWithVowel() &&
+                    var tmp1 = AnalyzeOneWord(newVariant, result, level + 1);
+                    tmp = tmp1 || tmp;
+
+                    if (!tmp1 &&
+                        suffix.Prevowel &&
                         newVariant.Text.EndsWithPreVowel() &&
                         newVariant.Text.HasTwoVowelsAtLeast())
                     {
                         var preVowelVariant = new AnalysisVariant(v);
-                        preVowelVariant.RemoveSuffix(new DBAffix(suffix, newVariant.Text.Last().ToString()));
-                        AnalyzeOneWord(preVowelVariant, result, level + 1);
+                        preVowelVariant.RemoveSuffix(new Affix(suffix, newVariant.Text.Last().ToString()));
+                        tmp = AnalyzeOneWord(preVowelVariant, result, level + 1) || tmp;
                         //Console.WriteLine("pre" + preVowelVariant);
                     }
                 }
             }
+
+            if (!inDB && !tmp)
+            {
+                var list = SearchCorrectStem(variant);
+                if (list.Any())
+                {
+                    result.Variants.AddRange(list);
+                    inDB = true;
+                }
+            }
+
             return inDB;
         }
 
@@ -174,9 +194,12 @@ namespace HLP.WordProcessing
             }
 
             // Hiányzik a szóvégi magánhangzó
-            else if(variant.Text.EndsWithConsonant() || variant.Text.EndsWithLongConsonant())
+            if(variant.Text.EndsWithConsonant() || variant.Text.EndsWithLongConsonant())
             {
-
+                result.AddRange(Alphabet.Vowels.Select(v => new AnalysisVariant(variant)
+                {
+                    Text = variant.Text + v
+                }));
             }
 
             return result.Where(v => DBContext.Words.GetCommonTypes(v).Any()).ToList();
@@ -197,11 +220,11 @@ namespace HLP.WordProcessing
             foreach(var component in components)
             {
                 var containedWords = DBContext.Words.Where(w => 
-                    w.WordText.Length > 1 &&
-                    component.Contains(w.WordText)
-                ).OrderByDescending(w => w.WordText.Length).ToList();
+                    w.Text.Length > 1 &&
+                    component.Contains(w.Text)
+                ).OrderByDescending(w => w.Text.Length).ToList();
 
-                Console.WriteLine($"\t{index}.{++count}. {component} ({string.Join(", ", containedWords.Select(w => w.WordText))})");
+                Console.WriteLine($"\t{index}.{++count}. {component} ({string.Join(", ", containedWords.Select(w => w.Text))})");
 
                 this.SearchForComponents(component, containedWords, new List<string>());
             }
@@ -209,18 +232,18 @@ namespace HLP.WordProcessing
             return result;
         }
 
-        private void SearchForComponents(string word, List<DBWord> containedWords, List<string> components)
+        private void SearchForComponents(string word, List<Word> containedWords, List<string> components)
         {
             if(word.Length == 0)
             {
                 Console.WriteLine($"\t\t{string.Join(", ", components)}");
                 return;
             }
-            foreach (var startWord in containedWords.Where(w => word.StartsWith(w.WordText)))
+            foreach (var startWord in containedWords.Where(w => word.StartsWith(w.Text)))
             {
                 var extendedComponents = new List<string>(components);
-                var newWord = word.Substring(startWord.WordText.Length);
-                extendedComponents.Add(startWord.WordText);
+                var newWord = word.Substring(startWord.Text.Length);
+                extendedComponents.Add(startWord.Text);
                 this.SearchForComponents(newWord, containedWords, extendedComponents);
             }
         }

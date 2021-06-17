@@ -1,0 +1,16 @@
+Szófaj_kódja;Szófaj_neve;Magábafoglalt_szófajok
+NSZ;névszó;FN|MN|NM|NU
+IGE;ige;
+FN;főnév;
+MN;melléknév;SZN
+NM;névmás;
+SZN;számnév;
+HA;határozószó;
+NU;névutó;
+IK;igekötő;
+IN;igenév;
+IND;indulatszó;
+NE;névelő;
+MON;mondatszó;
+KOT;kötőszó;
+SEG;segédige;
