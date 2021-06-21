@@ -34,7 +34,7 @@ namespace HLP.WordProcessing.Extensions
         }
 
         // A szó tartalmaz-e legalább két magánhangzót
-        public static bool HasTwoVowelsAtLeast(this string text)
+        public static int NumberOfVowels(this string text)
         {
             var count = 0;
             foreach(var letter in text)
@@ -45,7 +45,7 @@ namespace HLP.WordProcessing.Extensions
                 }
             }
             //Console.WriteLine($"<Fn:HasTwoVowelsAtLeast ~ {text} has {count} vowels>");
-            return count >= 2;
+            return count;
         }
 
         // A szó magánhangzóval kezdődik-e
@@ -54,6 +54,12 @@ namespace HLP.WordProcessing.Extensions
             var result = Alphabet.Vowels.Contains(text[0].ToString());
             //Console.WriteLine($"<Fn:StartsWithVowel ~ {text} {result}>");
             return result;
+        }
+
+        // A szó magánhangzóval végződik-e
+        public static bool EndsWithVowel(this string text)
+        {
+            return Alphabet.Vowels.Contains(text.Last().ToString());
         }
 
         // A szó előhangzóval kezdődik-e

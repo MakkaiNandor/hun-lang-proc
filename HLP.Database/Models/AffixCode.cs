@@ -8,6 +8,7 @@ namespace HLP.Database.Models
     {
         public string Code { get; set; }
         public string Type { get; set; }
+        public int Group { get; set; }
         public string WordTypeBefore { get; set; }
         public string WordTypeAfter { get; set; }
         public string Description { get; set; }

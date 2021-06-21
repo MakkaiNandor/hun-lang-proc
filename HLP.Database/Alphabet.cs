@@ -18,5 +18,7 @@ namespace HLP.Database
         public static List<string> Consonants { get; } = new List<string>() { "b", "c", "cs", "d", "dz", "dzs", "f", "g", "gy", "h", "j", "k", "l", "ly", "m", "n", "ny", "p", "q", "r", "s", "sz", "t", "ty", "v", "x", "y", "z", "zs" };
 
         public static List<string> LongConsonants { get { return Consonants.Select(c => c[0] + c).ToList(); } }
+
+        public static List<string> Letters { get; } = Vowels.Union(Consonants).Union(LongConsonants).OrderByDescending(l => l.Length).ToList();
     }
 }

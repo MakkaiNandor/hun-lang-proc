@@ -16,7 +16,8 @@ namespace HLP.WordProcessing.Extensions
                 variant.PossiblePrefixTypes.Contains(a.Code.Type) &&
                 variant.Text.StartsWith(a.Text) &&
                 variant.Text.Substring(0, variant.Text.Length - a.Text.Length).HasVowel() &&
-                a.IsCompatibleWith(variant.Type)
+                a.IsCompatibleWith(variant.Type) &&
+                (a.Code.Group == 0 || !variant.AffixGroups.Contains(a.Code.Group))
             ).ToList();
         }
 
@@ -27,7 +28,7 @@ namespace HLP.WordProcessing.Extensions
                 variant.Text.EndsWith(a.Text) &&
                 variant.Text.Substring(0, variant.Text.Length - a.Text.Length).HasVowel() &&
                 a.IsCompatibleWith(variant.Type) &&
-                variant.IsGood(a)
+                (a.Code.Group == 0 || !variant.AffixGroups.Contains(a.Code.Group))
             ).ToList();
         }
 

@@ -55,7 +55,9 @@ namespace HLP.Database
 
             result.Add(typeCode);
 
-            type.Includes.ForEach(t => result.AddRange(this.GetCompatibleWordTypes(t)));
+            type.Includes.ForEach(t => result.AddRange(GetCompatibleWordTypes(t)));
+
+            result.AddRange(WordTypes.Where(t => t.Includes.Contains(typeCode)).Select(t => t.Code));
 
             return result;
         }
@@ -124,9 +126,10 @@ namespace HLP.Database
                     Codes.Add(new AffixCode {
                         Code= values[0],
                         Type = values[1],
-                        WordTypeBefore = values[2],
-                        WordTypeAfter = values[3],
-                        Description = values[4]
+                        Group = int.Parse(values[2]),
+                        WordTypeBefore = values[3],
+                        WordTypeAfter = values[4],
+                        Description = values[5]
                     });
                 }
             }

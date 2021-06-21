@@ -14,6 +14,7 @@ namespace HLP.WordProcessing.Models
         public List<string> PossibleSuffixTypes { get; }
         public List<Affix> Prefixes { get; }
         public List<Affix> Suffixes { get; }
+        public List<int> AffixGroups { get; }
 
         public AnalysisVariant(string word, string type = "")
         {
@@ -24,6 +25,7 @@ namespace HLP.WordProcessing.Models
             PossibleSuffixTypes = new List<string> { "K", "J", "R" };
             Prefixes = new List<Affix>();
             Suffixes = new List<Affix>();
+            AffixGroups = new List<int>();
         }
 
         public AnalysisVariant(AnalysisVariant other)
@@ -35,6 +37,7 @@ namespace HLP.WordProcessing.Models
             PossibleSuffixTypes = new List<string>(other.PossibleSuffixTypes);
             Prefixes = new List<Affix>(other.Prefixes);
             Suffixes = new List<Affix>(other.Suffixes);
+            AffixGroups = new List<int>(other.AffixGroups);
         }
 
         public void RemovePrefix(Affix prefix)
@@ -46,6 +49,10 @@ namespace HLP.WordProcessing.Models
                 PossiblePrefixTypes.Remove("P");
             }
             PossiblePrefixTypes.Remove(prefix.Code.Type);
+            if (prefix.Code.Group != 0 && !AffixGroups.Contains(prefix.Code.Group))
+            {
+                AffixGroups.Add(prefix.Code.Group);
+            }
         }
 
         public void RemoveSuffix(Affix suffix)
@@ -71,6 +78,10 @@ namespace HLP.WordProcessing.Models
                     break;
                 default: break;
             }
+            if (suffix.Code.Group != 0 && !AffixGroups.Contains(suffix.Code.Group))
+            {
+                AffixGroups.Add(suffix.Code.Group);
+            }
         }
 
         public bool IsGood(Affix suffix)
@@ -82,7 +93,7 @@ namespace HLP.WordProcessing.Models
             return Suffixes.Last().Text != suffix.Text;
         }
 
-        public string PrintMorphOutput()
+        public string GetMorphCode()
         {
             var result = new List<string>();
 
@@ -103,7 +114,7 @@ namespace HLP.WordProcessing.Models
 
         public override string ToString()
         {
-            return $"\t{(Prefixes.Any() ? $"{string.Join(" + ", Prefixes)} + " : null)}{OriginalText}({Type}){(Text != OriginalText ? $"={Text}" : null)}{(Suffixes.Any() ? $" + {string.Join(" + ", Suffixes)}" : null)}\n\t{PrintMorphOutput()}";
+            return $"\t{(Prefixes.Any() ? $"{string.Join(" + ", Prefixes)} + " : null)}{OriginalText}({Type}){(Text != OriginalText ? $"={Text}" : null)}{(Suffixes.Any() ? $" + {string.Join(" + ", Suffixes)}" : null)}\n\t{GetMorphCode()}";
         }
     }
 }

@@ -9,18 +9,25 @@ namespace HLP
     {
         static void Main(string[] args)
         {
-            var processor = new MorphologicalAnalyzer();
+            Console.WriteLine("[1] Szavak felbontása\n[2] Teljesítmény tesztelése");
+            var option = Console.ReadLine();
 
-            while (true)
+            if (option == "1")
             {
-                Console.WriteLine("\n~~~~~ Bemenet ~~~~~");
-                var input = Console.ReadLine();
-                processor.Analyze(input);
+                var analyzer = new MorphologicalAnalyzer();
 
-            /*foreach (var item in result)
+                while (true)
+                {
+                    Console.WriteLine("\n~~~~~ Bemenet ~~~~~");
+                    var input = Console.ReadLine();
+                    analyzer.Analyze(input, true);
+                }
+            }
+            else if (option == "2")
             {
-                Console.WriteLine(item.ToString());
-            }*/
+                var tester = new PerformanceTesting();
+
+                tester.TestData();
             }
         }
     }

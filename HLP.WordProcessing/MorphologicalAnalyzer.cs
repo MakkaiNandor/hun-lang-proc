@@ -18,7 +18,15 @@ namespace HLP.WordProcessing
             DBContext = DatabaseContext.GetDatabaseContext();
         }
 
-        public List<AnalysisResult> Analyze(string inputText)
+        public void AnalyzeText(string text)
+        {
+            if (text.Length == 0)
+            {
+                return;
+            }
+        }
+
+        public List<AnalysisResult> Analyze(string inputText, bool print = false)
         {
             var result = new List<AnalysisResult>();
 
@@ -27,7 +35,7 @@ namespace HLP.WordProcessing
                 return result;
             }
 
-            Console.WriteLine("\n~~~~~ Kimenet ~~~~~");
+            if (print) Console.WriteLine("\n~~~~~ Kimenet ~~~~~");
 
             foreach (var word in inputText.SplitToWords())
             {
@@ -41,14 +49,16 @@ namespace HLP.WordProcessing
 
                 result.Add(analysisResult);
 
-                Console.WriteLine(analysisResult);
+                //Console.WriteLine(analysisResult);
 
                 //this.SplitCompoundWord(word, count);
             }
 
-            Console.WriteLine("\n~~~~~ Vége ~~~~~");
-
-            //Console.WriteLine(string.Join("\n", result));
+            if (print)
+            {
+                Console.WriteLine("\n~~~~~ Vége ~~~~~");
+                Console.WriteLine(string.Join("\n", result));
+            }
 
             return result;
         }
@@ -66,45 +76,58 @@ namespace HLP.WordProcessing
                     Type = t
                 }));
                 result.Variants.AddRange(variants);
-                foreach (var v in variants)
+                /*foreach (var v in variants)
                 {
                     Console.WriteLine($"{level}. {v}");
-                }
-            }
-            else
-            {
-                variants.Add(variant);
+                }*/
             }
             /*else
             {
-                variants.AddRange(SearchCorrectStem(variant));
+                variants.Add(variant);
+            }*/
+            else
+            {
+                SearchCorrectStem(variant).ForEach(v =>
+                {
+                    variants.AddRange(DBContext.Words.GetCommonTypes(v).Select(t => new AnalysisVariant(v)
+                    {
+                        Type = t
+                    }));
+                });
                 if (variants.Any())
                 {
                     result.Variants.AddRange(variants);
-                    return true;
+                    //return true;
                 }
                 else
                 {
                     variants.Add(variant);
                 }
-            }*/
+            }
 
             var tmp = false;
 
             foreach (var v in variants)
             {
                 /*var prefixes = DBContext.Affixes.GetPossiblePrefixes(v);
-
+                var prefixIsGood = false;
+                Console.WriteLine($"{level}p. {string.Join(", ", prefixes)}");
                 foreach (var prefix in prefixes)
                 {
                     var newVariant = new AnalysisVariant(v);
                     newVariant.RemovePrefix(prefix);
-                    AnalyzeOneWord(newVariant, result, level + 1);
+                    prefixIsGood = AnalyzeOneWord(newVariant, result, level + 1);
+                }
+
+                if (prefixIsGood)
+                {
+                    inDB = true;
+                    continue;
                 }*/
 
                 var suffixes = DBContext.Affixes.GetPossibleSuffixes(v);
 
-                Console.WriteLine($"{level}. {string.Join(", ", suffixes)}");
+                //Console.WriteLine($"{level}. {string.Join(", ", suffixes)}");
 
                 foreach (var suffix in suffixes)
                 {
@@ -118,7 +141,7 @@ namespace HLP.WordProcessing
                     if (!tmp1 &&
                         suffix.Prevowel &&
                         newVariant.Text.EndsWithPreVowel() &&
-                        newVariant.Text.HasTwoVowelsAtLeast())
+                        newVariant.Text.NumberOfVowels() >= 2)
                     {
                         var preVowelVariant = new AnalysisVariant(v);
                         preVowelVariant.RemoveSuffix(new Affix(suffix, newVariant.Text.Last().ToString()));
@@ -128,7 +151,7 @@ namespace HLP.WordProcessing
                 }
             }
 
-            if (!inDB && !tmp)
+            /*if (!inDB && !tmp)
             {
                 var list = SearchCorrectStem(variant);
                 if (list.Any())
@@ -136,7 +159,7 @@ namespace HLP.WordProcessing
                     result.Variants.AddRange(list);
                     inDB = true;
                 }
-            }
+            }*/
 
             return inDB;
         }
@@ -145,64 +168,91 @@ namespace HLP.WordProcessing
         {
             var result = new List<AnalysisVariant>();
 
-            // Szóvégi magánhangzó hosszabbodik
-            if (variant.Text.EndsWithLongVowel())
+            if (variant.Type == "IGE")
             {
-                result.Add(new AnalysisVariant(variant)
+                var res = StemChecker.CheckVerbStem(variant.Text).Where(s => !s.EndsWith(variant.Suffixes[0].Text)).ToList();
+                //Console.WriteLine($"{variant.Text}: {string.Join(", ", res)}");
+                res.ForEach(s =>
                 {
-                    Text = variant.Text.ReplaceVowel(variant.Text.Length - 1)
-                });
-            }
-
-            // A magánhangzók rövidülnek
-            else if (variant.Text.HasShortVowel())
-            {
-                var permutations = Permute(variant.Text.IndexOfShortVowels());
-
-                foreach (var perm in permutations)
-                {
-                    var newText = variant.Text;
-
-                    foreach (var index in perm)
-                    {
-                        newText = newText.ReplaceVowel(index);
-                    }
-
                     result.Add(new AnalysisVariant(variant)
                     {
-                        Text = newText
+                        Text = s
+                    });
+                });
+            }
+            else
+            {
+                var res = StemChecker.CheckNomenStem(variant.Text).Where(s => !s.EndsWith(variant.Suffixes[0].Text)).ToList();
+                //Console.WriteLine($"{variant.Text}: {string.Join(", ", res)}");
+                res.ForEach(s =>
+                {
+                    result.Add(new AnalysisVariant(variant)
+                    {
+                        Text = s
+                    });
+                });
+            }
+            /*else
+            {
+                // Szóvégi magánhangzó hosszabbodik
+                if (variant.Text.EndsWithLongVowel())
+                {
+                    result.Add(new AnalysisVariant(variant)
+                    {
+                        Text = variant.Text.ReplaceVowel(variant.Text.Length - 1)
                     });
                 }
-            }
 
-            // Hiányzik az utolsó magánhangzó (két mássalhangzóban végződik)
-            if (variant.Text.EndsWithTwoConsonants())
-            {
-                var temp = new List<AnalysisVariant>();
-                foreach (var v in result)
+                // A magánhangzók rövidülnek
+                else if (variant.Text.HasShortVowel())
                 {
-                    temp.AddRange(Alphabet.Vowels.Select(l => new AnalysisVariant(v)
+                    var permutations = Permute(variant.Text.IndexOfShortVowels());
+
+                    foreach (var perm in permutations)
                     {
-                        Text = v.Text.Insert(v.Text.Length - 1, l)
+                        var newText = variant.Text;
+
+                        foreach (var index in perm)
+                        {
+                            newText = newText.ReplaceVowel(index);
+                        }
+
+                        result.Add(new AnalysisVariant(variant)
+                        {
+                            Text = newText
+                        });
+                    }
+                }
+
+                // Hiányzik az utolsó magánhangzó (két mássalhangzóban végződik)
+                if (variant.Text.EndsWithTwoConsonants())
+                {
+                    var temp = new List<AnalysisVariant>();
+                    foreach (var v in result)
+                    {
+                        temp.AddRange(Alphabet.Vowels.Select(l => new AnalysisVariant(v)
+                        {
+                            Text = v.Text.Insert(v.Text.Length - 1, l)
+                        }));
+                    }
+                    result.AddRange(temp);
+                    result.AddRange(Alphabet.Vowels.Select(v => new AnalysisVariant(variant)
+                    {
+                        Text = variant.Text.Insert(variant.Text.Length - 1, v)
                     }));
                 }
-                result.AddRange(temp);
-                result.AddRange(Alphabet.Vowels.Select(v => new AnalysisVariant(variant)
-                {
-                    Text = variant.Text.Insert(variant.Text.Length - 1, v)
-                }));
-            }
 
-            // Hiányzik a szóvégi magánhangzó
-            if(variant.Text.EndsWithConsonant() || variant.Text.EndsWithLongConsonant())
-            {
-                result.AddRange(Alphabet.Vowels.Select(v => new AnalysisVariant(variant)
+                // Hiányzik a szóvégi magánhangzó
+                if (variant.Text.EndsWithConsonant() || variant.Text.EndsWithLongConsonant())
                 {
-                    Text = variant.Text + v
-                }));
-            }
+                    result.AddRange(Alphabet.Vowels.Select(v => new AnalysisVariant(variant)
+                    {
+                        Text = variant.Text + v
+                    }));
+                }
+            }*/
 
-            return result.Where(v => DBContext.Words.GetCommonTypes(v).Any()).ToList();
+            return result;//.Where(v => DBContext.Words.GetCommonTypes(v).Any()).ToList();
         }
 
         private List<string> SplitCompoundWord(string word, int index)
