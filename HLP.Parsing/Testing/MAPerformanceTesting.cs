@@ -1,13 +1,14 @@
-﻿using System;
+﻿using HLP.Database;
+using HLP.Parsing.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using HLP.WordProcessing.Models;
 
-namespace HLP.WordProcessing
+namespace HLP.Parsing.Testing
 {
-    public class PerformanceTesting
+    public class MAPerformanceTesting
     {
         private class Test
         {
@@ -16,19 +17,19 @@ namespace HLP.WordProcessing
             public List<string> Prefixes { get; set; }
             public List<string> Suffixes { get; set; }
             public string MorphCode { get; set; }
-            public AnalysisVariant analysis { get; set; }
+            public MAVariant Analysis { get; set; }
             public override string ToString()
             {
                 return $"{Word}: {string.Join("+", Prefixes)}{(Prefixes.Any() ? "+" : null)}{Stem}{(Suffixes.Any() ? "+" : null)}{string.Join("+", Suffixes)} ({MorphCode})";
             }
         }
 
-        private static readonly string SourceFilePath = "D:\\Egyetem\\Államvizsga\\HunLangProc\\HLP.Database\\Data\\morph_teszt.txt";
+        private static readonly string SourceFilePath = $"{DatabaseLoader.directory}/morph_teszt.txt";
 
         private MorphologicalAnalyzer Analyzer;
         private List<Test> Tests = new List<Test>();
 
-        public PerformanceTesting()
+        public MAPerformanceTesting()
         {
             LoadTestingData();
             Analyzer = new MorphologicalAnalyzer();
@@ -40,24 +41,26 @@ namespace HLP.WordProcessing
             var numberOfMatch = 0;
             foreach (var item in Tests)
             {
-                Console.WriteLine($"Testing word '{item.Word}'");
-                var analysisResult = Analyzer.Analyze(item.Word).First();
-                //Console.WriteLine(result);
+                Console.WriteLine($"Analyzing word '{item.Word}'");
+                var analysisResult = Analyzer.AnalyzeWord(item.Word, false);
+                Console.WriteLine($"nr = {analysisResult.Variants.Count}");
                 var match = analysisResult.Variants.Find(variant => Equals(item, variant));
-                item.analysis = match;
+                item.Analysis = match;
                 if (match == null)
                 {
-                    Console.WriteLine("NO MATCH!");
+                    Console.WriteLine("~~~ NO MATCH ~~~");
                 }
                 else
                 {
-                    Console.WriteLine($"MATCH!");
+                    Console.WriteLine($"~~~  MATCH  ~~~");
                     ++numberOfMatch;
                 }
             }
             Console.WriteLine($"{numberOfMatch} of {Tests.Count}");
 
-            while (true)
+            Console.WriteLine($"No match:\n{string.Join("\n", Tests.Where(t => t.Analysis == null).Select(t => t.Word))}");
+
+            /*while (true)
             {
                 var input = Console.ReadLine();
                 if (input == "exit")
@@ -69,13 +72,13 @@ namespace HLP.WordProcessing
                 {
                     Console.WriteLine(test.analysis);
                 }
-            }
+            }*/
         }
 
-        private bool Equals(Test test, AnalysisVariant variant)
+        private bool Equals(Test test, MAVariant variant)
         {
-            if (test.Stem != variant.CurrentText || 
-                test.Prefixes.Count != variant.Prefixes.Count || 
+            if (test.Stem != variant.CurrentText ||
+                test.Prefixes.Count != variant.Prefixes.Count ||
                 test.Suffixes.Count != variant.Suffixes.Count ||
                 test.MorphCode != variant.GetMorphCode())
             {
@@ -84,7 +87,7 @@ namespace HLP.WordProcessing
 
             for (var i = 0; i < test.Prefixes.Count; ++i)
             {
-                if (test.Prefixes[i] != variant.Prefixes[i].Text)
+                if (test.Prefixes[i] != variant.Prefixes[i].OriginalText)
                 {
                     return false;
                 }
@@ -92,7 +95,7 @@ namespace HLP.WordProcessing
 
             for (var i = 0; i < test.Suffixes.Count; ++i)
             {
-                if (test.Suffixes[i] != variant.Suffixes[i].Text)
+                if (test.Suffixes[i] != variant.Suffixes[i].OriginalText)
                 {
                     return false;
                 }
@@ -127,7 +130,8 @@ namespace HLP.WordProcessing
                             prefixes.Add(item);
                         }
                     }
-                    Tests.Add(new Test {
+                    Tests.Add(new Test
+                    {
                         Word = values[0],
                         Stem = stem,
                         Prefixes = prefixes,

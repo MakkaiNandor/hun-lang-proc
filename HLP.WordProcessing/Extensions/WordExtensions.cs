@@ -12,13 +12,13 @@ namespace HLP.WordProcessing.Extensions
     {
         public static List<string> GetCommonTypes(this List<Word> words, AnalysisVariant variant)
         {
-            var word = words.Find(w => w.Text == variant.Text);
+            var word = words.Find(w => w.Text == variant.CurrentText);
 
             if (word == null) return new List<string>();
 
-            var DB = DatabaseContext.GetDatabaseContext();
+            var DB = DatabaseContext.GetInstance();
 
-            var types = DB.GetCompatibleWordTypes(variant.Type);
+            var types = DB.GetCompatibleWordTypes(variant.WordType);
 
             if (types.Count == 0) return new List<string>(word.Types);
 

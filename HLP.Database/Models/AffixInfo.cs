@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HLP.Database.Models
 {
-    public class AffixCode
+    public class AffixInfo
     {
         public string Code { get; set; }
         public string Type { get; set; }

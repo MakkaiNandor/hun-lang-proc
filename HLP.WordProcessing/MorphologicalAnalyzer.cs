@@ -15,7 +15,7 @@ namespace HLP.WordProcessing
 
         public MorphologicalAnalyzer()
         {
-            DBContext = DatabaseContext.GetDatabaseContext();
+            DBContext = DatabaseContext.GetInstance();
         }
 
         public void AnalyzeText(string text)
@@ -37,7 +37,7 @@ namespace HLP.WordProcessing
 
             if (print) Console.WriteLine("\n~~~~~ Kimenet ~~~~~");
 
-            foreach (var word in inputText.SplitToWords())
+            foreach (var word in inputText.Split())
             {
                 //Console.WriteLine($"{++count}. {word}");
 
@@ -45,7 +45,41 @@ namespace HLP.WordProcessing
 
                 var variant = new AnalysisVariant(word);
 
+                var prefixes = DBContext.Affixes.GetPossiblePrefixes(variant).Where(a => a.Info.Type == "P");
+
+                //Console.WriteLine($"1. {string.Join(", ", prefixes)}");
+
+                foreach (var prefix in prefixes)
+                {
+                    var newVariant = new AnalysisVariant(variant);
+                    newVariant.RemovePrefix(prefix);
+                    AnalyzeOneWord(newVariant, analysisResult, 1);
+                }
+
                 AnalyzeOneWord(variant, analysisResult, 1);
+
+                var resultsWithIgekoto = new List<AnalysisVariant>(analysisResult.Variants);
+
+                foreach (var v in resultsWithIgekoto)
+                {
+                    if (v.WordType == "IGE")
+                    {
+                        var igekotok = DBContext.Words.Where(w => w.Types.Contains("IK") && v.CurrentText.StartsWith(w.Text));
+
+                        foreach (var igekoto in igekotok)
+                        {
+                            var newVariant = new AnalysisVariant(v);
+                            newVariant.RemovePrefix(new Affix
+                            {
+                                Text = igekoto.Text,
+                                Prevowel = false,
+                                Info = DBContext.AffixInfos.Find(c => c.Type == "I"),
+                                Requirements = new List<string>()
+                            });
+                            AnalyzeOneWord(newVariant, analysisResult, 1);
+                        }
+                    }
+                }
 
                 result.Add(analysisResult);
 
@@ -73,7 +107,7 @@ namespace HLP.WordProcessing
             {
                 inDB = true;
                 variants.AddRange(commonTypes.Select(t => new AnalysisVariant(variant) { 
-                    Type = t
+                    WordType = t
                 }));
                 result.Variants.AddRange(variants);
                 /*foreach (var v in variants)
@@ -91,7 +125,7 @@ namespace HLP.WordProcessing
                 {
                     variants.AddRange(DBContext.Words.GetCommonTypes(v).Select(t => new AnalysisVariant(v)
                     {
-                        Type = t
+                        WordType = t
                     }));
                 });
                 if (variants.Any())
@@ -138,16 +172,16 @@ namespace HLP.WordProcessing
                     var tmp1 = AnalyzeOneWord(newVariant, result, level + 1);
                     tmp = tmp1 || tmp;
 
-                    if (!tmp1 &&
+                    /*if (!tmp1 &&
                         suffix.Prevowel &&
-                        newVariant.Text.EndsWithPreVowel() &&
-                        newVariant.Text.NumberOfVowels() >= 2)
+                        newVariant.CurrentText.EndsWithPreVowel() &&
+                        newVariant.CurrentText.HasVowel(2))
                     {
                         var preVowelVariant = new AnalysisVariant(v);
-                        preVowelVariant.RemoveSuffix(new Affix(suffix, newVariant.Text.Last().ToString()));
+                        preVowelVariant.RemoveSuffix(new Affix(suffix, newVariant.CurrentText.Last().ToString()));
                         tmp = AnalyzeOneWord(preVowelVariant, result, level + 1) || tmp;
-                        //Console.WriteLine("pre" + preVowelVariant);
-                    }
+                        Console.WriteLine("pre" + preVowelVariant);
+                    }*/
                 }
             }
 
@@ -168,30 +202,30 @@ namespace HLP.WordProcessing
         {
             var result = new List<AnalysisVariant>();
 
-            if (variant.Type == "IGE")
+            /*if (variant.WordType == "IGE")
             {
-                var res = StemChecker.CheckVerbStem(variant.Text).Where(s => !s.EndsWith(variant.Suffixes[0].Text)).ToList();
+                var res = StemChecker.CheckVerbStem(variant.CurrentText).Where(s => !s.EndsWith(variant.Suffixes[0].Text)).ToList();
                 //Console.WriteLine($"{variant.Text}: {string.Join(", ", res)}");
                 res.ForEach(s =>
                 {
                     result.Add(new AnalysisVariant(variant)
                     {
-                        Text = s
+                        CurrentText = s
                     });
                 });
             }
             else
             {
-                var res = StemChecker.CheckNomenStem(variant.Text).Where(s => !s.EndsWith(variant.Suffixes[0].Text)).ToList();
+                var res = StemChecker.CheckNomenStem(variant.CurrentText).Where(s => !s.EndsWith(variant.Suffixes[0].Text)).ToList();
                 //Console.WriteLine($"{variant.Text}: {string.Join(", ", res)}");
                 res.ForEach(s =>
                 {
                     result.Add(new AnalysisVariant(variant)
                     {
-                        Text = s
+                        CurrentText = s
                     });
                 });
-            }
+            }*/
             /*else
             {
                 // Szóvégi magánhangzó hosszabbodik

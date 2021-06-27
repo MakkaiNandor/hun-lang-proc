@@ -1,13 +1,14 @@
 ﻿using HLP.Database;
 using HLP.Database.Models;
-using HLP.WordProcessing.Extensions;
+using HLP.Parsing.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace HLP.WordProcessing.Models
+namespace HLP.Parsing.Models
 {
-    public class AnalysisVariant
+    public class MAVariant
     {
         public string OriginalText { get; set; }
         public string CurrentText { get; set; }
@@ -17,8 +18,9 @@ namespace HLP.WordProcessing.Models
         public List<Affix> Prefixes { get; }
         public List<Affix> Suffixes { get; }
         public List<int> ContainedAffixGroups { get; }
+        public bool IgekotoChecked { get; set; }
 
-        public AnalysisVariant(string word, string type = "")
+        public MAVariant(string word, string type = "")
         {
             OriginalText = word;
             CurrentText = word;
@@ -28,9 +30,10 @@ namespace HLP.WordProcessing.Models
             Prefixes = new List<Affix>();
             Suffixes = new List<Affix>();
             ContainedAffixGroups = new List<int>();
+            IgekotoChecked = false;
         }
 
-        public AnalysisVariant(AnalysisVariant other)
+        public MAVariant(MAVariant other)
         {
             OriginalText = other.OriginalText;
             CurrentText = other.CurrentText;
@@ -40,41 +43,67 @@ namespace HLP.WordProcessing.Models
             Prefixes = new List<Affix>(other.Prefixes);
             Suffixes = new List<Affix>(other.Suffixes);
             ContainedAffixGroups = new List<int>(other.ContainedAffixGroups);
+            IgekotoChecked = other.IgekotoChecked;
         }
 
         public List<Affix> PossiblePrefixes()
         {
-            return DatabaseContext.GetInstance().Affixes.Where(a => 
+            var context = DatabaseContext.GetInstance();
+
+            var prefixes = context.Affixes.Where(a =>
                 PossiblePrefixTypes.Contains(a.Info.Type) &&
-                CurrentText.StartsWith(a.Text) &&
-                CurrentText.RemoveFromStart(a.Text).HasVowel() &&
+                !ContainedAffixGroups.Contains(a.Info.Group) &&
                 AreCompatibles(a.Info.WordTypeAfter, WordType) &&
-                (a.Info.Group == 0 || !ContainedAffixGroups.Contains(a.Info.Group))
-            ).ToList();
+                CurrentText.StartsWith(a.Text) &&
+                CurrentText.RemoveFromStart(a.Text).HasVowel() 
+            ).OrderByDescending(a => a.Text.Length).ToList();
+
+            //Console.WriteLine($"Prefixes: {prefixes.Count}");
+
+            return prefixes;
         }
 
         public List<Affix> PossibleSuffixes()
         {
-            return DatabaseContext.GetInstance().Affixes.Where(a =>
+            var context = DatabaseContext.GetInstance();
+
+            var suffixes = context.Affixes.Where(a =>
                 PossibleSuffixTypes.Contains(a.Info.Type) &&
-                CurrentText.EndsWith(a.Text) &&
-                CurrentText.RemoveFromEnd(a.Text).HasVowel() &&
+                !ContainedAffixGroups.Contains(a.Info.Group) &&
                 AreCompatibles(a.Info.WordTypeAfter, WordType) &&
-                (a.Info.Group == 0 || !ContainedAffixGroups.Contains(a.Info.Group))
-            ).ToList();
+                (CurrentText.EndsWith(a.Text) ?
+                CurrentText.RemoveFromEnd(a.Text).HasVowel() :
+                (a.Assimilation && CheckAssimilation(a.Text)))
+            ).OrderByDescending(a => a.Text.Length).ToList();
+
+            //Console.WriteLine($"Suffixes: {suffixes.Count}");
+
+            return suffixes;
+        }
+
+        private bool CheckAssimilation(string affix)
+        {
+            var remainder = affix.Remove(0, 1);
+            if (!CurrentText.EndsWith(remainder)) return false;
+            var word = CurrentText.RemoveFromEnd(remainder);
+            return word.EndsWithLongConsonant() && word.HasVowel();
         }
 
         // Két szófaj kompatibilis-e egymással
         private bool AreCompatibles(string type1, string type2)
         {
-            var types = DatabaseContext.GetInstance().GetCompatibleWordTypes(type1);
+            if (type2.Length == 0) return true;
 
-            return types.Count == 0 || types.Contains(type2);
+            var context = DatabaseContext.GetInstance();
+            var types1 = context.GetCompatibleWordTypes(type1);
+            var types2 = context.GetCompatibleWordTypes(type2);
+            
+            return types1.Intersect(types2).Any();
         }
 
         public void RemovePrefix(Affix prefix)
         {
-            OriginalText = CurrentText = CurrentText.RemoveFromStart(prefix.Text);
+            OriginalText = CurrentText = CurrentText.RemoveFromStart(prefix.OriginalText);
             Prefixes.Add(prefix);
             if (prefix.Info.Group != 0)
             {
@@ -84,9 +113,26 @@ namespace HLP.WordProcessing.Models
 
         public void RemoveSuffix(Affix suffix)
         {
-            OriginalText = CurrentText = CurrentText.RemoveFromEnd(suffix.Text);
+            if (CurrentText.EndsWith(suffix.OriginalText))
+            {
+                OriginalText = CurrentText = CurrentText.RemoveFromEnd(suffix.OriginalText);
+                Suffixes.Insert(0, suffix);
+            }
+            else
+            {
+                // Hasonulás
+                var remainder = suffix.Text.Remove(0, 1);
+                var word = CurrentText.RemoveFromEnd(remainder);
+                if (!word.EndsWithLongConsonant() || !word.HasVowel()) return;
+                var longConsonant = word.GetLastLetter();
+                var shortConsonant = longConsonant.Remove(0, 1);
+                OriginalText = CurrentText = word.RemoveFromEnd(longConsonant) + shortConsonant;
+                Suffixes.Insert(0, new Affix(suffix)
+                {
+                    OriginalText = shortConsonant + remainder
+                });
+            }
             WordType = suffix.Info.WordTypeBefore;
-            Suffixes.Insert(0, suffix);
             switch (suffix.Info.Type)
             {
                 case "R":
@@ -116,26 +162,14 @@ namespace HLP.WordProcessing.Models
 
         public string GetMorphCode()
         {
-            var result = new List<string>();
-
-            foreach (var prefix in Prefixes)
-            {
-                result.Add(prefix.Info.Code);
-            }
-
-            result.Add(WordType);
-
-            foreach(var suffix in Suffixes)
-            {
-                result.Add(suffix.Info.Code);
-            }
-
-            return string.Join(".", result);
+            var fromPrefixes = string.Join("", Prefixes.Select(p => p.Info.Code + "."));
+            var fromSuffixes = string.Join("", Suffixes.Select(s => "." + s.Info.Code));
+            return fromPrefixes + WordType + fromSuffixes;
         }
 
         public override string ToString()
         {
-            return $"\t{(Prefixes.Any() ? $"{string.Join(" + ", Prefixes)} + " : null)}{CurrentText}({WordType}){(CurrentText != OriginalText ? $"={OriginalText}" : null)}{(Suffixes.Any() ? $" + {string.Join(" + ", Suffixes)}" : null)}\n\t{GetMorphCode()}";
+            return $"{(Prefixes.Any() ? $"{string.Join(" + ", Prefixes)} + " : null)}{OriginalText}({WordType}){(CurrentText != OriginalText ? $"={CurrentText}" : null)}{(Suffixes.Any() ? $" + {string.Join(" + ", Suffixes)}" : null)}\n\t{GetMorphCode()}";
         }
     }
 }

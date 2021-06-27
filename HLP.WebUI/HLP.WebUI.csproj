@@ -5,8 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HLP.SentenceProcessing\HLP.SentenceProcessing.csproj" />
-    <ProjectReference Include="..\HLP.WordProcessing\HLP.WordProcessing.csproj" />
+    <ProjectReference Include="..\HLP.Parsing\HLP.Parsing.csproj" />
   </ItemGroup>
 
 </Project>

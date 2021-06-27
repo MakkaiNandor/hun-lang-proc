@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace HLP.WordProcessing.Extensions
+namespace HLP.Parsing.Extensions
 {
     public static class StringExtensions
     {
         public static string GetLastLetter(this string text)
         {
-            return Alphabet.Letters.FirstOrDefault(l => text.EndsWith(l));
+            var lastLetter = Alphabet.Letters.FirstOrDefault(l => text.EndsWith(l));
+            return lastLetter ?? "";
         }
 
         public static string RemoveFromEnd(this string text, string str)
@@ -24,8 +25,14 @@ namespace HLP.WordProcessing.Extensions
         }
 
         // A szó tartalmaz-e megadott mennyiségű magánhangzót
-        public static bool HasVowel(this string text, int required = 1)
+        public static bool HasVowel(this string text, int required = 1, int mode = 1)
         {
+            /*
+             * mode ->  -1: less than or equal to required
+             *          0: equal to required
+             *          1: greater than or equal to required
+             */
+            required = required < 0 ? 0 : required;
             var count = 0;
             foreach (var letter in text)
             {
@@ -34,7 +41,7 @@ namespace HLP.WordProcessing.Extensions
                     ++count;
                 }
             }
-            return count >= required;
+            return mode < 0 ? count <= required : mode > 0 ? count >= required : count == required;
         }
 
         // A szó tartalmaz-e rövid magánhangzót
@@ -77,13 +84,9 @@ namespace HLP.WordProcessing.Extensions
         // A szó két mássalhangzóval végződik-e
         public static bool EndsWithTwoConsonants(this string text)
         {
-            if (text.EndsWithLongConsonant())
-            {
-                return false;
-            }
-            var last = Alphabet.Consonants.Where(c => text.EndsWith(c)).OrderByDescending(c => c.Length).FirstOrDefault();
-            var preLast = last != null ? Alphabet.Consonants.Where(c => text.Substring(0, text.Length - last.Length).EndsWith(c)).OrderByDescending(c => c.Length).FirstOrDefault() : null;
-            return last != null && preLast != null;
+            var last = text.GetLastLetter();
+            var preLast = text.RemoveFromEnd(last).GetLastLetter();
+            return Alphabet.Consonants.Contains(last) && Alphabet.Consonants.Contains(preLast);
         }
 
         // A szó hosszú magánhangzóval végződik-e
@@ -113,7 +116,7 @@ namespace HLP.WordProcessing.Extensions
         {
             var result = new List<int>();
 
-            foreach(var vowel in Alphabet.ShortVowels)
+            foreach (var vowel in Alphabet.ShortVowels)
             {
                 result.AddRange(text.Select((b, i) => b == vowel[0] ? i : -1).Where(i => i >= 0));
             }

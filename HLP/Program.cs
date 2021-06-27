@@ -1,6 +1,6 @@
-﻿using HLP.WordProcessing;
+﻿using HLP.Parsing;
+using HLP.Parsing.Testing;
 using System;
-using HLP.WordProcessing.Extensions;
 using System.Collections.Generic;
 
 namespace HLP
@@ -12,22 +12,20 @@ namespace HLP
             Console.WriteLine("[1] Szavak felbontása\n[2] Teljesítmény tesztelése");
             var option = Console.ReadLine();
 
-            if (option == "1")
+            if (option == "2")
             {
-                var analyzer = new MorphologicalAnalyzer();
-
-                while (true)
-                {
-                    Console.WriteLine("\n~~~~~ Bemenet ~~~~~");
-                    var input = Console.ReadLine();
-                    analyzer.Analyze(input, true);
-                }
-            }
-            else if (option == "2")
-            {
-                var tester = new PerformanceTesting();
+                var tester = new MAPerformanceTesting();
 
                 tester.TestData();
+            }
+
+            var analyzer = new MorphologicalAnalyzer();
+
+            while (true)
+            {
+                Console.Write(">>> ");
+                var input = Console.ReadLine();
+                analyzer.AnalyzeText(input);
             }
         }
     }

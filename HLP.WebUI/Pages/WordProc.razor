@@ -10,7 +10,7 @@
 
 @if (Collapse)
 {
-    <p>A <b>morfológiai elemző</b> modul egy vagy több szót vár bemenetként, minden szóra elvégzi az elemzést és visszatéríti a lehetséges megoldásokat. A megoldások tartalmazzák a szótövet, ennek szófaját, valamint az ehhez kapcsolódó toldalékokat.</p>
+    <p class="p-3">A <b>morfológiai elemző</b> modul egy vagy több szót vár bemenetként, minden szóra elvégzi az elemzést és visszatéríti a lehetséges megoldásokat. A megoldások tartalmazzák a szótövet, ennek szófaját, valamint az ehhez kapcsolódó toldalékokat.</p>
 }
 
 <hr />
@@ -18,7 +18,7 @@
 <div class="row">
     <label class="col-1 col-form-label">Bemenet:</label>
     <div class="col-5">
-        <input type="text" class="form-control" @bind="Input" placeholder="egy vagy több szó" />
+        <input type="text" class="form-control" @bind="Input" placeholder="egy vagy több szó"/>
     </div>
     <div class="col-1">
         <button class="btn btn-primary" @onclick="OnAnalyzeClicked">Elemzés</button>
@@ -48,12 +48,13 @@
     bool Collapse { get; set; } = false;
     string Icon { get; set; } = "oi-chevron-right";
     string Input { get; set; } = "";
-    List<AnalysisResult> Result { get; set; } = new List<AnalysisResult>();
+    List<MAResult> Result { get; set; } = new List<MAResult>();
     MorphologicalAnalyzer Analyzer { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Analyzer = new MorphologicalAnalyzer();
+        await Task.CompletedTask;
     }
 
     void ToggleCollapse()
@@ -66,7 +67,7 @@
     {
         if (Input.Length > 0)
         {
-            Result = Analyzer.Analyze(Input);
+            Result = Analyzer.AnalyzeText(Input);
         }
     }
 

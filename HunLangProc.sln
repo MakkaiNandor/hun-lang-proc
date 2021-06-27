@@ -5,13 +5,11 @@ VisualStudioVersion = 16.0.31019.35
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HLP", "HLP\HLP.csproj", "{B63B3810-077C-49D8-8DFF-38F12DFCB312}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HLP.WordProcessing", "HLP.WordProcessing\HLP.WordProcessing.csproj", "{922E29BC-7C5C-44D6-A5AB-8ED3FB121011}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HLP.SentenceProcessing", "HLP.SentenceProcessing\HLP.SentenceProcessing.csproj", "{0F4B32D7-C3CA-4E9D-B06F-8D0B8CCBB059}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HLP.Database", "HLP.Database\HLP.Database.csproj", "{AB4E6219-D7C0-4B92-9E3F-9C23851A6B8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HLP.WebUI", "HLP.WebUI\HLP.WebUI.csproj", "{2C67A15C-A94C-42BE-B714-A30CBBF801DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HLP.WebUI", "HLP.WebUI\HLP.WebUI.csproj", "{2C67A15C-A94C-42BE-B714-A30CBBF801DA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HLP.Parsing", "HLP.Parsing\HLP.Parsing.csproj", "{615CDE56-0D73-4C76-8B66-5A94496A868B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,14 +21,6 @@ Global
 		{B63B3810-077C-49D8-8DFF-38F12DFCB312}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B63B3810-077C-49D8-8DFF-38F12DFCB312}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B63B3810-077C-49D8-8DFF-38F12DFCB312}.Release|Any CPU.Build.0 = Release|Any CPU
-		{922E29BC-7C5C-44D6-A5AB-8ED3FB121011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{922E29BC-7C5C-44D6-A5AB-8ED3FB121011}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{922E29BC-7C5C-44D6-A5AB-8ED3FB121011}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{922E29BC-7C5C-44D6-A5AB-8ED3FB121011}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0F4B32D7-C3CA-4E9D-B06F-8D0B8CCBB059}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0F4B32D7-C3CA-4E9D-B06F-8D0B8CCBB059}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F4B32D7-C3CA-4E9D-B06F-8D0B8CCBB059}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0F4B32D7-C3CA-4E9D-B06F-8D0B8CCBB059}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AB4E6219-D7C0-4B92-9E3F-9C23851A6B8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AB4E6219-D7C0-4B92-9E3F-9C23851A6B8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB4E6219-D7C0-4B92-9E3F-9C23851A6B8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +29,10 @@ Global
 		{2C67A15C-A94C-42BE-B714-A30CBBF801DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C67A15C-A94C-42BE-B714-A30CBBF801DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C67A15C-A94C-42BE-B714-A30CBBF801DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{615CDE56-0D73-4C76-8B66-5A94496A868B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{615CDE56-0D73-4C76-8B66-5A94496A868B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{615CDE56-0D73-4C76-8B66-5A94496A868B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{615CDE56-0D73-4C76-8B66-5A94496A868B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

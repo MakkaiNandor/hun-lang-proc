@@ -1,27 +1,46 @@
 ﻿using HLP.Database;
+using HLP.Parsing.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using HLP.WordProcessing.Extensions;
 
-namespace HLP.WordProcessing
+namespace HLP.Parsing.Utils
 {
-    public static class StemChecker
+    static class StemChecker
     {
-        // igei tőváltozat szótári alakjának keresése
-        public static List<string> CheckVerbStem(string stem)
+        public static List<string> CheckStems(string word, string type)
         {
-            var verbs = DatabaseContext.GetDatabaseContext().Words
+            var result = new List<string>();
+
+            if (type == "" || type == "IGE")
+            {
+                result.AddRange(CheckVerbStem(word));
+            }
+
+            if (type == "" || DatabaseContext.GetInstance().GetCompatibleWordTypes("NSZ").Contains(type))
+            {
+                result.AddRange(CheckNomenStem(word));
+            }
+
+            //Console.WriteLine($"{word} -> {string.Join(", ", result)} (type: {type})");
+
+            return result;
+        }
+
+        // igei tőváltozat szótári alakjának keresése
+        private static List<string> CheckVerbStem(string stem)
+        {
+            var verbs = DatabaseContext.GetInstance().Words
                 .Where(w => w.Types.Contains("IGE"))
                 .Select(w => w.Text).ToList();
 
             var result = new List<string>() { stem };
 
             var temp = stem;
-            var lastLetter = Alphabet.Letters.Where(l => temp.EndsWith(l)).First();
-            temp = temp.Substring(0, temp.Length - lastLetter.Length);
-            var preLastLetter = temp.Length > 0 ? Alphabet.Letters.Where(l => temp.EndsWith(l)).First() : "";
+            var lastLetter = stem.GetLastLetter();
+            temp = temp.RemoveFromEnd(lastLetter);
+            var preLastLetter = temp.GetLastLetter();
 
             //Console.WriteLine($"last: {lastLetter}, prelast: {preLastLetter}");
 
@@ -56,7 +75,7 @@ namespace HLP.WordProcessing
             }
 
             // utolsó két betű mássalhangzó (hangzóhiány), az utolsó betű 'd', 'g', 'l', 'm', 'r' vagy 'z'
-            if ((new List<string> { "d", "g", "l", "m", "r", "z" }).Contains(lastLetter) && 
+            if ((new List<string> { "d", "g", "l", "m", "r", "z" }).Contains(lastLetter) &&
                 Alphabet.Consonants.Contains(preLastLetter))
             {
                 // beszúrunk egy magánhangzót a két mássalhangzó közé
@@ -81,7 +100,7 @@ namespace HLP.WordProcessing
             }
 
             // egy magánhangzót tartalmaz és abban is végződik
-            if (stem.NumberOfVowels() == 1 && Alphabet.Vowels.Contains(lastLetter))
+            if (stem.HasVowel(1, 0) && Alphabet.Vowels.Contains(lastLetter))
             {
                 // ha hosszú a magánhangzó, akkor rövidítjük
                 var newStem = Alphabet.LongVowels.Contains(lastLetter) ? stem.ReplaceVowel(stem.Length - 1) : stem;
@@ -106,9 +125,9 @@ namespace HLP.WordProcessing
         }
 
         // névszói tőváltozat szótári alakjának keresése
-        public static List<string> CheckNomenStem(string stem)
+        private static List<string> CheckNomenStem(string stem)
         {
-            var DB = DatabaseContext.GetDatabaseContext();
+            var DB = DatabaseContext.GetInstance();
             var nomenTypes = DB.GetCompatibleWordTypes("NSZ");
             var nomens = DB.Words
                 .Where(w => w.Types.Intersect(nomenTypes).Any())
@@ -117,9 +136,9 @@ namespace HLP.WordProcessing
             var result = new List<string>() { stem };
 
             var temp = stem;
-            var lastLetter = Alphabet.Letters.Where(l => temp.EndsWith(l)).First();
-            temp = temp.Substring(0, temp.Length - lastLetter.Length);
-            var preLastLetter = temp.Length > 0 ? Alphabet.Letters.Where(l => temp.EndsWith(l)).First() : "";
+            var lastLetter = stem.GetLastLetter();
+            temp = temp.RemoveFromEnd(lastLetter);
+            var preLastLetter = temp.GetLastLetter();
 
             // az utolsó és az azt megelőző betű is mássalhangzó
             if (Alphabet.Consonants.Contains(lastLetter) &&
@@ -133,8 +152,8 @@ namespace HLP.WordProcessing
             }
 
             // a szó legfeljebb 2 magánhangzót tartalmaz, az utolsó betű mássalhangzó és az utolsó előtti meg magánhangzó ('a', 'e', 'i', 'u', 'ü')
-            if (stem.NumberOfVowels() <= 2 &&
-                (new List<string>() { "a", "e", "i", "u", "ü" }).Contains(preLastLetter) && 
+            if (stem.HasVowel(2, -1) &&
+                (new List<string>() { "a", "e", "i", "u", "ü" }).Contains(preLastLetter) &&
                 Alphabet.Consonants.Contains(lastLetter))
             {
                 // meghosszabbítjuk az utolsó magánhangzót
@@ -178,7 +197,7 @@ namespace HLP.WordProcessing
                 }
 
                 // egytagú 'o', 'ö', 'u', 'ü' vagy 'e' magánhagzós szavak
-                else if (stem.NumberOfVowels() == 1 &&
+                else if (stem.HasVowel(1, 0) &&
                     (new List<string>() { "o", "ö", "u", "ü", "e" }).Contains(preLastLetter))
                 {
                     // eltűnik a 'v' és hosszabbodik a magánhangzó

@@ -10,35 +10,37 @@ namespace HLP.WordProcessing.Extensions
 {
     static class AffixExtensions
     {
+        // A lehetséges prefixumok, amelyek levághatók a szó elejéről
         public static List<Affix> GetPossiblePrefixes(this List<Affix> affixes, AnalysisVariant variant)
         {
             return affixes.Where(a =>
-                variant.PossiblePrefixTypes.Contains(a.Code.Type) &&
-                variant.Text.StartsWith(a.Text) &&
-                variant.Text.Substring(0, variant.Text.Length - a.Text.Length).HasVowel() &&
-                a.IsCompatibleWith(variant.Type) &&
-                (a.Code.Group == 0 || !variant.AffixGroups.Contains(a.Code.Group))
+                variant.CurrentText.StartsWith(a.Text) &&
+                variant.CurrentText.Substring(0, variant.CurrentText.Length - a.Text.Length).HasVowel() &&
+                a.IsCompatibleWith(variant.WordType) &&
+                (a.Info.Group == 0 || !variant.ContainedAffixGroups.Contains(a.Info.Group))
             ).ToList();
         }
 
+        // A lehetséges szuffixumok, amelyek levághatók a szó végéről
         public static List<Affix> GetPossibleSuffixes(this List<Affix> affixes, AnalysisVariant variant)
         {
             return affixes.Where(a =>
-                variant.PossibleSuffixTypes.Contains(a.Code.Type) &&
-                variant.Text.EndsWith(a.Text) &&
-                variant.Text.Substring(0, variant.Text.Length - a.Text.Length).HasVowel() &&
-                a.IsCompatibleWith(variant.Type) &&
-                (a.Code.Group == 0 || !variant.AffixGroups.Contains(a.Code.Group))
+                variant.PossibleSuffixTypes.Contains(a.Info.Type) &&
+                variant.CurrentText.EndsWith(a.Text) &&
+                variant.CurrentText.Substring(0, variant.CurrentText.Length - a.Text.Length).HasVowel() &&
+                a.IsCompatibleWith(variant.WordType) &&
+                (a.Info.Group == 0 || !variant.ContainedAffixGroups.Contains(a.Info.Group))
             ).ToList();
         }
 
+        // Kompatibilis-e a szó szófaja a toldalékkal
         public static bool IsCompatibleWith(this Affix affix, string type)
         {
-            var DB = DatabaseContext.GetDatabaseContext();
+            var context = DatabaseContext.GetInstance();
 
-            var types = DB.GetCompatibleWordTypes(type);
+            var types = context.GetCompatibleWordTypes(type);
 
-            return types.Count == 0 || types.Contains(affix.Code.WordTypeAfter);
+            return types.Count == 0 || types.Contains(affix.Info.WordTypeAfter);
         }
     }
 }

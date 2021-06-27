@@ -6,24 +6,41 @@ namespace HLP.Database.Models
 {
     public class Affix
     {
+        public string OriginalText { get; set; }
         public string Text { get; set; }
         public bool Prevowel { get; set; }
-        public AffixCode Code { get; set; }
+        public bool Assimilation { get; set; }
+        public AffixInfo Info { get; set; }
         public List<string> Requirements { get; set; }
 
         public Affix() { }
 
-        public Affix(Affix other, string preVowel = null)
+        public Affix(Affix other)
         {
-            Text = preVowel != null ? other.Text.Insert(0, preVowel) : other.Text;
-            Code = other.Code;
+            OriginalText = other.OriginalText;
+            Text = other.Text;
             Prevowel = other.Prevowel;
+            Assimilation = other.Assimilation;
+            Info = other.Info;
             Requirements = new List<string>(other.Requirements);
+        }
+
+        public Affix GetWithPreVowel(string preVowel)
+        {
+            return new Affix()
+            {
+                OriginalText = OriginalText.Insert(0, preVowel),
+                Text = Text,
+                Info = Info,
+                Prevowel = false,
+                Assimilation = Assimilation,
+                Requirements = Requirements
+            };
         }
 
         public override string ToString()
         {
-            return $"{Text}[{Code.Type}]({Code.Code})";
+            return $"{OriginalText}[{Info.Type}]({Info.Code}){(OriginalText != Text ? $"={Text}" : null)}";
         }
     }
 }

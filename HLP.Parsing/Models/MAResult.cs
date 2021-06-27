@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
-namespace HLP.WordProcessing.Models
+namespace HLP.Parsing.Models
 {
-    public class AnalysisResult
+    public class MAResult
     {
         public string OriginalWord { get; }
-        public List<AnalysisVariant> Variants { get; }
+        public List<MAVariant> Variants { get; }
 
-        public AnalysisResult(string word)
+        public MAResult(string word)
         {
             OriginalWord = word;
-            Variants = new List<AnalysisVariant>();
+            Variants = new List<MAVariant>();
         }
 
         public override string ToString()
