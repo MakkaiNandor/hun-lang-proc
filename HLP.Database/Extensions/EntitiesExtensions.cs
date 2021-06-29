@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HLP.Database.Extensions
 {
-    static class EntitiesExtensions
+    public static class EntitiesExtensions
     {
         public static Word ToModel(this WordEntity word)
         {
@@ -20,11 +20,13 @@ namespace HLP.Database.Extensions
 
         public static Affix ToModel(this AffixEntity affix)
         {
+            var db = DatabaseContext.GetInstance();
+
             return new Affix
             {
                 OriginalText = affix.OriginalText,
                 Text = affix.Text,
-                Info = null,
+                Info = db.AffixInfos.SingleOrDefault(ai => ai.Code == affix.InfoCode)?.ToModel(),
                 Requirements = affix.Requirements.Split(".").ToList(),
                 Prevowel = affix.Prevowel,
                 Assimilation = affix.Assimilation
@@ -66,11 +68,15 @@ namespace HLP.Database.Extensions
 
         public static MorphTest ToModel(this MorphTestEntity morphTest)
         {
+            var values = morphTest.Analysis.Split("+").ToList();
+            var index = values.IndexOf(values.Find(v => v.StartsWith("!")));
             return new MorphTest
             {
                 Word = morphTest.Word,
-                Analysis = morphTest.Analysis,
-                MorphCode = morphTest.MorphCode
+                Stem = values[index],
+                MorphCode = morphTest.MorphCode,
+                Prefixes = values.Take(index).ToList(),
+                Suffixes = values.TakeLast(values.Count() - index - 1).ToList()
             };
         }
     }

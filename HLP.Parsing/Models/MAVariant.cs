@@ -1,4 +1,5 @@
 ﻿using HLP.Database;
+using HLP.Database.Extensions;
 using HLP.Database.Models;
 using HLP.Parsing.Extensions;
 using System;
@@ -48,39 +49,37 @@ namespace HLP.Parsing.Models
 
         public List<Affix> PossiblePrefixes()
         {
-            /*var context = DatabaseContext.GetInstance().Result;
+            var context = DatabaseContext.GetInstance();
 
-            var prefixes = context.Affixes.Where(a =>
+            var prefixes = context.Affixes.Select(a => a.ToModel()).Where(a =>
                 PossiblePrefixTypes.Contains(a.Info.Type) &&
-                !ContainedAffixGroups.Contains(a.Info.Group) &&
+                !ContainedAffixGroups.Contains(a.Info.GroupNumber) &&
                 AreCompatibles(a.Info.WordTypeAfter, WordType) &&
                 CurrentText.StartsWith(a.Text) &&
-                CurrentText.RemoveFromStart(a.Text).HasVowel() 
+                CurrentText.RemoveFromStart(a.Text).HasVowel(1, 1)
             ).OrderByDescending(a => a.Text.Length).ToList();
 
             //Console.WriteLine($"Prefixes: {prefixes.Count}");
 
-            return prefixes;*/
-            return null;
+            return prefixes;
         }
 
         public List<Affix> PossibleSuffixes()
         {
-            /*var context = DatabaseContext.GetInstance();
+            var context = DatabaseContext.GetInstance();
 
-            var suffixes = context.Affixes.Where(a =>
+            var suffixes = context.Affixes.Select(a => a.ToModel()).Where(a =>
                 PossibleSuffixTypes.Contains(a.Info.Type) &&
-                !ContainedAffixGroups.Contains(a.Info.Group) &&
+                !ContainedAffixGroups.Contains(a.Info.GroupNumber) &&
                 AreCompatibles(a.Info.WordTypeAfter, WordType) &&
                 (CurrentText.EndsWith(a.Text) ?
-                CurrentText.RemoveFromEnd(a.Text).HasVowel() :
+                CurrentText.RemoveFromEnd(a.Text).HasVowel(1, 1) :
                 (a.Assimilation && CheckAssimilation(a.Text)))
             ).OrderByDescending(a => a.Text.Length).ToList();
 
             //Console.WriteLine($"Suffixes: {suffixes.Count}");
 
-            return suffixes;*/
-            return null;
+            return suffixes;
         }
 
         private bool CheckAssimilation(string affix)
@@ -94,29 +93,29 @@ namespace HLP.Parsing.Models
         // Két szófaj kompatibilis-e egymással
         private bool AreCompatibles(string type1, string type2)
         {
-            /*if (type2.Length == 0) return true;
+            if (type2.Length == 0) return true;
 
             var context = DatabaseContext.GetInstance();
             var types1 = context.GetCompatibleWordTypes(type1);
             var types2 = context.GetCompatibleWordTypes(type2);
             
-            return types1.Intersect(types2).Any();*/
+            return types1.Intersect(types2).Any();
             return false;
         }
 
         public void RemovePrefix(Affix prefix)
         {
-            /*OriginalText = CurrentText = CurrentText.RemoveFromStart(prefix.OriginalText);
+            OriginalText = CurrentText = CurrentText.RemoveFromStart(prefix.OriginalText);
             Prefixes.Add(prefix);
-            if (prefix.Info.Group != 0)
+            if (prefix.Info.GroupNumber != 0)
             {
-                ContainedAffixGroups.Add(prefix.Info.Group);
-            }*/
+                ContainedAffixGroups.Add(prefix.Info.GroupNumber);
+            }
         }
 
         public void RemoveSuffix(Affix suffix)
         {
-            /*if (CurrentText.EndsWith(suffix.OriginalText))
+            if (CurrentText.EndsWith(suffix.OriginalText))
             {
                 OriginalText = CurrentText = CurrentText.RemoveFromEnd(suffix.OriginalText);
                 Suffixes.Insert(0, suffix);
@@ -157,10 +156,10 @@ namespace HLP.Parsing.Models
                     break;
                 default: break;
             }
-            if (suffix.Info.Group != 0)
+            if (suffix.Info.GroupNumber != 0)
             {
-                ContainedAffixGroups.Add(suffix.Info.Group);
-            }*/
+                ContainedAffixGroups.Add(suffix.Info.GroupNumber);
+            }
         }
 
         public string GetMorphCode()

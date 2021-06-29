@@ -1,4 +1,6 @@
 ﻿using HLP.Database;
+using HLP.Database.Extensions;
+using HLP.Database.Models;
 using HLP.Parsing.Models;
 using System;
 using System.Collections.Generic;
@@ -11,28 +13,12 @@ namespace HLP.Parsing.Testing
 {
     public class MAPerformanceTesting
     {
-        private class Test
-        {
-            public string Word { get; set; }
-            public string Stem { get; set; }
-            public List<string> Prefixes { get; set; }
-            public List<string> Suffixes { get; set; }
-            public string MorphCode { get; set; }
-            public MAVariant Analysis { get; set; }
-            public override string ToString()
-            {
-                return $"{Word}: {string.Join("+", Prefixes)}{(Prefixes.Any() ? "+" : null)}{Stem}{(Suffixes.Any() ? "+" : null)}{string.Join("+", Suffixes)} ({MorphCode})";
-            }
-        }
-
-        private static readonly string SourceFilePath = @"Data\morph_teszt.txt";
-
         private MorphologicalAnalyzer Analyzer;
-        private List<Test> Tests = new List<Test>();
+        private DatabaseContext DbContext;
 
         public MAPerformanceTesting()
         {
-            LoadTestingData();
+            DbContext = DatabaseContext.GetInstance();
             Analyzer = new MorphologicalAnalyzer();
             //Tests.ForEach(it => Console.WriteLine(it));
         }
@@ -40,13 +26,12 @@ namespace HLP.Parsing.Testing
         public void TestDataAsync()
         {
             var numberOfMatch = 0;
-            foreach (var item in Tests)
+            foreach (var item in DbContext.MorphTests.Select(t => t.ToModel()))
             {
                 Console.WriteLine($"Analyzing word '{item.Word}'");
                 var analysisResult = Analyzer.AnalyzeWord(item.Word, false);
                 Console.WriteLine($"nr = {analysisResult.Variants.Count}");
                 var match = analysisResult.Variants.Find(variant => Equals(item, variant));
-                item.Analysis = match;
                 if (match == null)
                 {
                     Console.WriteLine("~~~ NO MATCH ~~~");
@@ -57,9 +42,9 @@ namespace HLP.Parsing.Testing
                     ++numberOfMatch;
                 }
             }
-            Console.WriteLine($"{numberOfMatch} of {Tests.Count}");
+            Console.WriteLine($"{numberOfMatch} of {DbContext.MorphTests.Count()}");
 
-            Console.WriteLine($"No match:\n{string.Join("\n", Tests.Where(t => t.Analysis == null).Select(t => t.Word))}");
+            //Console.WriteLine($"No match:\n{string.Join("\n", DbContext.MorphTests.Where(t => t.Analysis == null).Select(t => t.Word))}");
 
             /*while (true)
             {
@@ -76,7 +61,7 @@ namespace HLP.Parsing.Testing
             }*/
         }
 
-        private bool Equals(Test test, MAVariant variant)
+        private bool Equals(MorphTest test, MAVariant variant)
         {
             if (test.Stem != variant.CurrentText ||
                 test.Prefixes.Count != variant.Prefixes.Count ||
@@ -103,44 +88,6 @@ namespace HLP.Parsing.Testing
             }
 
             return true;
-        }
-
-        private void LoadTestingData()
-        {
-            using (var reader = new StreamReader(SourceFilePath))
-            {
-                reader.ReadLine(); // Skip the header
-                while (!reader.EndOfStream)
-                {
-                    var values = reader.ReadLine().Split(';');
-                    var prefixes = new List<string>();
-                    var suffixes = new List<string>();
-                    var stem = "";
-                    foreach (var item in values[1].Split('+'))
-                    {
-                        if (item.StartsWith("!"))
-                        {
-                            stem = item.Trim('!');
-                        }
-                        else if (stem.Length > 0)
-                        {
-                            suffixes.Add(item);
-                        }
-                        else
-                        {
-                            prefixes.Add(item);
-                        }
-                    }
-                    Tests.Add(new Test
-                    {
-                        Word = values[0],
-                        Stem = stem,
-                        Prefixes = prefixes,
-                        Suffixes = suffixes,
-                        MorphCode = values[2]
-                    });
-                }
-            }
         }
     }
 }

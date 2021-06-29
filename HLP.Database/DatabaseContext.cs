@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Text;
+using HLP.Database.Extensions;
 
 namespace HLP.Database
 {
@@ -63,6 +64,36 @@ namespace HLP.Database
             builder.Entity<MorphTestEntity>().ToTable("MorphTests");
             builder.Entity<MorphTestEntity>().HasKey(e => e.Id);
             builder.Entity<MorphTestEntity>().Property(e => e.Id).ValueGeneratedOnAdd();
+        }
+
+        public List<string> SearchInDatabase(string word, string type)
+        {
+            var wordResult = Words.SingleOrDefault(w => w.Text == word).ToModel();
+
+            if (wordResult == null) return new List<string>();
+
+            var types = GetCompatibleWordTypes(type);
+
+            if (types.Count == 0) return new List<string>(wordResult.WordTypes);
+
+            return new List<string>(wordResult.WordTypes.Intersect(types));
+        }
+
+        public List<string> GetCompatibleWordTypes(string typeCode)
+        {
+            var result = new List<string>();
+
+            var type = WordTypes.SingleOrDefault(t => t.Code == typeCode).ToModel();
+
+            if (type == null) return result;
+
+            result.Add(typeCode);
+
+            type.IncludedWordTypes.ForEach(t => result.AddRange(GetCompatibleWordTypes(t)));
+
+            result.AddRange(WordTypes.Where(t => t.IncludedWordTypes.Contains(typeCode)).Select(t => t.Code));
+
+            return result.Distinct().ToList();
         }
 
         /*private static DatabaseContext DBInstance = null;
