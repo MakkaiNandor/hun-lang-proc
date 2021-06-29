@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace HLP.Parsing
 {
@@ -60,15 +61,19 @@ namespace HLP.Parsing
             var variant = new MAVariant(word);
 
             // Prefixumok levágása
-            foreach (var prefix in variant.PossiblePrefixes())
+            /*foreach (var prefix in variant.PossiblePrefixes())
             {
                 var newVariant = new MAVariant(variant);
                 newVariant.RemovePrefix(prefix);
                 RemoveSuffixes(newVariant, result, 1);
-            }
+            }*/
+
+            Console.WriteLine("Before remove suffixes");
 
             // Szuffixumok levágása
             RemoveSuffixes(variant, result, 1);
+
+            Console.WriteLine("After remove suffixes");
 
             // Eredmények szűrése, redukálása
             var reducer = new ResultReducer();
@@ -81,6 +86,117 @@ namespace HLP.Parsing
             }
 
             return result;
+        }
+
+        private void RemoveSuffixes(MAVariant variant, MAResult result)
+        {
+            Console.WriteLine("Start remove suffixes");
+
+            var variants = new List<MAVariant> { variant };
+
+            while (true)
+            {
+                Console.WriteLine($"Variants:\n{string.Join("\n\t", variants)}");
+                if (!variants.Any()) break;
+                var variantList = new List<MAVariant>(variants);
+                foreach (var currVariant in variantList)
+                {
+                    Console.WriteLine($"CurrVariant: {currVariant}");
+                    // TODO: search in db
+                    var alternativeVariants = new List<MAVariant>();
+                    var commonTypes = context.SearchInDatabase(currVariant.CurrentText, currVariant.WordType);
+                    Console.WriteLine($"Common types: {string.Join(", ", commonTypes)}");
+
+                    // TODO: if in db, get common types and create new variants
+                    if (commonTypes.Any())
+                    {
+                        Console.WriteLine($"In database!");
+                        alternativeVariants.AddRange(commonTypes.Select(t => new MAVariant(currVariant)
+                        {
+                            WordType = t
+                        }));
+                        result.Variants.AddRange(alternativeVariants);
+                        variants.Remove(currVariant);
+                    }
+                    // TODO: if not in db, search for stem variants and create new variants
+                    else
+                    {
+                        Console.WriteLine($"Not in database!");
+                        if (currVariant.Suffixes.Any())
+                        {
+                            var stemVariants = StemChecker.CheckStems(currVariant.CurrentText, currVariant.WordType);
+
+                            foreach (var stem in stemVariants)
+                            {
+                                var types = context.SearchInDatabase(stem, variant.WordType);
+
+                                Console.WriteLine($"{stem}: {string.Join(", ", types)}");
+
+                                if (types.Any())
+                                {
+                                    alternativeVariants.AddRange(types.Select(t => new MAVariant(currVariant)
+                                    {
+                                        CurrentText = stem,
+                                        WordType = t
+                                    }));
+                                }
+                            }
+                        }
+
+                        if (alternativeVariants.Any())
+                        {
+                            result.Variants.AddRange(alternativeVariants);
+                            variants.Remove(currVariant);
+                            continue;
+                        }
+                        else
+                        {
+                            alternativeVariants.Add(currVariant);
+                        }
+                    }
+
+                    Console.WriteLine($"AltVariants:\n{string.Join("\n\t", alternativeVariants)}");
+
+                    // TODO: for every variant in altenative variants search possible suffixes
+                    foreach (var v in alternativeVariants)
+                    {
+                        Console.WriteLine($"AltVariant: {v}");
+                        var removableSuffixes = v.PossibleSuffixes();
+
+                        if (!removableSuffixes.Any())
+                        {
+                            variants.Remove(v);
+                        }
+
+                        Console.WriteLine($"Removable suffixes: {string.Join(", ", removableSuffixes)}");
+
+                        // TODO: for every suffix in possible suffixes:
+                        foreach (var suffix in removableSuffixes)
+                        {
+                            // TODO: create new variant and remove suffix
+                            var newVariant = new MAVariant(v);
+                            newVariant.RemoveSuffix(suffix);
+                            Console.WriteLine($"{suffix} removed: {newVariant}");
+                            variants.Add(newVariant);
+
+                            // TODO: create new variant and remove suffix with prevowel
+                            if (suffix.Prevowel &&
+                                newVariant.CurrentText.HasVowel(2) &&
+                                newVariant.CurrentText.EndsWithPreVowel())
+                            {
+                                var preVowel = newVariant.CurrentText.GetLastLetter();
+                                var preVowelVariant = new MAVariant(v);
+                                preVowelVariant.RemoveSuffix(suffix.GetWithPreVowel(preVowel));
+                                Console.WriteLine($"{suffix} removed with prevowel: {preVowelVariant}");
+                                variants.Add(preVowelVariant);
+                            }
+                        }
+                    }
+                    variants.Remove(currVariant);
+                }
+            }
+
+            Console.WriteLine("End remove suffixes");
         }
 
         private void RemoveSuffixes(MAVariant variant, MAResult result, int level)
@@ -163,7 +279,6 @@ namespace HLP.Parsing
 
                 foreach (var suffix in currVariant.PossibleSuffixes())
                 {
-                    int nrRes = result.Variants.Count;
                     //Console.WriteLine($"Suffix: {suffix}");
                     // Levágjuk a toldalékot és meghívjuk újból a függvényt
                     var newVariant = new MAVariant(currVariant);
@@ -174,7 +289,6 @@ namespace HLP.Parsing
 
                     // Előhangzó vizsgálata
                     if (suffix.Prevowel &&
-                        result.Variants.Count == nrRes &&
                         newVariant.CurrentText.HasVowel(2) &&
                         newVariant.CurrentText.EndsWithPreVowel())
                     {

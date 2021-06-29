@@ -21,7 +21,7 @@
         <input type="text" class="form-control" @bind="Input" placeholder="egy vagy több szó" />
     </div>
     <div class="col-1">
-        <button class="btn btn-primary" @onclick="async (e) => await this.OnAnalyzeClicked()">Elemzés</button>
+        <button class="btn btn-primary" @onclick="async (e) => await this.OnAnalyzeClicked()" disabled="@AnalyzeStarted">Elemzés</button>
     </div>
     <div class="col-1">
         <button class="btn btn-primary" @onclick="OnResetClicked">Visszaállít</button>
@@ -79,8 +79,12 @@ else if (InfoMessage.Length > 0)
         Result.Clear();
         if (Input.Length > 0)
         {
-            Result = await Analyzer.AnalyzeTextAsync(Input);
-            AnalyzeStarted = true;
+
+            await Task.Run(() => {
+                AnalyzeStarted = true;
+                Result = Analyzer.AnalyzeText(Input);
+                AnalyzeStarted = false;
+            });
         }
         else
         {

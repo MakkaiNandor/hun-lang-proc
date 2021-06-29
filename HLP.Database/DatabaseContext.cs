@@ -1,14 +1,23 @@
-﻿using HLP.Database.Models;
+﻿using HLP.Database.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace HLP.Database
 {
-    public class DatabaseContext
+    public class DatabaseContext : DbContext
     {
-        private static DatabaseContext DBInstance = null;
+        public DbSet<Word> Words { get; set; }
+        public DbSet<Affix> Affixes { get; set; }
+        public DbSet<WordType> WordTypes { get; set; }
+        public DbSet<AffixInfo> AffixInfos { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+            => options.UseSqlite("Data Source=my_database.db");
+
+        /*private static DatabaseContext DBInstance = null;
 
         public static DatabaseContext GetInstance()
         {
@@ -58,6 +67,6 @@ namespace HLP.Database
             result.AddRange(WordTypes.Where(t => t.Includes.Contains(typeCode)).Select(t => t.Code));
 
             return result.Distinct().ToList();
-        }
+        }*/
     }
 }

@@ -12,7 +12,7 @@ namespace HLP
             Console.WriteLine("[1] Szavak felbontása\n[2] Teljesítmény tesztelése");
             var option = Console.ReadLine();
 
-            if (option == "2")
+            /*if (option == "2")
             {
                 var tester = new MAPerformanceTesting();
 
@@ -26,7 +26,7 @@ namespace HLP
                 Console.Write(">>> ");
                 var input = Console.ReadLine();
                 analyzer.AnalyzeText(input);
-            }
+            }*/
         }
     }
 }

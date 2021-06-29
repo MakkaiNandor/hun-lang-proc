@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace HLP.Parsing.Testing
 {
@@ -36,7 +37,7 @@ namespace HLP.Parsing.Testing
             //Tests.ForEach(it => Console.WriteLine(it));
         }
 
-        public void TestData()
+        public void TestDataAsync()
         {
             var numberOfMatch = 0;
             foreach (var item in Tests)

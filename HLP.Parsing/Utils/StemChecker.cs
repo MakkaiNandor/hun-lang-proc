@@ -23,7 +23,7 @@ namespace HLP.Parsing.Utils
                 result.AddRange(CheckNomenStem(word));
             }
 
-            //Console.WriteLine($"{word} -> {string.Join(", ", result)} (type: {type})");
+            Console.WriteLine($"{word} -> {string.Join(", ", result)} (type: {type})");
 
             return result;
         }
