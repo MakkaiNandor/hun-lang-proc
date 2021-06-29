@@ -48,7 +48,7 @@ namespace HLP.Parsing.Models
 
         public List<Affix> PossiblePrefixes()
         {
-            var context = DatabaseContext.GetInstance();
+            /*var context = DatabaseContext.GetInstance().Result;
 
             var prefixes = context.Affixes.Where(a =>
                 PossiblePrefixTypes.Contains(a.Info.Type) &&
@@ -60,12 +60,13 @@ namespace HLP.Parsing.Models
 
             //Console.WriteLine($"Prefixes: {prefixes.Count}");
 
-            return prefixes;
+            return prefixes;*/
+            return null;
         }
 
         public List<Affix> PossibleSuffixes()
         {
-            var context = DatabaseContext.GetInstance();
+            /*var context = DatabaseContext.GetInstance();
 
             var suffixes = context.Affixes.Where(a =>
                 PossibleSuffixTypes.Contains(a.Info.Type) &&
@@ -78,7 +79,8 @@ namespace HLP.Parsing.Models
 
             //Console.WriteLine($"Suffixes: {suffixes.Count}");
 
-            return suffixes;
+            return suffixes;*/
+            return null;
         }
 
         private bool CheckAssimilation(string affix)
@@ -92,28 +94,29 @@ namespace HLP.Parsing.Models
         // Két szófaj kompatibilis-e egymással
         private bool AreCompatibles(string type1, string type2)
         {
-            if (type2.Length == 0) return true;
+            /*if (type2.Length == 0) return true;
 
             var context = DatabaseContext.GetInstance();
             var types1 = context.GetCompatibleWordTypes(type1);
             var types2 = context.GetCompatibleWordTypes(type2);
             
-            return types1.Intersect(types2).Any();
+            return types1.Intersect(types2).Any();*/
+            return false;
         }
 
         public void RemovePrefix(Affix prefix)
         {
-            OriginalText = CurrentText = CurrentText.RemoveFromStart(prefix.OriginalText);
+            /*OriginalText = CurrentText = CurrentText.RemoveFromStart(prefix.OriginalText);
             Prefixes.Add(prefix);
             if (prefix.Info.Group != 0)
             {
                 ContainedAffixGroups.Add(prefix.Info.Group);
-            }
+            }*/
         }
 
         public void RemoveSuffix(Affix suffix)
         {
-            if (CurrentText.EndsWith(suffix.OriginalText))
+            /*if (CurrentText.EndsWith(suffix.OriginalText))
             {
                 OriginalText = CurrentText = CurrentText.RemoveFromEnd(suffix.OriginalText);
                 Suffixes.Insert(0, suffix);
@@ -157,7 +160,7 @@ namespace HLP.Parsing.Models
             if (suffix.Info.Group != 0)
             {
                 ContainedAffixGroups.Add(suffix.Info.Group);
-            }
+            }*/
         }
 
         public string GetMorphCode()

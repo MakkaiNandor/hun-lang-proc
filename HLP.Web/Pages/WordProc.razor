@@ -65,6 +65,9 @@ else if (InfoMessage.Length > 0)
     protected override async Task OnInitializedAsync()
     {
         Analyzer = new MorphologicalAnalyzer();
+
+        //DatabaseContext db;
+
         await Task.CompletedTask;
     }
 
@@ -80,11 +83,11 @@ else if (InfoMessage.Length > 0)
         if (Input.Length > 0)
         {
 
-            await Task.Run(() => {
+            /*await Task.Run(() => {
                 AnalyzeStarted = true;
                 Result = Analyzer.AnalyzeText(Input);
                 AnalyzeStarted = false;
-            });
+            });*/
         }
         else
         {

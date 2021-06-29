@@ -8,10 +8,11 @@ namespace HLP.Database.Models
     {
         public string Code { get; set; }
         public string Name { get; set; }
-        public List<string> Includes { get; set; }
+        public List<string> IncludedWordTypes { get; set; }
+
         public override string ToString()
         {
-            return $"<WordType Code={Code} Name={Name} Includes={string.Join(", ", Includes)}>";
+            return $"<WordType Code={Code} Name={Name} Includes={string.Join(", ", IncludedWordTypes)}>";
         }
     }
 }

@@ -25,7 +25,7 @@ namespace HLP.Parsing.Testing
             }
         }
 
-        private static readonly string SourceFilePath = $"{DatabaseLoader.directory}/morph_teszt.txt";
+        private static readonly string SourceFilePath = @"Data\morph_teszt.txt";
 
         private MorphologicalAnalyzer Analyzer;
         private List<Test> Tests = new List<Test>();

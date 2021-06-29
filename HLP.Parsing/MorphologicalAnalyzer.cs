@@ -90,7 +90,7 @@ namespace HLP.Parsing
 
         private void RemoveSuffixes(MAVariant variant, MAResult result)
         {
-            Console.WriteLine("Start remove suffixes");
+            /*Console.WriteLine("Start remove suffixes");
 
             var variants = new List<MAVariant> { variant };
 
@@ -196,11 +196,11 @@ namespace HLP.Parsing
                 }
             }
 
-            Console.WriteLine("End remove suffixes");
+            Console.WriteLine("End remove suffixes");*/
         }
 
         private void RemoveSuffixes(MAVariant variant, MAResult result, int level)
-        {
+        {/*
             //Console.WriteLine($"Lvl {level}. {variant}");
 
             var commonTypes = context.SearchInDatabase(variant.CurrentText, variant.WordType);
@@ -301,7 +301,7 @@ namespace HLP.Parsing
                         RemoveSuffixes(preVowelVariant, result, level+1);
                     }
                 }
-            }
+            }*/
         }
 
         private Affix ConvertWordToAffix(Word word, string code)
@@ -312,7 +312,7 @@ namespace HLP.Parsing
                 Text = word.Text,
                 Prevowel = false,
                 Assimilation = false,
-                Info = context.AffixInfos.Find(i => i.Code == code),
+                Info = /*context.AffixInfos.Find(i => i.Code == code)*/null,
                 Requirements = new List<string>()
             };
         }

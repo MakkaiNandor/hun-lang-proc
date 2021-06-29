@@ -1,3 +1,4 @@
+using HLP.Database;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -13,8 +14,9 @@ namespace HLP.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
+            await Task.Run(() => DatabaseInitializer.InitializeAsync());
             CreateHostBuilder(args).Build().Run();
         }
 

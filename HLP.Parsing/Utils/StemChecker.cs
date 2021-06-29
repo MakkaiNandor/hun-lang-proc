@@ -18,10 +18,10 @@ namespace HLP.Parsing.Utils
                 result.AddRange(CheckVerbStem(word));
             }
 
-            if (type == "" || DatabaseContext.GetInstance().GetCompatibleWordTypes("NSZ").Contains(type))
+            /*if (type == "" || DatabaseContext.GetInstance().GetCompatibleWordTypes("NSZ").Contains(type))
             {
                 result.AddRange(CheckNomenStem(word));
-            }
+            }*/
 
             Console.WriteLine($"{word} -> {string.Join(", ", result)} (type: {type})");
 
@@ -31,7 +31,7 @@ namespace HLP.Parsing.Utils
         // igei tőváltozat szótári alakjának keresése
         private static List<string> CheckVerbStem(string stem)
         {
-            var verbs = DatabaseContext.GetInstance().Words
+            /*var verbs = DatabaseContext.GetInstance().Words
                 .Where(w => w.Types.Contains("IGE"))
                 .Select(w => w.Text).ToList();
 
@@ -121,105 +121,107 @@ namespace HLP.Parsing.Utils
 
             //Console.WriteLine($"({preLastLetter}, {lastLetter}) {string.Join(", ", result)}");
 
-            return result.Distinct().Intersect(verbs).ToList();
+            return result.Distinct().Intersect(verbs).ToList();*/
+            return null;
         }
 
         // névszói tőváltozat szótári alakjának keresése
         private static List<string> CheckNomenStem(string stem)
         {
-            var DB = DatabaseContext.GetInstance();
-            var nomenTypes = DB.GetCompatibleWordTypes("NSZ");
-            var nomens = DB.Words
-                .Where(w => w.Types.Intersect(nomenTypes).Any())
-                .Select(w => w.Text).ToList();
+            /* var DB = DatabaseContext.GetInstance();
+             var nomenTypes = DB.GetCompatibleWordTypes("NSZ");
+             var nomens = DB.Words
+                 .Where(w => w.Types.Intersect(nomenTypes).Any())
+                 .Select(w => w.Text).ToList();
 
-            var result = new List<string>() { stem };
+             var result = new List<string>() { stem };
 
-            var temp = stem;
-            var lastLetter = stem.GetLastLetter();
-            temp = temp.RemoveFromEnd(lastLetter);
-            var preLastLetter = temp.GetLastLetter();
+             var temp = stem;
+             var lastLetter = stem.GetLastLetter();
+             temp = temp.RemoveFromEnd(lastLetter);
+             var preLastLetter = temp.GetLastLetter();
 
-            // az utolsó és az azt megelőző betű is mássalhangzó
-            if (Alphabet.Consonants.Contains(lastLetter) &&
-                Alphabet.Consonants.Contains(preLastLetter))
-            {
-                // beszúrunk egy magánhangzót a két mássalhangzó közé
-                result.AddRange(Alphabet.Vowels.Select(v => temp + v + lastLetter));
+             // az utolsó és az azt megelőző betű is mássalhangzó
+             if (Alphabet.Consonants.Contains(lastLetter) &&
+                 Alphabet.Consonants.Contains(preLastLetter))
+             {
+                 // beszúrunk egy magánhangzót a két mássalhangzó közé
+                 result.AddRange(Alphabet.Vowels.Select(v => temp + v + lastLetter));
 
-                // felcseréljük a mássalhangzókat és beszúrunk egy magánhangzót közéjük
-                result.AddRange(Alphabet.Vowels.Select(v => temp.Substring(0, temp.Length - preLastLetter.Length) + lastLetter + v + preLastLetter));
-            }
+                 // felcseréljük a mássalhangzókat és beszúrunk egy magánhangzót közéjük
+                 result.AddRange(Alphabet.Vowels.Select(v => temp.Substring(0, temp.Length - preLastLetter.Length) + lastLetter + v + preLastLetter));
+             }
 
-            // a szó legfeljebb 2 magánhangzót tartalmaz, az utolsó betű mássalhangzó és az utolsó előtti meg magánhangzó ('a', 'e', 'i', 'u', 'ü')
-            if (stem.HasVowel(2, -1) &&
-                (new List<string>() { "a", "e", "i", "u", "ü" }).Contains(preLastLetter) &&
-                Alphabet.Consonants.Contains(lastLetter))
-            {
-                // meghosszabbítjuk az utolsó magánhangzót
-                result.Add(stem.ReplaceVowel(stem.Length - lastLetter.Length - 1));
-            }
+             // a szó legfeljebb 2 magánhangzót tartalmaz, az utolsó betű mássalhangzó és az utolsó előtti meg magánhangzó ('a', 'e', 'i', 'u', 'ü')
+             if (stem.HasVowel(2, -1) &&
+                 (new List<string>() { "a", "e", "i", "u", "ü" }).Contains(preLastLetter) &&
+                 Alphabet.Consonants.Contains(lastLetter))
+             {
+                 // meghosszabbítjuk az utolsó magánhangzót
+                 result.Add(stem.ReplaceVowel(stem.Length - lastLetter.Length - 1));
+             }
 
-            // hosszú magánhangzóban végződik ('á', 'é')
-            if ((new List<string>() { "á", "é" }).Contains(lastLetter))
-            {
-                // rövidítjük a magánhangzót
-                result.Add(stem.ReplaceVowel(stem.Length - 1));
-            }
+             // hosszú magánhangzóban végződik ('á', 'é')
+             if ((new List<string>() { "á", "é" }).Contains(lastLetter))
+             {
+                 // rövidítjük a magánhangzót
+                 result.Add(stem.ReplaceVowel(stem.Length - 1));
+             }
 
-            // mássalhangzóban végződik (hiányzik egy szóvégi magánhangzó)
-            if (Alphabet.Consonants.Contains(lastLetter))
-            {
-                // hosszáadunk egy magánhangzót ('ú', 'ű', 'a', 'e')
-                result.AddRange((new List<string>() { "ú", "ű", "a", "e" }).Select(v => stem + v));
-            }
+             // mássalhangzóban végződik (hiányzik egy szóvégi magánhangzó)
+             if (Alphabet.Consonants.Contains(lastLetter))
+             {
+                 // hosszáadunk egy magánhangzót ('ú', 'ű', 'a', 'e')
+                 result.AddRange((new List<string>() { "ú", "ű", "a", "e" }).Select(v => stem + v));
+             }
 
-            // 'a'-ban vagy 'e'-ben végződik
-            if (lastLetter == "a")
-            {
-                // kicseréljük az 'a'-t 'ó'-ra
-                result.Add(temp + "ó");
-            }
-            else if (lastLetter == "e")
-            {
-                // kicseréljük az 'e'-t 'ő'-re
-                result.Add(temp + "ő");
-            }
+             // 'a'-ban vagy 'e'-ben végződik
+             if (lastLetter == "a")
+             {
+                 // kicseréljük az 'a'-t 'ó'-ra
+                 result.Add(temp + "ó");
+             }
+             else if (lastLetter == "e")
+             {
+                 // kicseréljük az 'e'-t 'ő'-re
+                 result.Add(temp + "ő");
+             }
 
-            // 'v'-ben végződő szavak
-            if (lastLetter == "v")
-            {
-                // a 'magv', 'műv' és 'bőv' esetében
-                if ((new List<string>() { "magv", "műv", "bőv" }).Contains(stem))
-                {
-                    // eltűnik a 'v'
-                    result.Add(temp);
-                }
+             // 'v'-ben végződő szavak
+             if (lastLetter == "v")
+             {
+                 // a 'magv', 'műv' és 'bőv' esetében
+                 if ((new List<string>() { "magv", "műv", "bőv" }).Contains(stem))
+                 {
+                     // eltűnik a 'v'
+                     result.Add(temp);
+                 }
 
-                // egytagú 'o', 'ö', 'u', 'ü' vagy 'e' magánhagzós szavak
-                else if (stem.HasVowel(1, 0) &&
-                    (new List<string>() { "o", "ö", "u", "ü", "e" }).Contains(preLastLetter))
-                {
-                    // eltűnik a 'v' és hosszabbodik a magánhangzó
-                    result.Add(temp.ReplaceVowel(temp.Length - 1));
-                }
+                 // egytagú 'o', 'ö', 'u', 'ü' vagy 'e' magánhagzós szavak
+                 else if (stem.HasVowel(1, 0) &&
+                     (new List<string>() { "o", "ö", "u", "ü", "e" }).Contains(preLastLetter))
+                 {
+                     // eltűnik a 'v' és hosszabbodik a magánhangzó
+                     result.Add(temp.ReplaceVowel(temp.Length - 1));
+                 }
 
-                // 'av'-val végződő szavak
-                else if (preLastLetter == "a")
-                {
-                    // 'av' helyett 'ó' lesz
-                    result.Add(temp.Substring(0, temp.Length - 1) + "ó");
-                }
+                 // 'av'-val végződő szavak
+                 else if (preLastLetter == "a")
+                 {
+                     // 'av' helyett 'ó' lesz
+                     result.Add(temp.Substring(0, temp.Length - 1) + "ó");
+                 }
 
-                // két mássalhangzóval végződik
-                else if (Alphabet.Consonants.Contains(preLastLetter))
-                {
-                    // 'v' helyett 'u', 'ú' vagy 'ű' lesz
-                    result.AddRange((new List<string>() { "u", "ú", "ű" }).Select(v => temp + v));
-                }
-            }
+                 // két mássalhangzóval végződik
+                 else if (Alphabet.Consonants.Contains(preLastLetter))
+                 {
+                     // 'v' helyett 'u', 'ú' vagy 'ű' lesz
+                     result.AddRange((new List<string>() { "u", "ú", "ű" }).Select(v => temp + v));
+                 }
+             }
 
-            return result.Intersect(nomens).ToList();
+             return result.Intersect(nomens).ToList();*/
+            return null;
         }
     }
 }

@@ -4,18 +4,66 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using System.Text;
 
 namespace HLP.Database
 {
     public class DatabaseContext : DbContext
     {
-        public DbSet<Word> Words { get; set; }
-        public DbSet<Affix> Affixes { get; set; }
-        public DbSet<WordType> WordTypes { get; set; }
-        public DbSet<AffixInfo> AffixInfos { get; set; }
+        public static readonly string DbPath = @".\my_database.db";
+
+        public static DatabaseContext Instance = null;
+
+        public static DatabaseContext GetInstance()
+        {
+            if (Instance == null)
+            {
+                Instance = new DatabaseContext();
+            }
+            return Instance;
+        }
+
+        public DbSet<WordEntity> Words { get; set; }
+        public DbSet<AffixEntity> Affixes { get; set; }
+        public DbSet<WordTypeEntity> WordTypes { get; set; }
+        public DbSet<AffixInfoEntity> AffixInfos { get; set; }
+        public DbSet<OrderRuleEntity> OrderRules { get; set; }
+        public DbSet<MorphTestEntity> MorphTests { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite("Data Source=my_database.db");
+        {
+            options.UseSqlite($"Data Source={DbPath}");
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<WordEntity>().ToTable("Words");
+            builder.Entity<WordEntity>().HasKey(e => e.Id);
+            builder.Entity<WordEntity>().Property(e => e.Id).ValueGeneratedOnAdd();
+            builder.Entity<WordEntity>().HasIndex(e => e.Text);
+
+            builder.Entity<AffixEntity>().ToTable("Affixes");
+            builder.Entity<AffixEntity>().HasKey(e => e.Id);
+            builder.Entity<AffixEntity>().Property(e => e.Id).ValueGeneratedOnAdd();
+            builder.Entity<AffixEntity>().HasIndex(a => a.Text);
+
+            builder.Entity<WordTypeEntity>().ToTable("WordTypes");
+            builder.Entity<WordTypeEntity>().HasKey(e => e.Id);
+            builder.Entity<WordTypeEntity>().Property(e => e.Id).ValueGeneratedOnAdd();
+
+            builder.Entity<AffixInfoEntity>().ToTable("AffixInfos");
+            builder.Entity<AffixInfoEntity>().HasKey(e => e.Id);
+            builder.Entity<AffixInfoEntity>().Property(e => e.Id).ValueGeneratedOnAdd();
+
+            builder.Entity<OrderRuleEntity>().ToTable("OrderRules");
+            builder.Entity<OrderRuleEntity>().HasKey(e => e.Id);
+            builder.Entity<OrderRuleEntity>().Property(e => e.Id).ValueGeneratedOnAdd();
+
+            builder.Entity<MorphTestEntity>().ToTable("MorphTests");
+            builder.Entity<MorphTestEntity>().HasKey(e => e.Id);
+            builder.Entity<MorphTestEntity>().Property(e => e.Id).ValueGeneratedOnAdd();
+        }
 
         /*private static DatabaseContext DBInstance = null;
 

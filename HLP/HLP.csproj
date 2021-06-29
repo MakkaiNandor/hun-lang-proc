@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HLP.Parsing\HLP.Parsing.csproj" />
+    <ProjectReference Include="..\HLP.Database\HLP.Database.csproj" />
   </ItemGroup>
 
 </Project>

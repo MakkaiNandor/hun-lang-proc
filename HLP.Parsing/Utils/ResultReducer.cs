@@ -10,14 +10,14 @@ namespace HLP.Parsing.Utils
 {
     class ResultReducer
     {
-        private readonly string filePath = $"{DatabaseLoader.directory}/sorrend.txt";
+        private readonly string filePath = @"Data\sorrend.txt";
         private readonly char[] separators = new[] { ';', '.', '|' };
         private Dictionary<string, List<List<string>>> orders = new Dictionary<string, List<List<string>>>();
         private DatabaseContext context;
 
         public ResultReducer()
         {
-            context = DatabaseContext.GetInstance();
+            context = new DatabaseContext();
             LoadFile();
         }
 
@@ -56,7 +56,7 @@ namespace HLP.Parsing.Utils
 
         private bool CheckOrder(MAVariant variant, string lemma, string type)
         {
-            type = context.GetCompatibleWordTypes("NSZ").Contains(type) ? "NSZ" : type;
+            /*type = context.GetCompatibleWordTypes("NSZ").Contains(type) ? "NSZ" : type;
 
             if (!orders.TryGetValue(type, out List<List<string>> order)) return false;
 
@@ -82,7 +82,7 @@ namespace HLP.Parsing.Utils
                     return false;
                 }
                 endPos = newPos;
-            }
+            }*/
 
             return true;
         }
@@ -128,13 +128,13 @@ namespace HLP.Parsing.Utils
                 prevAffixCode = suffix.Info.Code;
             }
 
-            var persAffix = variant.Suffixes.Find(s => s.Info.Group == 7);
+            /*var persAffix = variant.Suffixes.Find(s => s.Info.Group == 7);
             if (persAffix != null &&
                 !persAffix.Requirements.Any() &&
                 variant.Suffixes.Exists(s => s.Info.Group == 3))
             {
                 return false;
-            }
+            }*/
 
             return true;
         }

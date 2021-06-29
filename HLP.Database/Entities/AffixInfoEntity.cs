@@ -4,9 +4,8 @@ using System.Text;
 
 namespace HLP.Database.Entities
 {
-    public class AffixInfo
+    public class AffixInfoEntity : BaseEntity
     {
-        public int AffixInfoId { get; set; }
         public string Code { get; set; }
         public string Type { get; set; }
         public int GroupNumber { get; set; }

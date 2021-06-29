@@ -12849,7 +12849,7 @@ esthomály;FN
 esti;MN
 estike;FN
 estve;FN|HA
-esz;IGE|FN
+esz;FN
 ész;FN
 észak;FN
 északfény;FN

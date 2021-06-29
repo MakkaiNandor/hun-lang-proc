@@ -8,10 +8,10 @@ namespace HLP.Database.Models
     {
         public string OriginalText { get; set; }
         public string Text { get; set; }
-        public bool Prevowel { get; set; }
-        public bool Assimilation { get; set; }
         public AffixInfo Info { get; set; }
         public List<string> Requirements { get; set; }
+        public bool Prevowel { get; set; }
+        public bool Assimilation { get; set; }
 
         public Affix() { }
 

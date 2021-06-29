@@ -1,16 +1,34 @@
-﻿using HLP.Parsing;
-using HLP.Parsing.Testing;
+﻿using HLP.Database;
+using HLP.Database.Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace HLP
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Console.WriteLine("[1] Szavak felbontása\n[2] Teljesítmény tesztelése");
-            var option = Console.ReadLine();
+
+            var db = new DatabaseContext();
+
+            Console.WriteLine("~~~~~~~~");
+
+            DatabaseInitializer.InitializeAsync();
+
+            Console.WriteLine("~~~~~~~~");
+
+            /*
+            Console.WriteLine("Start");
+
+            using var db = new DatabaseContext();
+
+            Console.WriteLine(db.GetInfo());*/
+
+            /*Console.WriteLine("[1] Szavak felbontása\n[2] Teljesítmény tesztelése");
+            var option = Console.ReadLine();*/
 
             /*if (option == "2")
             {
