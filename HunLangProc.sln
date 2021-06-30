@@ -3,15 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31019.35
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HLP", "HLP\HLP.csproj", "{B63B3810-077C-49D8-8DFF-38F12DFCB312}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HLP.Database", "HLP.Database\HLP.Database.csproj", "{AB4E6219-D7C0-4B92-9E3F-9C23851A6B8B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HLP.WebUI", "HLP.WebUI\HLP.WebUI.csproj", "{2C67A15C-A94C-42BE-B714-A30CBBF801DA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HLP.Parsing", "HLP.Parsing\HLP.Parsing.csproj", "{615CDE56-0D73-4C76-8B66-5A94496A868B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HLP.Web", "HLP.Web\HLP.Web.csproj", "{23067441-34CC-46AB-B3D3-66BF4546C3AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HLP.Web", "HLP.Web\HLP.Web.csproj", "{23067441-34CC-46AB-B3D3-66BF4546C3AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,18 +15,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B63B3810-077C-49D8-8DFF-38F12DFCB312}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B63B3810-077C-49D8-8DFF-38F12DFCB312}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B63B3810-077C-49D8-8DFF-38F12DFCB312}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B63B3810-077C-49D8-8DFF-38F12DFCB312}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AB4E6219-D7C0-4B92-9E3F-9C23851A6B8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AB4E6219-D7C0-4B92-9E3F-9C23851A6B8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB4E6219-D7C0-4B92-9E3F-9C23851A6B8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB4E6219-D7C0-4B92-9E3F-9C23851A6B8B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2C67A15C-A94C-42BE-B714-A30CBBF801DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2C67A15C-A94C-42BE-B714-A30CBBF801DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2C67A15C-A94C-42BE-B714-A30CBBF801DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2C67A15C-A94C-42BE-B714-A30CBBF801DA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{615CDE56-0D73-4C76-8B66-5A94496A868B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{615CDE56-0D73-4C76-8B66-5A94496A868B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{615CDE56-0D73-4C76-8B66-5A94496A868B}.Release|Any CPU.ActiveCfg = Release|Any CPU

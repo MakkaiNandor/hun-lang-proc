@@ -107,7 +107,7 @@ namespace HLP.Parsing
                     Console.WriteLine($"CurrVariant: {currVariant}");
                     // TODO: search in db
                     var alternativeVariants = new List<MAVariant>();
-                    var commonTypes = dbContext.SearchInDatabase(currVariant.CurrentText, currVariant.WordType);
+                    var commonTypes = dbContext.SearchWordInDatabase(currVariant.CurrentText, currVariant.WordType);
                     Console.WriteLine($"Common types: {string.Join(", ", commonTypes)}");
 
                     // TODO: if in db, get common types and create new variants
@@ -131,7 +131,7 @@ namespace HLP.Parsing
 
                             foreach (var stem in stemVariants)
                             {
-                                var types = dbContext.SearchInDatabase(stem, variant.WordType);
+                                var types = dbContext.SearchWordInDatabase(stem, variant.WordType);
 
                                 Console.WriteLine($"{stem}: {string.Join(", ", types)}");
 

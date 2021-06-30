@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace HLP.Database
 {
-    public class DatabaseInitializer
+    public static class DatabaseInitializer
     {
         // Fájlok elérési útvonalai
         // Ha az adatbázis üres, ezekből a fájlokból töltjük fel adatokkal
-        public static readonly string wordsFilePath = @"Data\szavak.txt";
-        public static readonly string affixesFilePath = @"Data\toldalekok.txt";
-        public static readonly string wordTypesFilePath = @"Data\szofajok.txt";
-        public static readonly string infoFilePath = @"Data\kodok.txt";
-        public static readonly string orderRulesFilePath = @"Data\sorrend.txt";
-        public static readonly string morphTestDataFilePath = @"Data\morph_teszt.txt";
+        private static readonly string wordsFilePath = @"Data\szavak.txt";
+        private static readonly string affixesFilePath = @"Data\toldalekok.txt";
+        private static readonly string wordTypesFilePath = @"Data\szofajok.txt";
+        private static readonly string infoFilePath = @"Data\kodok.txt";
+        private static readonly string orderRulesFilePath = @"Data\sorrend.txt";
+        private static readonly string morphTestDataFilePath = @"Data\morph_teszt.txt";
 
         private static readonly char[] separators = new[] { ';', '|', '.', '+' };
 
@@ -63,7 +63,7 @@ namespace HLP.Database
         }
 
         // A szavak beolvasása fájlból
-        public static async Task<List<Word>> LoadWordsAsync()
+        private static async Task<List<Word>> LoadWordsAsync()
         {
             var words = new List<Word>();
 
@@ -89,7 +89,7 @@ namespace HLP.Database
         }
 
         // A toldalékok beolvasása fájlból
-        public static async Task<List<Affix>> LoadAffixesAsync()
+        private static async Task<List<Affix>> LoadAffixesAsync()
         {
             var affixes = new List<Affix>();
 
@@ -120,7 +120,7 @@ namespace HLP.Database
         }
 
         // A szófajok beolvasása fájlból
-        public static async Task<List<WordType>> LoadWordTypesAsync()
+        private static async Task<List<WordType>> LoadWordTypesAsync()
         {
             Console.WriteLine("Loading word types!");
 
@@ -147,7 +147,7 @@ namespace HLP.Database
         }
 
         // A toldalékok információit tartalmazó kódok beolvasása fájlból
-        public static async Task<List<AffixInfo>> LoadAffixInfosAsync()
+        private static async Task<List<AffixInfo>> LoadAffixInfosAsync()
         {
             var affixInfos = new List<AffixInfo>();
 
@@ -177,7 +177,7 @@ namespace HLP.Database
         }
 
         // Toldalékolási sorrendre vonatkozó szabályok beolvasása fájlból
-        public static async Task<List<OrderRule>> LoadOrderRulesAsync()
+        private static async Task<List<OrderRule>> LoadOrderRulesAsync()
         {
             var orderRules = new List<OrderRule>();
 
@@ -204,7 +204,7 @@ namespace HLP.Database
         }
 
         // A morfológiai elemző tesztelési adatainak beolvasása fájlból
-        public static async Task<List<MorphTest>> LoadMorphTestsAsync()
+        private static async Task<List<MorphTest>> LoadMorphTestsAsync()
         {
             var morphTests = new List<MorphTest>();
 

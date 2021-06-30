@@ -20,6 +20,15 @@ namespace HLP.Database
             return Instance;
         }
 
+        public List<Word> Words { get; set; } = new List<Word>();
+        public List<Affix> Affixes { get; set; } = new List<Affix>();
+        public List<WordType> WordTypes { get; set; } = new List<WordType>();
+        public List<AffixInfo> AffixInfos { get; set; } = new List<AffixInfo>();
+        public List<OrderRule> OrderRules { get; set; } = new List<OrderRule>();
+        public List<MorphTest> MorphTests { get; set; } = new List<MorphTest>();
+
+        private DatabaseContext() { }
+
         public static void Dispose()
         {
             if (Instance != null)
@@ -33,17 +42,7 @@ namespace HLP.Database
                 Instance = null;
             }
         }
-
-        private DatabaseContext() { }
-
-        public List<Word> Words { get; set; } = new List<Word>();
-        public List<Affix> Affixes { get; set; } = new List<Affix>();
-        public List<WordType> WordTypes { get; set; } = new List<WordType>();
-        public List<AffixInfo> AffixInfos { get; set; } = new List<AffixInfo>();
-        public List<OrderRule> OrderRules { get; set; } = new List<OrderRule>();
-        public List<MorphTest> MorphTests { get; set; } = new List<MorphTest>();
-
-        public List<string> SearchInDatabase(string word, string type)
+        public List<string> SearchWordInDatabase(string word, string type)
         {
             var wordResult = Words.Find(w => w.Text == word);
 
