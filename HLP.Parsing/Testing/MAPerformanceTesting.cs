@@ -1,5 +1,4 @@
 ﻿using HLP.Database;
-using HLP.Database.Extensions;
 using HLP.Database.Models;
 using HLP.Parsing.Models;
 using System;
@@ -13,12 +12,12 @@ namespace HLP.Parsing.Testing
 {
     public class MAPerformanceTesting
     {
+        private DatabaseContext dbContext;
         private MorphologicalAnalyzer Analyzer;
-        private DatabaseContext DbContext;
 
         public MAPerformanceTesting()
         {
-            DbContext = DatabaseContext.GetInstance();
+            dbContext = DatabaseContext.GetInstance();
             Analyzer = new MorphologicalAnalyzer();
             //Tests.ForEach(it => Console.WriteLine(it));
         }
@@ -26,7 +25,7 @@ namespace HLP.Parsing.Testing
         public void TestDataAsync()
         {
             var numberOfMatch = 0;
-            foreach (var item in DbContext.MorphTests.Select(t => t.ToModel()))
+            foreach (var item in dbContext.MorphTests)
             {
                 Console.WriteLine($"Analyzing word '{item.Word}'");
                 var analysisResult = Analyzer.AnalyzeWord(item.Word, false);
@@ -42,7 +41,7 @@ namespace HLP.Parsing.Testing
                     ++numberOfMatch;
                 }
             }
-            Console.WriteLine($"{numberOfMatch} of {DbContext.MorphTests.Count()}");
+            Console.WriteLine($"{numberOfMatch} of {dbContext.MorphTests.Count()}");
 
             //Console.WriteLine($"No match:\n{string.Join("\n", DbContext.MorphTests.Where(t => t.Analysis == null).Select(t => t.Word))}");
 

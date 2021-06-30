@@ -1,20 +1,15 @@
-﻿using HLP.Database.Entities;
+﻿using HLP.Database.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Text;
-using HLP.Database.Extensions;
 
 namespace HLP.Database
 {
-    public class DatabaseContext : DbContext
+    public class DatabaseContext
     {
-        public static readonly string DbPath = @".\my_database.db";
-
-        public static DatabaseContext Instance = null;
+        private static DatabaseContext Instance = null;
 
         public static DatabaseContext GetInstance()
         {
@@ -25,14 +20,60 @@ namespace HLP.Database
             return Instance;
         }
 
-        public DbSet<WordEntity> Words { get; set; }
-        public DbSet<AffixEntity> Affixes { get; set; }
-        public DbSet<WordTypeEntity> WordTypes { get; set; }
-        public DbSet<AffixInfoEntity> AffixInfos { get; set; }
-        public DbSet<OrderRuleEntity> OrderRules { get; set; }
-        public DbSet<MorphTestEntity> MorphTests { get; set; }
+        public static void Dispose()
+        {
+            if (Instance != null)
+            {
+                Instance.Words.Clear();
+                Instance.Affixes.Clear();
+                Instance.WordTypes.Clear();
+                Instance.AffixInfos.Clear();
+                Instance.OrderRules.Clear();
+                Instance.MorphTests.Clear();
+                Instance = null;
+            }
+        }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        private DatabaseContext() { }
+
+        public List<Word> Words { get; set; } = new List<Word>();
+        public List<Affix> Affixes { get; set; } = new List<Affix>();
+        public List<WordType> WordTypes { get; set; } = new List<WordType>();
+        public List<AffixInfo> AffixInfos { get; set; } = new List<AffixInfo>();
+        public List<OrderRule> OrderRules { get; set; } = new List<OrderRule>();
+        public List<MorphTest> MorphTests { get; set; } = new List<MorphTest>();
+
+        public List<string> SearchInDatabase(string word, string type)
+        {
+            var wordResult = Words.Find(w => w.Text == word);
+
+            if (wordResult == null) return new List<string>();
+
+            var types = GetCompatibleWordTypes(type);
+
+            if (types.Count == 0) return new List<string>(wordResult.WordTypes);
+
+            return new List<string>(wordResult.WordTypes.Intersect(types));
+        }
+
+        public List<string> GetCompatibleWordTypes(string typeCode)
+        {
+            var result = new List<string>();
+
+            var type = WordTypes.Find(t => t.Code == typeCode);
+
+            if (type == null) return result;
+
+            result.Add(typeCode);
+
+            type.IncludedWordTypes.ForEach(t => result.AddRange(GetCompatibleWordTypes(t)));
+
+            result.AddRange(WordTypes.Where(t => t.IncludedWordTypes.Contains(typeCode)).Select(t => t.Code));
+
+            return result.Distinct().ToList();
+        }
+
+        /*protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             options.UseSqlite($"Data Source={DbPath}");
         }
@@ -64,88 +105,6 @@ namespace HLP.Database
             builder.Entity<MorphTestEntity>().ToTable("MorphTests");
             builder.Entity<MorphTestEntity>().HasKey(e => e.Id);
             builder.Entity<MorphTestEntity>().Property(e => e.Id).ValueGeneratedOnAdd();
-        }
-
-        public List<string> SearchInDatabase(string word, string type)
-        {
-            var wordResult = Words.SingleOrDefault(w => w.Text == word).ToModel();
-
-            if (wordResult == null) return new List<string>();
-
-            var types = GetCompatibleWordTypes(type);
-
-            if (types.Count == 0) return new List<string>(wordResult.WordTypes);
-
-            return new List<string>(wordResult.WordTypes.Intersect(types));
-        }
-
-        public List<string> GetCompatibleWordTypes(string typeCode)
-        {
-            var result = new List<string>();
-
-            var type = WordTypes.SingleOrDefault(t => t.Code == typeCode).ToModel();
-
-            if (type == null) return result;
-
-            result.Add(typeCode);
-
-            type.IncludedWordTypes.ForEach(t => result.AddRange(GetCompatibleWordTypes(t)));
-
-            result.AddRange(WordTypes.Where(t => t.IncludedWordTypes.Contains(typeCode)).Select(t => t.Code));
-
-            return result.Distinct().ToList();
-        }
-
-        /*private static DatabaseContext DBInstance = null;
-
-        public static DatabaseContext GetInstance()
-        {
-            if(DBInstance is null)
-            {
-                DBInstance = new DatabaseContext();
-            }
-            return DBInstance;
-        }
-
-        public List<WordType> WordTypes { get; } = new List<WordType>();
-        public List<Word> Words { get; } = new List<Word>();
-        public List<Affix> Affixes { get; } = new List<Affix>();
-        public List<AffixInfo> AffixInfos { get; } = new List<AffixInfo>();
-
-        private DatabaseContext()
-        {
-            var loader = new DatabaseLoader();
-            loader.LoadDataAsync(WordTypes, Words, Affixes, AffixInfos);
-        }
-
-        public List<string> SearchInDatabase(string word, string type)
-        {
-            var wordResult = Words.Find(w => w.Text == word);
-
-            if (wordResult == null) return new List<string>();
-
-            var types = GetCompatibleWordTypes(type);
-
-            if (types.Count == 0) return new List<string>(wordResult.Types);
-
-            return new List<string>(wordResult.Types.Intersect(types));
-        }
-
-        public List<string> GetCompatibleWordTypes(string typeCode)
-        {
-            var result = new List<string>();
-
-            var type = WordTypes.Find(t => t.Code == typeCode);
-
-            if (type == null) return result;
-
-            result.Add(typeCode);
-
-            type.Includes.ForEach(t => result.AddRange(GetCompatibleWordTypes(t)));
-
-            result.AddRange(WordTypes.Where(t => t.Includes.Contains(typeCode)).Select(t => t.Code));
-
-            return result.Distinct().ToList();
         }*/
     }
 }

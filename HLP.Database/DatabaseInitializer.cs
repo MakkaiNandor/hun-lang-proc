@@ -1,4 +1,4 @@
-﻿using HLP.Database.Entities;
+﻿using HLP.Database.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,59 +19,53 @@ namespace HLP.Database
         public static readonly string orderRulesFilePath = @"Data\sorrend.txt";
         public static readonly string morphTestDataFilePath = @"Data\morph_teszt.txt";
 
-        private static readonly char[] separators = new[] { ';', '|', '.' };
+        private static readonly char[] separators = new[] { ';', '|', '.', '+' };
 
         // Adatok beolvasásaa fájlokból
-        public static async void InitializeAsync()
+        public static async Task InitializeAsync()
         {
-            await using (var dbContext = new DatabaseContext())
+            var dbContext = DatabaseContext.GetInstance();
+
+            Console.WriteLine("Start");
+
+            // Szavak beolvasása, ha üres
+            if (!dbContext.Words.Any())
             {
-                Console.WriteLine("Start");
-                await dbContext.Database.EnsureCreatedAsync();
-
-                // Szavak beolvasása, ha üres
-                if (!dbContext.Words.Any())
-                {
-                    await dbContext.Words.AddRangeAsync(await LoadWordsAsync());
-                }
-                // Toldalékok beolvasása, ha üres
-                if (!dbContext.Affixes.Any())
-                {
-                    await dbContext.Affixes.AddRangeAsync(await LoadAffixesAsync());
-                }
-                // Szófajok beolvasása, ha üres
-                if (!dbContext.WordTypes.Any())
-                {
-                    await dbContext.WordTypes.AddRangeAsync(await LoadWordTypesAsync());
-                }
-                // Toldalék kódok beolvasása, ha üres
-                if (!dbContext.AffixInfos.Any())
-                {
-                    await dbContext.AffixInfos.AddRangeAsync(await LoadAffixInfosAsync());
-                }
-                // Sorrendi szabályok beolvasása, ha üres
-                if (!dbContext.OrderRules.Any())
-                {
-                    await dbContext.OrderRules.AddRangeAsync(await LoadOrderRulesAsync());
-                }
-                // Teszt adatok beolvasása, ha üres
-                if (!dbContext.MorphTests.Any())
-                {
-                    await dbContext.MorphTests.AddRangeAsync(await LoadMorphTestsAsync());
-                }
-
-                await dbContext.SaveChangesAsync();
-
-                DatabaseContext.Instance = dbContext;
-
-                Console.WriteLine("End");
+                dbContext.Words = await LoadWordsAsync();
             }
+            // Toldalék kódok beolvasása, ha üres
+            if (!dbContext.AffixInfos.Any())
+            {
+                dbContext.AffixInfos = await LoadAffixInfosAsync();
+            }
+            // Szófajok beolvasása, ha üres
+            if (!dbContext.WordTypes.Any())
+            {
+                dbContext.WordTypes = await LoadWordTypesAsync();
+            }
+            // Toldalékok beolvasása, ha üres
+            if (!dbContext.Affixes.Any())
+            {
+                dbContext.Affixes = await LoadAffixesAsync();
+            }
+            // Sorrendi szabályok beolvasása, ha üres
+            if (!dbContext.OrderRules.Any())
+            {
+                dbContext.OrderRules = await LoadOrderRulesAsync();
+            }
+            // Teszt adatok beolvasása, ha üres
+            if (!dbContext.MorphTests.Any())
+            {
+                dbContext.MorphTests = await LoadMorphTestsAsync();
+            }
+
+            Console.WriteLine("End");
         }
 
         // A szavak beolvasása fájlból
-        public static async Task<List<WordEntity>> LoadWordsAsync()
+        public static async Task<List<Word>> LoadWordsAsync()
         {
-            var words = new List<WordEntity>();
+            var words = new List<Word>();
 
             Console.WriteLine("Loading words!");
 
@@ -81,10 +75,10 @@ namespace HLP.Database
                 while (!reader.EndOfStream)
                 {
                     var values = (await reader.ReadLineAsync()).Split(separators[0]);
-                    words.Add(new WordEntity
+                    words.Add(new Word
                     {
                         Text = values[0],
-                        WordTypes = values[1]
+                        WordTypes = values[1].Split(separators[1]).ToList()
                     });
                 }
             }
@@ -95,9 +89,9 @@ namespace HLP.Database
         }
 
         // A toldalékok beolvasása fájlból
-        public static async Task<List<AffixEntity>> LoadAffixesAsync()
+        public static async Task<List<Affix>> LoadAffixesAsync()
         {
-            var affixes = new List<AffixEntity>();
+            var affixes = new List<Affix>();
 
             Console.WriteLine("Loading affixes!");
 
@@ -106,24 +100,17 @@ namespace HLP.Database
                 await reader.ReadLineAsync(); // Skip the header
                 while (!reader.EndOfStream)
                 {
-                    try
+                    var values = (await reader.ReadLineAsync()).Split(separators[0]);
+                    var codes = values[0].Split(separators[2]);
+                    affixes.Add(new Affix
                     {
-                        var values = (await reader.ReadLineAsync()).Split(separators[0]);
-                        var codes = values[0].Split(separators[2]);
-                        affixes.Add(new AffixEntity
-                        {
-                            OriginalText = values[1],
-                            Text = values[1],
-                            InfoCode = codes.Last(),
-                            Requirements = string.Join(separators[2], codes.Take(codes.Length - 1)),
-                            Prevowel = values[2] == "1",
-                            Assimilation = values[3] == "1"
-                        });
-                    }
-                    catch(IndexOutOfRangeException ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
+                        OriginalText = values[1],
+                        Text = values[1],
+                        Info = DatabaseContext.GetInstance().AffixInfos.Find(it => it.Code == codes.Last()),
+                        Requirements = codes.Take(codes.Length - 1).ToList(),
+                        Prevowel = values[2] == "1",
+                        Assimilation = values[3] == "1"
+                    });
                 }
             }
 
@@ -133,11 +120,11 @@ namespace HLP.Database
         }
 
         // A szófajok beolvasása fájlból
-        public static async Task<List<WordTypeEntity>> LoadWordTypesAsync()
+        public static async Task<List<WordType>> LoadWordTypesAsync()
         {
             Console.WriteLine("Loading word types!");
 
-            var wordTypes = new List<WordTypeEntity>();
+            var wordTypes = new List<WordType>();
 
             using (var reader = new StreamReader(wordTypesFilePath))
             {
@@ -145,11 +132,11 @@ namespace HLP.Database
                 while (!reader.EndOfStream)
                 {
                     var values = (await reader.ReadLineAsync()).Split(separators[0]);
-                    wordTypes.Add(new WordTypeEntity
+                    wordTypes.Add(new WordType
                     {
                         Code = values[0],
                         Name = values[1],
-                        IncludedWordTypes = values[2]
+                        IncludedWordTypes = values[2].Split(separators[1]).ToList()
                     });
                 }
             }
@@ -160,9 +147,9 @@ namespace HLP.Database
         }
 
         // A toldalékok információit tartalmazó kódok beolvasása fájlból
-        public static async Task<List<AffixInfoEntity>> LoadAffixInfosAsync()
+        public static async Task<List<AffixInfo>> LoadAffixInfosAsync()
         {
-            var affixInfos = new List<AffixInfoEntity>();
+            var affixInfos = new List<AffixInfo>();
 
             Console.WriteLine("Loading affix info!");
 
@@ -172,7 +159,7 @@ namespace HLP.Database
                 while (!reader.EndOfStream)
                 {
                     var values = (await reader.ReadLineAsync()).Split(separators[0]);
-                    affixInfos.Add(new AffixInfoEntity
+                    affixInfos.Add(new AffixInfo
                     {
                         Code = values[0],
                         Type = values[1],
@@ -190,9 +177,9 @@ namespace HLP.Database
         }
 
         // Toldalékolási sorrendre vonatkozó szabályok beolvasása fájlból
-        public static async Task<List<OrderRuleEntity>> LoadOrderRulesAsync()
+        public static async Task<List<OrderRule>> LoadOrderRulesAsync()
         {
-            var orderRules = new List<OrderRuleEntity>();
+            var orderRules = new List<OrderRule>();
 
             Console.WriteLine("Loading order rules!");
 
@@ -202,11 +189,11 @@ namespace HLP.Database
                 while (!reader.EndOfStream)
                 {
                     var values = (await reader.ReadLineAsync()).Split(separators[0]);
-                    orderRules.Add(new OrderRuleEntity
+                    orderRules.Add(new OrderRule
                     {
                         RootWordType = values[0],
-                        RulesBeforeRoot = values[1],
-                        RulesAfterRoot = values[2]
+                        RulesBeforeRoot = values[1].Split(separators[2]).Select(it => it.Split(separators[1]).ToList()).ToList(),
+                        RulesAfterRoot = values[2].Split(separators[2]).Select(it => it.Split(separators[1]).ToList()).ToList()
                     });
                 }
             }
@@ -217,23 +204,28 @@ namespace HLP.Database
         }
 
         // A morfológiai elemző tesztelési adatainak beolvasása fájlból
-        public static async Task<List<MorphTestEntity>> LoadMorphTestsAsync()
+        public static async Task<List<MorphTest>> LoadMorphTestsAsync()
         {
-            var morphTests = new List<MorphTestEntity>();
+            var morphTests = new List<MorphTest>();
 
             Console.WriteLine("Loading morph tests!");
 
-            using (var reader = new StreamReader(infoFilePath))
+            using (var reader = new StreamReader(morphTestDataFilePath))
             {
                 await reader.ReadLineAsync(); // Skip the header
                 while (!reader.EndOfStream)
                 {
                     var values = (await reader.ReadLineAsync()).Split(separators[0]);
-                    morphTests.Add(new MorphTestEntity
+                    var items = values[1].Split(separators[3]).ToList();
+                    var index = items.IndexOf(items.Find(it => it.StartsWith("!")));
+
+                    morphTests.Add(new MorphTest
                     {
                         Word = values[0],
-                        Analysis = values[1],
-                        MorphCode = values[2]
+                        Stem = items[index],
+                        MorphCode = values[2],
+                        Prefixes = items.Take(index).ToList(),
+                        Suffixes = items.TakeLast(items.Count() - index - 1).ToList()
                     });
                 }
             }

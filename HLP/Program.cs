@@ -1,5 +1,4 @@
 ﻿using HLP.Database;
-using HLP.Database.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,12 +10,9 @@ namespace HLP
     {
         static async Task Main(string[] args)
         {
-
-            var db = new DatabaseContext();
-
             Console.WriteLine("~~~~~~~~");
 
-            DatabaseInitializer.InitializeAsync();
+            await DatabaseInitializer.InitializeAsync();
 
             Console.WriteLine("~~~~~~~~");
 

@@ -2,38 +2,19 @@
 using HLP.Parsing.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 
 namespace HLP.Parsing.Utils
 {
-    class ResultReducer
+    public class ResultReducer
     {
-        private readonly string filePath = @"Data\sorrend.txt";
-        private readonly char[] separators = new[] { ';', '.', '|' };
-        private Dictionary<string, List<List<string>>> orders = new Dictionary<string, List<List<string>>>();
-        private DatabaseContext context;
+        private DatabaseContext dbContext;
 
         public ResultReducer()
         {
-            context = new DatabaseContext();
-            LoadFile();
-        }
-
-        private void LoadFile()
-        {
-            using (var reader = new StreamReader(filePath))
-            {
-                while (!reader.EndOfStream)
-                {
-                    var line = reader.ReadLine();
-                    var values = line.Split(separators[0]);
-                    var key = values[0];
-                    var value = values[1].Split(separators[1]).Select(c => c.Split(separators[2]).ToList()).ToList();
-                    orders.Add(key, value);
-                }
-            }
+            dbContext = DatabaseContext.GetInstance();
+            Console.WriteLine($"Rules:\n\t{string.Join("\n\t", dbContext.OrderRules)}");
         }
 
         public void ReduceResults(MAResult result)
@@ -43,9 +24,13 @@ namespace HLP.Parsing.Utils
             {
                 GetLemmaAndType(variant, out string lemma, out string type);
 
+                Console.WriteLine($"Check variant: {variant}");
+                Console.WriteLine($"lemma: {lemma}, type: {type}");
+
                 if (!CheckRequirements(variant) ||
                     !CheckOrder(variant, lemma, type))
                 {
+                    Console.WriteLine($"Remove!");
                     result.Variants.Remove(variant);
                     ++count;
                 }
@@ -56,41 +41,44 @@ namespace HLP.Parsing.Utils
 
         private bool CheckOrder(MAVariant variant, string lemma, string type)
         {
-            /*type = context.GetCompatibleWordTypes("NSZ").Contains(type) ? "NSZ" : type;
+            type = dbContext.GetCompatibleWordTypes("NSZ").Contains(type) ? "NSZ" : type;
 
-            if (!orders.TryGetValue(type, out List<List<string>> order)) return false;
+            var order = dbContext.OrderRules.Find(rule => rule.RootWordType == type);
 
-            var startPos = 0; 
-            var endPos = order.Count();
-            var lemmaPos = SearchCode(type, order, startPos, endPos);
+            if (order == null) return true;
 
-            foreach (var prefix in variant.Prefixes.Where(p => p.Info.Type != "I"))
+            var offset = 0;
+
+            foreach (var prefix in variant.Prefixes)
             {
-                var newPos = SearchCode(prefix.Info.Code, order, startPos, lemmaPos);
+                var newPos = SearchCode(prefix.Info.Code, order.RulesBeforeRoot, offset);
+                Console.WriteLine($"offset: {offset}, new position: {newPos}");
                 if (newPos == -1)
                 {
                     return false;
                 }
-                startPos = newPos;
+                offset = newPos;
             }
 
-            foreach (var suffix in variant.Suffixes.Where(s => s.Info.Type != "K").Reverse())
+            offset = 0;
+            foreach (var suffix in variant.Suffixes.Where(s => s.Info.Type != "K"))
             {
-                var newPos = SearchCode(suffix.Info.Code, order, lemmaPos + 1, endPos);
+                var newPos = SearchCode(suffix.Info.Code, order.RulesAfterRoot, offset);
+                Console.WriteLine($"offset: {offset}, new position: {newPos}");
                 if (newPos == -1)
                 {
                     return false;
                 }
-                endPos = newPos;
-            }*/
+                offset = newPos;
+            }
 
             return true;
         }
 
-        private int SearchCode(string item, List<List<string>> list, int start, int end)
+        private int SearchCode(string item, List<List<string>> list, int offset)
         {
-            var pos = start;
-            while (pos < end)
+            var pos = offset;
+            while (pos < list.Count())
             {
                 if (list[pos].Contains(item))
                 {
@@ -117,24 +105,27 @@ namespace HLP.Parsing.Utils
 
         private bool CheckRequirements(MAVariant variant)
         {
+            Console.WriteLine("Check requirements!");
             var prevAffixCode = "";
             foreach (var suffix in variant.Suffixes)
             {
                 var req = suffix.Requirements;
                 if (req.Any() && prevAffixCode != req[0])
                 {
+                    Console.WriteLine($"{req[0]} != {prevAffixCode}");
                     return false;
                 }
                 prevAffixCode = suffix.Info.Code;
             }
 
-            /*var persAffix = variant.Suffixes.Find(s => s.Info.Group == 7);
+            var persAffix = variant.Suffixes.Find(s => s.Info.GroupNumber == 7);
             if (persAffix != null &&
                 !persAffix.Requirements.Any() &&
-                variant.Suffixes.Exists(s => s.Info.Group == 3))
+                variant.Suffixes.Exists(s => s.Info.GroupNumber == 3))
             {
+                Console.WriteLine($"Pers");
                 return false;
-            }*/
+            }
 
             return true;
         }

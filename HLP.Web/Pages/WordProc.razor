@@ -1,4 +1,5 @@
 ﻿@page "/wordproc"
+@implements IDisposable
 
 <h1>Szóelemzés</h1>
 
@@ -16,26 +17,25 @@
 <hr />
 
 <div class="row">
-    <label class="col-1 col-form-label">Bemenet:</label>
+    <label class="col-1 col-form-label font-weight-bold">Bemenet:</label>
     <div class="col-5">
         <input type="text" class="form-control" @bind="Input" placeholder="egy vagy több szó" />
     </div>
     <div class="col-1">
-        <button class="btn btn-primary" @onclick="async (e) => await this.OnAnalyzeClicked()" disabled="@AnalyzeStarted">Elemzés</button>
+        <button class="btn btn-primary" @onclick="async (e) => await this.OnAnalyzeClicked()" disabled="@(AnalyzeStarted || DataLoading)">Elemzés</button>
     </div>
     <div class="col-1">
-        <button class="btn btn-primary" @onclick="OnResetClicked">Visszaállít</button>
+        <button class="btn btn-primary" @onclick="OnResetClicked" disabled="@DataLoading">Visszaállít</button>
     </div>
 </div>
 
-@if (AnalyzeStarted && !Result.Any())
-{
-    <div class="text-info font-weight-bold mt-3 pl-3">Az elemzés folyamatban van!</div>
-}
-else if (InfoMessage.Length > 0)
-{
-    <div class="text-info font-weight-bold mt-3 pl-3">@InfoMessage</div>
-}
+<div class="text-info font-weight-bold mt-3 pl-3">@InfoMessage</div>
+
+<hr />
+
+<div>
+    <p class="mt-2 font-weight-bold">Elemzés eredménye:</p>
+</div>
 
 @foreach (var result in Result)
 {
@@ -55,20 +55,28 @@ else if (InfoMessage.Length > 0)
 
 @code {
     bool Collapse = false;
+    bool AnalyzeStarted = false;
+    bool DataLoading = false;
+    string InfoMessage = "";
     string Icon = "oi-chevron-right";
     string Input = "";
     List<MAResult> Result = new List<MAResult>();
     MorphologicalAnalyzer Analyzer;
-    string InfoMessage = "";
-    bool AnalyzeStarted = false;
 
     protected override async Task OnInitializedAsync()
     {
+        InfoMessage = "Szükséges adatok betöltése ...";
+        DataLoading = true;
+        await DatabaseInitializer.InitializeAsync();
+        DataLoading = false;
         Analyzer = new MorphologicalAnalyzer();
+        InfoMessage = "Készen áll az elemzésre!";
+    }
 
-        //DatabaseContext db;
-
-        await Task.CompletedTask;
+    public void Dispose()
+    {
+        DatabaseContext.Dispose();
+        Console.WriteLine("Database disposed!");
     }
 
     void ToggleCollapse()
@@ -82,16 +90,18 @@ else if (InfoMessage.Length > 0)
         Result.Clear();
         if (Input.Length > 0)
         {
-
-            /*await Task.Run(() => {
+            InfoMessage = "Az elemzés folyamatban van!";
+            await Task.Run(() =>
+            {
                 AnalyzeStarted = true;
                 Result = Analyzer.AnalyzeText(Input);
                 AnalyzeStarted = false;
-            });*/
+            });
+            InfoMessage = "";
         }
         else
         {
-            InfoMessage = "A bemeneti érték nem lehet üres!";
+            InfoMessage = "Nincs bemenet!";
         }
     }
 

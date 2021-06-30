@@ -1,5 +1,4 @@
 ﻿using HLP.Database;
-using HLP.Database.Extensions;
 using HLP.Database.Models;
 using HLP.Parsing.Extensions;
 using System;
@@ -49,14 +48,12 @@ namespace HLP.Parsing.Models
 
         public List<Affix> PossiblePrefixes()
         {
-            var context = DatabaseContext.GetInstance();
-
-            var prefixes = context.Affixes.Select(a => a.ToModel()).Where(a =>
-                PossiblePrefixTypes.Contains(a.Info.Type) &&
-                !ContainedAffixGroups.Contains(a.Info.GroupNumber) &&
-                AreCompatibles(a.Info.WordTypeAfter, WordType) &&
-                CurrentText.StartsWith(a.Text) &&
-                CurrentText.RemoveFromStart(a.Text).HasVowel(1, 1)
+            var prefixes = DatabaseContext.GetInstance().Affixes.Where(a =>
+                    PossiblePrefixTypes.Contains(a.Info.Type) &&
+                    !ContainedAffixGroups.Contains(a.Info.GroupNumber) &&
+                    AreCompatibles(a.Info.WordTypeAfter, WordType) &&
+                    CurrentText.StartsWith(a.Text) &&
+                    CurrentText.RemoveFromStart(a.Text).HasVowel(1, 1)
             ).OrderByDescending(a => a.Text.Length).ToList();
 
             //Console.WriteLine($"Prefixes: {prefixes.Count}");
@@ -66,15 +63,13 @@ namespace HLP.Parsing.Models
 
         public List<Affix> PossibleSuffixes()
         {
-            var context = DatabaseContext.GetInstance();
-
-            var suffixes = context.Affixes.Select(a => a.ToModel()).Where(a =>
-                PossibleSuffixTypes.Contains(a.Info.Type) &&
-                !ContainedAffixGroups.Contains(a.Info.GroupNumber) &&
-                AreCompatibles(a.Info.WordTypeAfter, WordType) &&
-                (CurrentText.EndsWith(a.Text) ?
-                CurrentText.RemoveFromEnd(a.Text).HasVowel(1, 1) :
-                (a.Assimilation && CheckAssimilation(a.Text)))
+            var suffixes = DatabaseContext.GetInstance().Affixes.Where(a =>
+                    PossibleSuffixTypes.Contains(a.Info.Type) &&
+                    !ContainedAffixGroups.Contains(a.Info.GroupNumber) &&
+                    AreCompatibles(a.Info.WordTypeAfter, WordType) &&
+                    (CurrentText.EndsWith(a.Text) ?
+                    CurrentText.RemoveFromEnd(a.Text).HasVowel(1, 1) :
+                    (a.Assimilation && CheckAssimilation(a.Text)))
             ).OrderByDescending(a => a.Text.Length).ToList();
 
             //Console.WriteLine($"Suffixes: {suffixes.Count}");
@@ -100,7 +95,6 @@ namespace HLP.Parsing.Models
             var types2 = context.GetCompatibleWordTypes(type2);
             
             return types1.Intersect(types2).Any();
-            return false;
         }
 
         public void RemovePrefix(Affix prefix)

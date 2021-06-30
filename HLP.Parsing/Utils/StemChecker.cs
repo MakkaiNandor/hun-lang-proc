@@ -11,6 +11,8 @@ namespace HLP.Parsing.Utils
     {
         public static List<string> CheckStems(string word, string type)
         {
+            var dbContext = DatabaseContext.GetInstance();
+
             var result = new List<string>();
 
             if (type == "" || type == "IGE")
@@ -18,10 +20,10 @@ namespace HLP.Parsing.Utils
                 result.AddRange(CheckVerbStem(word));
             }
 
-            /*if (type == "" || DatabaseContext.GetInstance().GetCompatibleWordTypes("NSZ").Contains(type))
+            if (type == "" || dbContext.GetCompatibleWordTypes("NSZ").Contains(type))
             {
                 result.AddRange(CheckNomenStem(word));
-            }*/
+            }
 
             Console.WriteLine($"{word} -> {string.Join(", ", result)} (type: {type})");
 
@@ -31,8 +33,8 @@ namespace HLP.Parsing.Utils
         // igei tőváltozat szótári alakjának keresése
         private static List<string> CheckVerbStem(string stem)
         {
-            /*var verbs = DatabaseContext.GetInstance().Words
-                .Where(w => w.Types.Contains("IGE"))
+            var verbs = DatabaseContext.GetInstance().Words
+                .Where(w => w.WordTypes.Contains("IGE"))
                 .Select(w => w.Text).ToList();
 
             var result = new List<string>() { stem };
@@ -121,17 +123,16 @@ namespace HLP.Parsing.Utils
 
             //Console.WriteLine($"({preLastLetter}, {lastLetter}) {string.Join(", ", result)}");
 
-            return result.Distinct().Intersect(verbs).ToList();*/
-            return null;
+            return result.Distinct().Intersect(verbs).ToList();
         }
 
         // névszói tőváltozat szótári alakjának keresése
         private static List<string> CheckNomenStem(string stem)
         {
-            /* var DB = DatabaseContext.GetInstance();
-             var nomenTypes = DB.GetCompatibleWordTypes("NSZ");
-             var nomens = DB.Words
-                 .Where(w => w.Types.Intersect(nomenTypes).Any())
+             var context = DatabaseContext.GetInstance();
+             var nomenTypes = context.GetCompatibleWordTypes("NSZ");
+             var nomens = context.Words
+                 .Where(w => w.WordTypes.Intersect(nomenTypes).Any())
                  .Select(w => w.Text).ToList();
 
              var result = new List<string>() { stem };
@@ -220,8 +221,7 @@ namespace HLP.Parsing.Utils
                  }
              }
 
-             return result.Intersect(nomens).ToList();*/
-            return null;
+             return result.Intersect(nomens).ToList();
         }
     }
 }
