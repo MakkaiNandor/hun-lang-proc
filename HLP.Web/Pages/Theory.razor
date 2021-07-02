@@ -1,0 +1,85 @@
+﻿@page "/theory"
+@implements IDisposable
+        
+<h1 class="text-center mb-2">Elméleti anyagrész</h1>
+
+<p class="text-center">Az elméleti anyag forrása: Keszler Borbála – Lengyel Klára: Kis magyar grammatika, Nemzeti Tankönyvkiadó, Budapest, 2002</p>
+
+<div class="row">
+    <div class="flipped scrollable col-4">
+        <ul id="tree-list">
+            @if (RootNode == null)
+            {
+                <p class="m-4 text-center">Betöltés ...</p>
+            }
+            else
+            {
+                @foreach (var node in RootNode.Items)
+                {
+                    <TreeListNode Node="node" OnClick="SelectedItemChanged" />
+                }
+            }
+        </ul>
+    </div>
+    <div class="scrollable col-7 px-5 mx-5">
+        @if (SelectedItemName != null)
+        {
+            <h4 class="text-center mt-4 mb-3">@SelectedItemName</h4>
+            <div class="text-justify">
+                @if (SelectedItemText != null)
+                {
+                    @((MarkupString)SelectedItemText)
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code { 
+    private TheoremNode RootNode { get; set; } = null;
+    private string SelectedItemName { get; set; } = null;
+    private string SelectedItemText { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using (var reader = new StreamReader(@".\Data\elmelet.json"))
+        {
+            var content = await reader.ReadToEndAsync();
+            RootNode = JsonConvert.DeserializeObject<TheoremNode>(content);
+        }
+    }
+
+    public void SelectedItemChanged(string name)
+    {
+        SelectedItemName = name;
+        SelectedItemText = SearchTextByName(name, RootNode);
+    }
+
+    public void Dispose()
+    {
+        DeleteNode(RootNode);
+    }
+
+    private void DeleteNode(TheoremNode node)
+    {
+        foreach (var n in node.Items)
+        {
+            DeleteNode(n);
+        }
+        node.Items = null;
+        node = null;
+    }
+
+    private string SearchTextByName(string name, TheoremNode node)
+    {
+        if (node.Name == name)
+            return node.Text;
+        foreach (var n in node.Items)
+        {
+            var res = SearchTextByName(name, n);
+            if (res != null)
+                return res;
+        }
+        return null;
+    }
+}

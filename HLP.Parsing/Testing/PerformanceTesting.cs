@@ -1,8 +1,10 @@
 ﻿using HLP.Database;
 using HLP.Database.Models;
+using HLP.Parsing.Log;
 using HLP.Parsing.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,54 +12,49 @@ using System.Threading.Tasks;
 
 namespace HLP.Parsing.Testing
 {
-    public class MAPerformanceTesting
+    public class PerformanceTesting
     {
         private DatabaseContext dbContext;
         private MorphologicalAnalyzer Analyzer;
+        private Logging log;
 
-        public MAPerformanceTesting()
+        public PerformanceTesting()
         {
             dbContext = DatabaseContext.GetInstance();
             Analyzer = new MorphologicalAnalyzer();
-            //Tests.ForEach(it => Console.WriteLine(it));
+            log = new Logging();
         }
 
-        public void TestDataAsync()
+        public long TestMorpAnalyzer(out int nrOfGoods, out int nrOfWrongs)
         {
-            var numberOfMatch = 0;
+            // Változók inicializálása
+            long elapsedTime = 0;
+            nrOfGoods = 0;
+            nrOfWrongs = 0;
+            var stopper = new Stopwatch();
+
+            // Tesztelés indítása
+            log.Log("MA performance testing started");
             foreach (var item in dbContext.MorphTests)
             {
-                Console.WriteLine($"Analyzing word '{item.Word}'");
-                var analysisResult = Analyzer.AnalyzeWord(item.Word, false);
-                Console.WriteLine($"nr = {analysisResult.Variants.Count}");
+                // Elemzés és időmérés
+                stopper.Restart();
+                var analysisResult = Analyzer.AnalyzeWord(item.Word);
+                stopper.Stop();
+                log.Log(analysisResult, stopper.ElapsedMilliseconds);
+                elapsedTime += stopper.ElapsedMilliseconds;
+
+                // Helyes elemzés keresése
                 var match = analysisResult.Variants.Find(variant => Equals(item, variant));
                 if (match == null)
-                {
-                    Console.WriteLine("~~~ NO MATCH ~~~");
-                }
+                    ++nrOfWrongs;
                 else
-                {
-                    Console.WriteLine($"~~~  MATCH  ~~~");
-                    ++numberOfMatch;
-                }
+                    ++nrOfGoods;
             }
-            Console.WriteLine($"{numberOfMatch} of {dbContext.MorphTests.Count()}");
 
-            //Console.WriteLine($"No match:\n{string.Join("\n", DbContext.MorphTests.Where(t => t.Analysis == null).Select(t => t.Word))}");
+            log.Log($"MA performance testing stoped\tPerformance: {nrOfGoods} of {nrOfGoods+nrOfWrongs} ({(nrOfWrongs/(nrOfGoods+nrOfWrongs))*100}%)\tElapsed time: {elapsedTime} ms");
 
-            /*while (true)
-            {
-                var input = Console.ReadLine();
-                if (input == "exit")
-                {
-                    break;
-                }
-                var test = Tests.Find(t => t.Word == input);
-                if (test != null)
-                {
-                    Console.WriteLine(test.analysis);
-                }
-            }*/
+            return elapsedTime;
         }
 
         private bool Equals(MorphTest test, MAVariant variant)

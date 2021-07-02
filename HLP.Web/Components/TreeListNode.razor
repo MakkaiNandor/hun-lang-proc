@@ -1,0 +1,21 @@
+﻿<li>
+    <span class="@(Node.Text != null ? "clickable" : null)" @onclick="(e) => Node.Text != null ? OnClick.InvokeAsync(Node.Name) : null">@Node.Name</span>
+    @if (Node.Items.Any())
+    {
+        <ul>
+            @foreach (var node in Node.Items)
+            {
+                <TreeListNode Node="node" OnClick="OnClick"/>
+            }
+        </ul>
+    }
+</li>
+
+@code {
+    [Parameter] 
+    public EventCallback<string> OnClick { get; set; }
+
+    [Parameter]
+    public TheoremNode Node { get; set; }
+
+}

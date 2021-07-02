@@ -1,19 +1,18 @@
-﻿@page "/wordproc"
+﻿@page "/sentenceproc"
 @implements IDisposable
 
-<h1>Szóelemzés</h1>
+<h1>Mondatelemzés</h1>
 
-<p><i>Morfológiai elemző modul</i></p>
+<p><i>Szintaktikai elemző modul</i></p>
 
-<p class="my-2">A <b>morfológiai elemző</b> modul egy vagy több szót vár bemenetként. Csak azokat a szavakat képes helyesen felbontani, amelyek megfelelnek a helyesírási szabályoknak. Minden szóra elvégzi az elemzést és visszatéríti a lehetséges megoldásokat. A legtöbb esetben egynél több felbontási változatot talál, amelyekből a felhasználó kiválaszthatja a szerinte legmegfelelőbbnek vélt megoldást. Ehhez segítséget nyújt a rendelkezésre álló elméleti anyag.</p>
-<p>A megoldások tartalmazzák a szótövet, valamint az ehhez kapcsolódó toldalékokat, prefixumokat és szuffixumokat. Egy megoldás kiválasztásával további információk jelennek meg a szótőről (szófaj, alakváltozat vagy szótári alak) és a toldalékokról (típus, rövid leírás).</p>
+<p class="my-2">A <b>szintaktikai elemző</b> modul még nincs kész.</p>
 
 <hr />
 
 <div class="row">
     <label class="col-1 col-form-label font-weight-bold">Bemenet:</label>
     <div class="col-5">
-        <input type="text" class="form-control" @bind="Input" @bind:event="oninput" @onkeydown="CheckIfEnterPressed" placeholder="Egy vagy több szó" />
+        <input type="text" class="form-control" @bind="Input" @bind:event="oninput" @onkeydown="CheckIfEnterPressed" placeholder="Egy vagy több mondat" />
     </div>
     <div class="col-1">
         <button class="btn btn-primary" @onclick="async (e) => await OnAnalyzeClicked()" disabled="@(AnalyzeInProgress || DataIsLoading)">Elemzés</button>
@@ -31,23 +30,24 @@
     <p class="mt-2 font-weight-bold">Elemzés eredménye:</p>
 </div>
 
-@foreach (var result in Result)
+@if (Result != null)
 {
-    <hr />
-    <div class="row">
-        <div class="col-2">
-            @result.OriginalWord
+    @foreach (var result in Result.WordResults)
+    {
+        <hr />
+        <div class="row">
+            <div class="col-2">
+                @result.OriginalWord
+            </div>
+            <div class="col">
+                @foreach (var variant in result.Variants)
+                {
+                    <MorphVariant Variant="@variant" />
+                }
+            </div>
         </div>
-        <div class="col">
-            @foreach (var variant in result.Variants)
-            {
-                <MorphVariant Variant="@variant"/>
-            }
-        </div>
-    </div>
+    }
 }
-
-<MorphTest State="@DataIsLoading"/>
 
 @code {
     private bool AnalyzeInProgress = false;
@@ -57,8 +57,8 @@
     private string State = "";
     private string InfoMessage = "";
 
-    private List<MAResult> Result = new List<MAResult>();
-    private MorphologicalAnalyzer Analyzer;
+    private SAResult Result = null;
+    private SyntacticAnalyzer Analyzer;
 
     protected override async Task OnInitializedAsync()
     {
@@ -68,7 +68,7 @@
             await Task.Delay(500);
         await DatabaseInitializer.InitializeAsync();
         DataIsLoading = false;
-        Analyzer = new MorphologicalAnalyzer();
+        Analyzer = new SyntacticAnalyzer();
         State = "Készen áll az elemzésre!";
         InfoMessage = State;
     }
@@ -76,7 +76,7 @@
     public void Dispose()
     {
         DatabaseContext.Dispose();
-        Console.WriteLine("(wordproc) Database disposed!");
+        Console.WriteLine("(sentenceproc) Database disposed!");
     }
 
     private async Task CheckIfEnterPressed(KeyboardEventArgs e)
@@ -95,13 +95,11 @@
             return;
         }
 
-        Result = new List<MAResult>();
-
         InfoMessage = "Az elemzés folyamatban van!";
         await Task.Run(() =>
         {
             AnalyzeInProgress = true;
-            Result = Analyzer.AnalyzeText(Input);
+            Result = Analyzer.AnalyzeSentence(Input);
             AnalyzeInProgress = false;
         });
         InfoMessage = State;
@@ -110,7 +108,7 @@
     private void OnResetClicked()
     {
         Input = "";
-        Result = new List<MAResult>();
+        Result = null;
         AnalyzeInProgress = false;
         InfoMessage = State;
     }

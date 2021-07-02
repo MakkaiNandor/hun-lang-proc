@@ -1,0 +1,143 @@
+{
+    "name": "Theory",
+    "text": null,
+    "items": [
+        {
+            "name": "Morfológia (Szóalaktan)",
+            "text": "<p>A szóalaktanban a szavak szerkezetét, belső felépítését és létrehozásuk szabályait vizsgáljuk.</p>",
+            "items": [
+                {
+                    "name": "Alaktani fogalmak",
+                    "text": null,
+                    "items": [
+                        {
+                            "name": "Szóelem (morféma)",
+                            "text": "<p class='indent'>Az alaktan központi eleme a <b>szóelem</b>. A morféma a legkisebb nyelvi jel. Ez azt jelenti, hogy a morféma a legkisebb nyelvi egység, amely meghatározott formával és ehhez kapcsolódó jelentéssel rendelkezik, s további hozzá hasonló, meghatározott alakú és jelentésű kisebb egységekre nem bontható. Az <i>emberség</i> szó két szóeleme az <i>ember-</i> és a <i>-ség</i>, melyeknek van jelentésük, de alkotóelemeinek (a fonémáknak) már nincs.</p>",
+                            "items": []
+                        },
+                        {
+                            "name": "A szóelemek osztályozása",
+                            "text": "<p>A morfémáknak két fő típusuk van: <b>tőmorfémák</b> és <b>toldalékok</b>.</p><p>A tőmorféma a szó jelentésének és alakjának központi eleme, alapja. A tőhöz kapcsolódnak a toldalékok.<p></p>tő + toldalékok</p><p><i>bot-</i> + <i>-om, -ok, -é, -ra, -tal</i></p><p><i>ráz-</i> + <i>-om, -ott, -ná, -hat, -at</i></p><p>A tőmorféma a szóalak kötelező eleme: minden szónak van töve. Vannak olyan szavak, amelyekben csupán tőmorféma található: <i>szép</i>, <i>mag</i>, <i>jön</i>. Vannak olyanok, melyekben a tő mellett toldalék(ok) is van(nak): <i>játsz-</i> (tő) + <i>-ik</i> (toldalék), <i>kiált-</i> (tő) + <i>-vány-ok-ban</i> (toldalékok). A <b>toldalékok</b> a tőhöz kapcsolódó, többnyire grammatikai jelentést hordozó szóelemek. Fajtájuk szerint megkülönböztetünk <b>képzőket</b>, például: <i>gomb-os</i>, <b>jeleket</b>, például: <i>vidám-abb</i>, és <b>ragokat</b>, például: <i>átugor-ja</i>.</p>",
+                            "items": []
+                        },
+                        {
+                            "name": "A szóelemek jelentése",
+                            "text": "<p class='indent'>Minden szóelemnek van jelentése. A szóelemeknek vagy tartalmas, fogalmi jelentésük van, például: <i>kenyér-</i>, <i>halad-</i>, <i>betű-</i>, <i>húsz-</i>, <i>otthon-</i>, vagy nyelvtani viszonyjelentésük, például: <i>-k</i> (pl. a <i>hajók</i> szóban), <i>-ban</i> (pl. a <i>fiókban</i> szóban).</p><p>A tövek jelentése legtöbbször tartalmas, ezért ezek a fogalomjelölő szavak központi elemei. A viszonyjelentésű szavak töve természetesen nem tartalmas, hanem viszonyjelentésű tő, például: <i>össze</i>, <i>sőt</i>, <i>ha</i>, <i>bár</i>, <i>sem</i>.</p><p>A fogalmi jelentésű szótövekhez is kapcsolódik nyelvtani jelentés. A szótövek ugyanis meghatározott szófajhoz kötődnek, és meghatározott toldalékokkal kapcsolódnak össze.</p><p>A toldalékok többségének nyelvtani jelentése van. Például a <i>pár-ok</i> (itt a jelnek számjelentése van), <i>pár-os</i> (itt a képző szófajt változtat, főnévből melléknevet képez, emellett tulajdonságjelentést kapcsol a tőhöz), <i>pár-ban</i> (itt a viszonyragnak határozói jelentése van). Vannak azonban olyan toldalékok is, melyek a nyelvtani jelentésen kívül fogalmi jelentést vagy legalábbis tartalmas jelentéselemet hordoznak. Például, a <i>nadrágocska</i> szó <i>-ocska</i> képzője azt jelenti: <i>kicsi</i>.</p>",
+                            "items": []
+                        },
+                        {
+                            "name": "Egyalakú és többalakú szóelemek",
+                            "text": "<p class='indent'>A szóvá kapcsolódó szóelemek hatással lehetnek egymás szóalakjára. Különféle toldalékok előtt különféle tőváltozatok jelenhetnek meg (pl. <i>erdő-t</i>, <i>erde-i</i>), és a különféle tövek után a toldalékok is más-más formában fordulhatnak elő (pl. <i>háló-vá</i>, <i>fácán-ná</i>, <i>újság-gá</i>; <i>hajó-k</i>, <i>száj-ak</i>, <i>könyv-ek</i>, <i>asztal-ok</i>, <i>rög-ök</i>).</p><p>Ha a tő minden toldalék előtt azonos alakú marad, vagy ha a toldalék bármilyen tő után ugyanolyan alakú, akkor a szóelemet <b>egyalakú</b>, <b>egyváltozatú</b> szóelemnek nevezzük.</p><p>A tövek között sok egyváltozatú szóelem van. A toldalékok között kevesebb az egyalakú.</p><p>Ha a tövek vagy a toldalékok azonos jelentésben többféle változatban is léteznek, akkor <b>többalakú</b> szóelemeknek nevezzük őket. A többalakú szóelemek egyes alakjai az <b>alakváltozatok</b>. Többalakú például a <i>kotor</i> szó töve, mert a <i>kotor-</i> (<i>kotor-ja</i>, <i>kotor-t</i>, <i>kotor-ni</i>) alakon kívül <i>kotr-</i> (<i>kotr-om</i>, <i>kotr-od</i>, <i>kotr-ó</i>) alakváltozata is létezik. A tövek között kevesebb a többalakú, mint az egyalakú.</p><p>A toldalékokra a többalakúság jellemző, vagyis gyakoribb a többalakú toldalék, mint az egyalakú. Többalakú toldalék például a <i>-ság</i>/<i>-ség</i>, <i>-hoz</i>/<i>-hez</i>/<i>-höz</i>.</p>",
+                            "items": []
+                        },
+                        {
+                            "name": "Az előhangzó",
+                            "text": "<p class='indent'>Előhangzónak a tő és a toldalék között megjelenő, rendszerint alsó vagy középső nyelvállású magánhangzót nevezzük. Az előhangzót a toldalék részének, első elemének tekintjük, nem tagoljuk külön a toldaléktól. Az előhangzónak nincs jelentése, a toldalék része, tehát nem különbözik a többi fonémától. Feladata az, hogy kiemelje, testesebbé tegye a toldalékot, valamint, hogy megkönnyítse a toldalékos szó kiejtését. Például, a <i>csónak</i> szó tárgyragos alakja nem <i>*csónakt</i>, hanem <i>csónakot</i>.</p><p>Van olyan eset is, amikor az előhangzó minősége attól függ, hogy milyen az őt tartalmazó szó szófaja. Például, <i>felelős</i> szó más előhangzóval kapja a toldalékot, ha főnév: <i>felelősök</i>, és más előhangzó szerepel benne, ha melléknév: <i>felelősek</i>.</p><p>Az előhangzós toldalékokat alakváltozatoknak tartjuk, például a <i>-gat</i>/<i>-get</i> gyakorító képző alakváltozata az <i>-ogat</i>/<i>-eget</i>/<i>-öget</i>.</p>",
+                            "items": []
+                        },
+                        {
+                            "name": "A ragozási sorog (paradigmák)",
+                            "text": "<p class='indent'>Egyes szófajok toldalékai (jelei és ragjai) rendszert alkotnak. Rendszere van például az igékben a szám- és személyjelölésnek, például: én <i>beszél-ek</i>, te <i>beszél-sz</i>, ő <i>beszél</i>, mi <i>beszél-ünk</i>, ti <i>beszél-tek</i>, ők <i>beszél-nek</i>. A toldalékolási rendszereket <b>ragozási sorok</b>nak, más néven <b>paradigmák</b>nak nevezzük. A ragozási sorok tagjai egymástól jól megkülönböztethető, egymással szembeállítható szóalakok.</p>",
+                            "items": []
+                        },
+                        {
+                            "name": "A zéró morféma",
+                            "text": "<p class='indent'>A ragozási sorokat, amint már szóltunk róla, egymástól jól megkülönböztethető szóalakok alkotják. Például az <i>énekelsz</i> egyes szám 2. személyű ige megkülönböztethető az <i>énekelünk</i> többes szám 1. személyű igétől, hiszen toldalékaik különböznek.</p><p>A toldalék nélküli szavak is megkülönböztethetők a toldalékos szavaktól (lásd <i>énekel</i> – <i>énekeltek</i>), ezért a ragozási sorokban nem szükséges minden szónak toldalékosnak lennie. A toldalék nélküli szavak is éppen olyan fontosak, mint a toldalékosak, mert ezek is – éppen toldaléktalanságuk által – tartalmaznak nyelvtani viszonyjelentéseket. Az <i>énekel</i> szóról azért tudjuk, hogy egyes szám 3. személyű, mert más számú és személyű igealakokkal szemben nem visel toldalékot.</p><p>A toldalék hiánya tehát ugyanúgy jelöltségnek számít a ragozási sorban, mint a megléte. Ezért a toldalék nélküli szavakat is jelöltnek tartjuk, és azt mondjuk róluk, hogy bennük a toldalék zéró, azaz a zéró szóelem (zéró morféma) hordozza a nyelvtani jelentést.</p><p>A <b>zéró morféma</b> hangalak nélküli toldalék, melynek nyelvtani jelentése van, és egy ragozási sor részét alkotja.</p>",
+                            "items": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Tövek",
+                    "text": "<p class='indent'>A szótövek lehetnek <b>egyalakúak</b> vagy <b>többalakúak</b>. <b>Egyalakú</b> (vagy egyváltozatú) tövekről egyrészt akkor beszélünk, ha a tő eleve változtathatatlan, nem toldalékolható (pl. <i>meg-</i> igekötő; <i>nos</i>, <i>jaj!</i> mondatszó), másrészt ha a tő a különféle toldalékok előtt változatlan marad, például: <i>asztal</i> + <i>∅</i>, <i>asztal</i> + <i>t</i>, <i>asztal</i> + <i>ban</i>, <i>asztal</i> + <i>ok</i>.</p><p>A magyar tövek nagy százaléka egyváltozatú.</p><p>A <b>többalakú</b> (vagy többváltozatú) tövek jellemzője az, hogy bizonyos toldalékok előtt, toldaléktípustól függően, alakváltozatokat mutatnak fel (pl. <i>alsz-ik</i>, <i>alud-ni</i>, <i>alv-ó</i>, <i>al-tat</i>).</p>",
+                    "items": []
+                },
+                {
+                    "name": "Toldalékok",
+                    "text": "<p class='indent'>A toldalékoknak a tőhöz viszonyított helyzetük alapján a magyarban két fő típusuk van: a <b>szuffixum</b> és a <b>prefixum</b>.</p><p>a) <b>Szuffixum</b>: olyan toldalék, amely a tő után – közvetlenül vagy közvetve, azaz más szuffixumok követve – helyezkedik el. A magyar nyelvre tipikusan a tő utáni toldalékolás a jellemző. Toldalékaink túlnyomó többsége tehát szuffixum, például: <i>láng-ja</i>, <i>áll-ít-ás-ról</i>.</p><p>b) <b>Prefixum</b>: olyan toldalék, amely a tő előtt helyezkedik el. A magyarban egyetlen ilyen létezik: a felsőfok, illetve az ugyanehhez a toldaléktípushoz tartozó túlzófok jele, a <i>leg-</i> és <i>legesleg-</i>; például: <i>leg-csípősebb</i>, <i>legesleg-elöl</i>.</p><p>Háromféle toldalékmorfémát különböztetünk meg: <b>képzőt</b>, <b>jelet</b> és <b>ragot</b>.</p><p>A toldalékmorfémákat nem könnyű mereven elhatárolni egymástól. Vannak képző szerű jeleink (pl. középfokjel, mert állhat utána képző) és képzőszerű ragjaink (<i>-lag</i>/<i>-leg</i>, mert állhat utánuk képző). Vannak jelszerű képzőink (pl. a főnévi igenév képzője, mert jel nem, csak rag állhat utána) és ragszerű képzőink (pl. a határozói igenév képzője, mert utána semmiféle toldalék nem következhet).</p>",
+                    "items": [
+                        {
+                            "name": "A képző (derivációs morféma)",
+                            "text": "<p><b>Új szót (lexémát) hoz létre</b>.</p><ul><li>Az adott szófaji kategória nem minden eleméhez, tehát nem minden igéhez, főnévhez stb. tehető hozzá.</li><li>Nem kötelező elem, hiánya miatt nem veszünk fel zérómorfémát.</li><li>Legelsőbb helyzetű, a tő után helyezkedik el.</li><li>Más toldalékmorféma, tehát képző, jel, rag állhat utána.</li><li>Nem akadályozza meg a további szófajváltást.</li><li>A képző megváltoztatja a szó bővítési lehetőségeit, azaz a szintaktikai környezetet.</li><li>Több szóosztály töveihez is járulhat.</li></ul>",
+                            "items": []
+                        },
+                        {
+                            "name": "Jelek és ragok (inflexiós morfémák)",
+                            "text": "<p class='indent'><b>Grammatikai, nyelvtani jelentést hordoznak</b>. Többé-kevésbé zárt rendszert alkotnak, ragozási sorok részei.</p><ul><li>A szófajkategória legtöbb eleméhez hozzátehető.</li><li>Megjelenésük jellemző az adott szófajra, tehát vagy csak igéhez (időjelek, módjelek, igei személyragok), vagy csak névszóhoz (többes szám jele, határozóragok) járulhatnak.</li><li>Nem változtatják meg a szó szófaját.</li><li>Nem engedik meg a további szófajváltást.</li><li>Nem változtatják meg a szó grammatikai környezetét, azaz nem változtatják meg a szó bővítési lehetőségeit.</li><li>Többféle nyelvtani jelentésük lehet egyszerre, például az igei személyragok egyszerre jelölhetnek számot, személy, valamint utalnak a tárgy határozottságára vagy határozatlanságára.</li></ul>",
+                            "items": [
+                                {
+                                    "name": "A jel",
+                                    "text": "<ul><li>Belső helyet foglal el (tő vagy képző után következik).</li><li>Megtűr maga mellett más jeleket (de szófajonként meghatározott módon).</li><li>Új ragozási sort indít.</li><li>Lehet kötelező elem, de lehet tetszőleges is.</li></ul>",
+                                    "items": []
+                                },
+                                {
+                                    "name": "A rag",
+                                    "text": "<ul><li>Szóalakzáró elem. Más toldalék tehát nem követheti.</li><li>Csak egy lehet belőle.</li><li>Képzőtlen, képzős és jeles szóhoz is járulhat.</li><li>Kötelező elem az igénél és a főnévnél is. Hiánya esetén ∅ morfémát veszünk fel.</li><li>Morfológiailag jelöl szintaktikai viszonyokat.</li></ul>",
+                                    "items": []
+                                }
+                            ]
+                        },
+                        {
+                            "name": "A toldalékváltozatok",
+                            "text": "<p class='indent'>A magyar toldalékok lehetnek egy- vagy többalakúak. Szemben a tövekkel toldalékaink nagy számban többalakúak.</p><p>a) Egyalakú: <i>-ig</i>, <i>-ért</i>, <i>-ként</i>, <i>-é</i>, például: <i>ház-ig</i>, <i>kapá-ért</i>, <i>tanár-ként</i>, <i>apám-é</i>.</p><p>b) Többalakúak: <i>-ban/-ben</i>; <i>-tól/-től</i>, <i>-hoz/-hez/-höz</i>, <i>-na/-ne/-ná/-né</i>, <i>-t/-tt</i>, stb.</p>",
+                            "items": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Morfémaszerkezetek",
+                    "text": null,
+                    "items": [
+                        {
+                            "name": "Sorrendi szabályok",
+                            "text": "<p class='indent'>A szavakban a szóelemek kapcsolódási sorrendje szorosan kötött. Az általános szabály a magyarban: (prefixum) + tő + szuffixum(ok). Ha toldalék fordul elő egy szóban, általános szabály, hogy a képzők közelebb helyezkednek el a tőhöz, mint a jelek, ragok, azaz a sorrend: <b>képző</b> + <b>jel</b> + <b>rag</b>.</p><p>Az azonos szóelemek társulási lehetőségei a következők:</p><ul><li>Két vagy több tő előfordulhat egy szóalakban – ezek az összetett szavak (pl. <i>ablak-üveg</i>, <i>gép-kocsi-vezető</i>)</li><li>Két vagy több képző is megjelenhet egyetlen szóalakban.</li><li>Két vagy több jel megjelenhet egy névszói alakban, az ige esetében azonban csak egyetlen jel testes (a másik zéró morfémás).</li><li>A ragok nyilvánvalóan sohasem társulnak egymással.</li></ul>",
+                            "items": []
+                        },
+                        {
+                            "name": "A szabályostól eltérő esetek",
+                            "text": "<p class='indent'>A morfémák általános kapcsolódási szabályától csak esetenként találunk eltéréseket.</p><p>a) <b>A jel megelőzi a képzőt</b>. A leggyakoribb példa erre a középfok jele, mely bizonyos képzőket 'megtűr' maga mögött: <i>kis-ebb-ít</i>, <i>nagy-obb-odik</i>. Szorványosabban fordul elő a <i>-beli</i> fiatal képző előtt az általános többesjel: <i>századokbeli</i>, illetve a birtokos személyjel: <i>korombeli</i>.</p><p>b) <b>A rag megelőzi a képzőt</b>. Ez úgynevezett képző szerű ragok esetében fordul elő, például: <i>-szor/-szer/-ször</i> vagy <i>-nként</i>. Általában az <i>-i</i> és az <i>-s</i> képzőmorfémákat előzi meg: <i>hat-szor-os</i>, <i>het-enként-i</i>.</p>",
+                            "items": []
+                        },
+                        {
+                            "name": "Az abszolút és a relatív tő",
+                            "text": "<p class='indent'>Az <b>abszolút tő</b> nem tagolható további elemekre, az abszolút tő tehát a szónak az az eleme, amelyet már minden toldaléktól megfosztottunk. Például a <i>jegesedik</i> szó abszolút töve a <i>jeg-</i>, a <i>húzogathatjátok</i> abszolút töve a <i>húz-</i>.</p><p class='indent'>A <b>relatív tő</b> az a tő, amely még tagolható, amelyről még leválasztható toldalék. Nem egyetlen tőmorféma tehát, mégis tőnek nevezhető abban az értelemben, hogy kapcsolódik vagy kapcsolható hozzá toldalék. Például az <i>üvegezésekhez</i> szóalak relatív szótövei: <i>üvegezések-</i>, <i>üvegezés-</i>, <i>üvegez-</i>.A szóalak abszolút töve pedig egyetlen morféma az <i>üveg-</i>.</p>",
+                            "items": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Szintaktika",
+            "text": "<p class='indent'>A <b>mondattan (szintaktika)</b> a mondat típusait, szerkezetét, belső felépítését vizsgálja, így tárgyalja egyrészt a mondatfajtákat, a mondatok szerkezeti típusait, a mondatrészek és tagmondatok fajtáit, másrészt foglalkozik a szavak és a szintagmák mondattá való összekapcsolódásának szabályszerűségeivel.</p><p>A mondat egy vagy több szóból áll, zárt intonációs szerkezet jellemzi. A legnagyobb nyelvi egység, amely a nyelv szabályai, mintái szerint elemekből megszerkeszthető. Egyben a legkisebb olyan nyelvi egység, amely egy adott beszédhelyzetben a kommunikáció egységévé válhat.</p>",
+            "items": [
+                {
+                    "name": "A mondatok osztályozása szerkezetük szerint",
+                    "text": "<p>A mondatokat szerkezetük alapján több csoportba sorolhatjuk:</p><p class='indent'><b>Egyszerű</b> a mondat, ha egyetlen tagmondatból áll, azaz egyetlen alany-állítmányi szerkezetet vagy tagolatlan egységet tartalmaz, és <b>összetett</b>, ha több tagmondatból áll.</p><p>Az egyszerű mondat <b>tagolt</b>, ha van benne állítmány (pl. <i>A nyúl fut</i>; <i>Havazik</i>), és <b>tagolatlan</b> akkor, ha nincs, és a mondat nem is igényel állítmánnyal való kiegészítést (pl. <i>Szia!</i>; <i>Teringettét!</i>). A tagolatlan mondat lehet <b>szerkesztetlen</b> (pl. <i>Puff!</i>), ha egyelten szóból áll, és <b>szerkesztett</b> (pl. <i>Azt a hét meg a nyolcát!</i>), ha tartalmaz szintagmát, állítmánnyal azonban ennek ellenére sem egészíthető ki.</p><p>A <b>tagolt</b> mondat tovább bontható abból a szempontból, hogy minimális szerkezetű-e vagy bővített. <b>Minimális szerkezetű</b> a mondat akkor, ha csak állítmányt és a hozzá tartozó kötelező vonzatokat tartalmazza. Például: <i>Megmosta Peti a fogát?</i> A mondat minden mondatrésze kötelező elem, kihagyásával sérülne a mondat jelentése és/vagy szintaktikai felépítése.</p><p><b>Bővített szerkezetű</b> az a mondat, mely a minimális szerkezeten kívül még más bővítményeket: fakultatív vonzatot vagy szabad bővítményt tartalmaz. Például az <i>Alaposan megmosta este Peti a fogát?</i> mondat a minimális szerkezeten kívül két szabad bővítményt tartalmaz: <i>alaposan</i>, <i>este</i>.</p><p>A minimális és a bővített mondatokat egyaránt csoportosíthatjuk aszerint, hogy szerkezetileg teljesek vagy hiányosak-e. <b>Teljes szerkezetűek</b> azok a mondatok, melyek minden kötelező mondatrészt, tehát az állítmányt és a kötelező vonzatokat is tartalmazzák. <b>Hiányos szerkezetűek</b> azok a mondatok, melyekből egy vagy több kötelező mondatrész, tehát az állítmány vagy a kötelező bővítmények hiányoznak.</p><p class='indent'>Az <b>összetett mondatok</b> csoportosítása a tagmondatok grammatikai-jelentéstani viszonya alapján történik, így beszélünk alárendelő és mellérendelő összetett mondatokról.</p><p>Az <b>alárendelt</b> mondat jellemzője, hogy a tagmondatai nem azonos szerkezeti szinten helyezkednek el, egymáshoz képest  fő- és mellékmondatok (a mellékmondatnak is lehet alárendelt tagmondata).</p><p>A <b>mellérendelő</b> mondatokban a tagmondatok kapcsolata alapvetően logikai viszony. A viszony fajtáját a mellérendelő kötőszó jelölheti, illetve teheti egyértelművé. A kötőszó hiányában a tagmondatok viszonya nem mindig állapítható meg egyértelműen.</p>",
+                    "items": []
+                },
+                {
+                    "name": "A mondatfajták",
+                    "text": "<p class='indent'>A mondatok fogalmi-tartalmi jelentésükön kívül a beszélő szándékát is kifejezik. A mondatokkal ugyanis kérdezhetünk, parancsolhatunk, kérhetünk, közölhetünk stb. A beszélő szándékának kifejezését különféle szavak (óhajtó, kérdő és fokozó partikulák, kérdő névmások, indulatszók), igei módjelek, valamit az intonáció segíti elő.</p><p>Öt mondatfajtát különböztetünk meg: a <b>kijelentő</b>, <b>óhajtó</b>, <b>felszólító</b>, <b>kérdő</b> és <b>felkiáltó</b> mondatfajtát.</p>",
+                    "items": []
+                },
+                {
+                    "name": "A mondatrészek",
+                    "text": null,
+                    "items": [
+                        {
+                            "name": "Az állítmány",
+                            "text": "<p class='indent'>Az állítmány a tagolt mondat központi szerepű, fő mondatrésze. Az egyetlen olyan mondatrész, amely önállóan, más mondatrészek részvétele nélkül képes teljes (nem hiányos) szerkezetű mondatot alkotni (Pl. <i>Jössz?</i>). Az állítmány szervezi meg a tagol mondat szerkezetét: jelentésétől függ a mondat felépítése. Az állítmány a legszélesebben bővíthető mondatrész; kötelező bővítményeivel együtt a mondat vázát alkotja.</p><h5>Az állítmány szerepű szavak szófaja</h5><p>Állítmány szerepében leggyakrabban <b>ige</b> áll (Pl. <i>Szállnak a fecskék</i>). Az ige az egyetlen szófaj, mely önmagában (segédszó hozzáadása nélkül) lehet állítmány.</p><p>Állítmány szerepében <b>névszó</b> (főnév, melléknév, főnévi és melléknévi névmás) is állhat.</p><p>Az állítmánynak időt, módot, számot és személyt kell kifejeznie. Ezeket a nyelvtani jelentéseket az igék tartalmazzák, ezért nem kell az igékhez segédelemeket hozzátennünk, hogy állítmányi szerepbe kerülhessenek. A főnév, a melléknév, a névmások és a melléknévi igenév azonban sem az idő, sem a mód, sem a személy kifejezésére nem képesek. Ahhoz, hogy a névszókkal alkotott állítmányok is kifejezhessék az időt, a módot, a számot és a személyt, segédigékkel kell kiegészülniük, melyek az állítmány nyelvtani jelentéseit tartalmazzák. Például az <i>okos voltál</i> állítmány tartalmi jelentését az <i>okos</i> melléknév fejezi kis; a <i>voltál</i> segédige pedig annak a jelölője, hogy az állítmány múlt idejű, kijelentő módú, egyes szám 2. személyű.</p><p>Ha tehát az állítmány fogalmi jelentését nem az ige, hanem valamely névszó hordozza, az állítmány kötelezően kiegészül segédigével, például: <i>Légy figyelmesebb</i>. A <i>van</i> segédige a jelen idejű, kijelentő módú, egyes és többes szám harmadik személyű állítmányban nem jelenik meg (Pl. <i>András pincér</i>). A segédige hiányából azonban pontosan kikövetkeztethetők az állítmány nyelvtani tulajdonságai; a segédige hiánya tehát a zéró morféma szerepére emlékeztet. Ezért az ilyen, hiányzó segédigét zéró segédigének nevezzük.</p><p>Szófajuk szerint az állítmányoknak tehát két csoportjuk van: az <b>igei állítmányok</b> és az <b>névszói-igei állítmányok</b> csoportja. A névszói-igei állítmányok névszóból és segédigéből állnak. Névszói-igei állítmánynak nevezzük azokat az állítmányokat is, melyekből a segédige hiányzik.</p><h5>Az állítmány szerkezeti felépítése</h5><p>Az állítmányban szereplő szavak száma, minősége, valamint (több tartalmas szó esetén) kapcsolata alapján megkülönböztetjük az <b>egyszerű</b>, <b>összetett</b>, a <b>halmozott</b> és <b>kettős</b> állítmányokat.</p><ul><li>Az <b>egyszerű állítmány</b> mindig ige, és fordítva: az ige mindig egyszerű állítmány.</li><li><b>Összetett állítmánynak</b> a névszói-igei állítmány nevezzük, melyben a fogalmi jelentést a névszó, az igei nyelvtani jelentést a segédige hordozza.</li><li>A <b>halmozott állítmány</b> két vagy több egymásnak mellérendelt állítmány, melyeket egyetlen mondatrésznek tekintünk.</li><li>A <b>kettős állítmány</b> egyik tagja általában a kell ige valamely szóalakja, a másik pedig egy felszólító módú ragozott ige.</li></ul><h5>Az állítmány és alany az egyeztetése</h5><p>Az állítmány és az alany közötti egyeztetés a két mondatrész kölcsönös függését jelzi. Az állítmány és az alany között számbeli és személybeli egyeztetés van. Az egyeztetést az alany irányítja: az állítmány szóalakját az alany számához és személyéhez igazítjuk. Az igei állítmányt, valamint az összetett állítmány segédigéjét számban és személyben, az összetett állítmány segédigéjét pedig számban egyeztetjük az alany számával és személyével.</p><p>Például: <i>én dolgozom</i>, <i>te dolgoztál</i>, <i>ő alapos∅</i>, <i>ők alaposak∅</i>, <i>mi rokonok vagyunk</i>, <i>ti rokonok vagytok</i>.</p><h5>Az állítmány bővítményei</h5><p>Az állítmány bővítményei az <b>alany</b>, a <b>tárgy</b>, a <b>határozó</b> és a <b>jelző</b> is.</p><ul><li><b>Alany</b> csaknem minden állítmányhoz tartozik, például: <i>Nyikorog az ajtó</i>. Az úgynevezett alanytalan mondatokban azonban az állítmányhoz nem kapcsolódik alany: <i>Pirkad</i>; <i>Hajnalodik</i>.</li><li><b>Tárgya</b> kizárólag az igei állítmánynak lehet, például: <i>Elmondjam a viccet?</i></li><li><b>Határozót</b> az igei és a névszói-igei állítmány is kaphat, például: <i>Nem aludtam a zaj miatt</i>; <i>Ez a hely nem alkalmas a rakodásra</i>.</li><li><b>Jelzőt</b> az összetett állítmány névszói része kaphat, például: <i>A ló négylábú állat</i>.</li></ul>",
+                            "items": []
+                        },
+                        {
+                            "name": "Az alany",
+                            "text": "<p class='indent'>Az alany elsősorban a tagolt mondat állítmányának kötött bővítménye, azaz vonzata. Legtöbbször az a mondatrész, amelyre az állítás vonatkozik. Az alanyt nem lehet pusztán a jelentése alapján meghatározni, mert többfajta jelentésű szó kerülhet alanyi szerepbe.</p><h5>Az alany szófaja</h5><p>Az alany csak főnév vagy főnévi természetű szó (főnévi névmás, főnévi igenév) lehet. Más szófajú szó csak akkor kerülhet alanyi szerepbe, ha főnévvé válik.</p><h5>Az alany alakja</h5><p>A főnevek, a főnévi névmások és a főnévvé vált egyéb szófajok alanyi szerepben <b>alanyesetben</b> állnak. Az alanyeset jelölője a zéró viszonyrag, de úgy is fogalmazhatunk, hogy az alanyi szerepben álló főnevek és főnévi névmások nem kapnak viszonyragot. Az alanyt személy és szám szerint egyeztetjük az állítmánnyal.</p><p>Az alany <b>főnévi igenév</b> is lehet a <i>kell</i>, <i>lehet</i>, <i>muszáj</i>, <i>szabad</i>, <i>sikerül</i>, <i>illik</i>, <i>jólesik</i> stb. szavak, valamint a <i>jó</i>, <i>kellemes</i>, <i>nehéz</i>, <i>fontos</i>, <i>helytelen</i> stb. értékelő jelentésű állítmányok mellett. Például: Neked most fontos lenne pihenned. A főnévi igenév semmilyen viszonyragot nem kaphat, ezért a főnévi igenév alanyi szerepét még az alanyi szerepét még a ∅ morféma sem jelöli. Az alanyi szerepű főnévi igenév személyragokat kaphat. Az igenév személyragjai a cselekvőt jelölik. A főnévi igenév személyragozása nem kötelező.</p><h5>Az alany szerkezeti felépítése</h5><p>Szerkezet szempontjából az alany lehet <b>egyszerű</b>, <b>összetett</b> vagy <b>halmozott</b>.</p><ul><li>Az <b>egyszerű</b> alany egyetlen főnevet, főnévi névmás vagy főnévi igenevet tartalmaz. Például: <i>Sivít a mentőautó</i>.</li><li>Az <b>összetett</b> alany névszói és segédigenévi részből áll. Felépítése az összetett állítmány szerkezetéhez hasonlít.</li><li>A <b>halmozott</b> alanyok egy állítmányhoz tartoznak, és egymással mellérendelő viszonyban állnak.</li></ul>",
+                            "items": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

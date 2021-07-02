@@ -1,0 +1,133 @@
+﻿<div class="my-2">
+    <div>
+        <span class="square-icon oi @Icon" @onclick="ToggleCollapse"></span>&nbsp;
+        <span>
+            @foreach (var prefix in Variant.Prefixes)
+            {
+                <span>
+                    <span class="@GetColor(prefix.Info.Type)">
+                        <ToolTip Text="@GetName(prefix.Info.Type)">@prefix.OriginalText</ToolTip>
+                    </span>
+                    [@prefix.Info.Code]&nbsp;+&nbsp;
+                </span>
+            }
+            <span>
+                <span class="text-dark font-weight-bold"><ToolTip Text="@GetWordTypeName(Variant.WordType)">@Variant.OriginalText</ToolTip></span>
+                [@Variant.WordType]@(Variant.OriginalText != Variant.CurrentText ? $"={Variant.CurrentText}" : null)
+            </span>
+            @foreach (var suffix in Variant.Suffixes)
+            {
+                <span>
+                    &nbsp;+&nbsp;
+                    <span class="@GetColor(suffix.Info.Type)"><ToolTip Text="@GetName(suffix.Info.Type)">@suffix.OriginalText</ToolTip></span>
+                    [@suffix.Info.Code]
+                </span>
+            }
+            </span>
+    </div>
+
+    @if (!Collapsed)
+    {
+        <div class="mt-1">
+            @foreach (var prefix in Variant.Prefixes)
+            {
+                <div>
+                    <span class="@GetColor(prefix.Info.Type)">@prefix.OriginalText</span> [@prefix.Info.Code]: @prefix.Info.Description
+                    @if (prefix.OriginalText != prefix.Text)
+                    {
+                        <span>(előhangzós <i>@prefix.Text</i>)</span>
+                    }
+                </div>
+            }
+            <div>
+                <span class="text-dark font-weight-bold">@Variant.OriginalText</span> [@Variant.WordType] (<i>szótő</i>): 
+                @if (Variant.OriginalText != Variant.CurrentText)
+                {
+                    <span>alakváltozat, a szótári alakja: <i>@Variant.CurrentText</i>, </span>
+                }
+                szófaja @GetWordTypeName(Variant.WordType)
+            </div>
+            @foreach (var suffix in Variant.Suffixes)
+            {
+            <div>
+                <span class="@GetColor(suffix.Info.Type)">@suffix.OriginalText</span> [@suffix.Info.Code]: @suffix.Info.Description
+                @if (suffix.OriginalText.Length > suffix.Text.Length)
+                {
+                    <span>(előhangzós <i>@suffix.Text</i>)</span>
+                }
+                else if (suffix.OriginalText != suffix.Text)
+                {
+                    <span>(hasonult <i>@suffix.Text</i>)</span>
+                }
+            </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public MAVariant Variant { get; set; }
+
+    private bool Collapsed = true;
+    private string Icon = "oi-caret-right";
+
+    private void ToggleCollapse()
+    {
+        Collapsed = !Collapsed;
+        Icon = Collapsed ? "oi-caret-right" : "oi-caret-bottom";
+    }
+
+    private string GetColor(string type)
+    {
+        return InfoAboutType(type)[1];
+    }
+
+    private string GetName(string type)
+    {
+        return InfoAboutType(type)[0];
+    }
+
+    private string GetWordTypeName(string wordTypeCode)
+    {
+        var db = DatabaseContext.GetInstance();
+        return db.WordTypes.Find(it => it.Code == wordTypeCode)?.Name;
+    }
+
+    private List<string> InfoAboutType(string type)
+    {
+        var info = new List<string>();
+
+        switch (type)
+        {
+            case "P":
+                info.Add("prefixum");
+                info.Add("text-primary");
+                break;
+            case "I":
+                info.Add("igekötő");
+                info.Add("text-secondary");
+                break;
+            case "K":
+                info.Add("képző");
+                info.Add("text-success");
+                break;
+            case "J":
+                info.Add("jel");
+                info.Add("text-warning");
+                break;
+            case "R":
+                info.Add("rag");
+                info.Add("text-danger");
+                break;
+            default:
+                info.Add("");
+                info.Add("");
+                break;
+        }
+
+        return info;
+    }
+
+
+}

@@ -1,10 +1,12 @@
 ﻿using HLP.Database;
 using HLP.Database.Models;
 using HLP.Parsing.Extensions;
+using HLP.Parsing.Log;
 using HLP.Parsing.Models;
 using HLP.Parsing.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,48 +17,43 @@ namespace HLP.Parsing
     {
         private readonly DatabaseContext dbContext;
         private readonly Tokenizer tokenizer;
+        private readonly Logging log;
 
         public MorphologicalAnalyzer()
         {
             dbContext = DatabaseContext.GetInstance();
             tokenizer = new Tokenizer();
+            log = new Logging();
         }
 
-        public List<MAResult> AnalyzeText(string text, bool print = true)
+        public List<MAResult> AnalyzeText(string text)
         {
             var result = new List<MAResult>();
 
             if (text.Length == 0)
-            {
                 return result;
-            }
 
             var words = tokenizer.GetWords(text);
 
-            if (print)
-            {
-                Console.WriteLine("~~~~~~~~~~ Words ~~~~~~~~~~");
-                Console.WriteLine(string.Join("\n", words));
-            }
-
             foreach (var word in words)
             {
-                result.Add(AnalyzeWord(word, print));
+                // Elemzés és időmérés
+                MAResult res;
+                var watch = new Stopwatch();
+                watch.Start();
+                res = AnalyzeWord(word);
+                watch.Stop();
+                log.Log(res, watch.ElapsedMilliseconds);
+                result.Add(res);
             }
 
             return result;
         }
 
-        public MAResult AnalyzeWord(string word, bool print = true)
+        public MAResult AnalyzeWord(string word)
         {
             var result = new MAResult(word);
             word = word.ToLower();
-
-            if (print)
-            {
-                Console.WriteLine("~~~~~~~~~~ Start ~~~~~~~~~~");
-                Console.WriteLine($"Analyzing word '{word}'!");
-            }
 
             var variant = new MAVariant(word);
 
@@ -68,52 +65,36 @@ namespace HLP.Parsing
                 RemoveSuffixes(newVariant, result);
             }
 
-            Console.WriteLine("Before remove suffixes");
-
             // Szuffixumok levágása
             if (!result.Variants.Any())
             {
                 RemoveSuffixes(variant, result);
             }
 
-            Console.WriteLine("After remove suffixes");
-
             // Eredmények szűrése, redukálása
             var reducer = new ResultReducer();
             reducer.ReduceResults(result);
-
-            if (print)
-            {
-                Console.WriteLine($"Results:\n\t{string.Join("\n\t", result.Variants)}");
-                Console.WriteLine("~~~~~~~~~~  End  ~~~~~~~~~~");
-            }
 
             return result;
         }
 
         private void RemoveSuffixes(MAVariant variant, MAResult result)
         {
-            Console.WriteLine("Start remove suffixes");
-
             var variants = new List<MAVariant> { variant };
 
             while (true)
             {
-                Console.WriteLine($"Variants:\n{string.Join("\n\t", variants)}");
                 if (!variants.Any()) break;
                 var variantList = new List<MAVariant>(variants);
                 foreach (var currVariant in variantList)
                 {
-                    Console.WriteLine($"CurrVariant: {currVariant}");
                     // TODO: search in db
                     var alternativeVariants = new List<MAVariant>();
                     var commonTypes = dbContext.SearchWordInDatabase(currVariant.CurrentText, currVariant.WordType);
-                    Console.WriteLine($"Common types: {string.Join(", ", commonTypes)}");
 
                     // TODO: if in db, get common types and create new variants
                     if (commonTypes.Any())
                     {
-                        Console.WriteLine($"In database!");
                         alternativeVariants.AddRange(commonTypes.Select(t => new MAVariant(currVariant)
                         {
                             WordType = t
@@ -124,7 +105,6 @@ namespace HLP.Parsing
                     // TODO: if not in db, search for stem variants and create new variants
                     else
                     {
-                        Console.WriteLine($"Not in database!");
                         if (currVariant.Suffixes.Any())
                         {
                             var stemVariants = StemChecker.CheckStems(currVariant.CurrentText, currVariant.WordType);
@@ -132,8 +112,6 @@ namespace HLP.Parsing
                             foreach (var stem in stemVariants)
                             {
                                 var types = dbContext.SearchWordInDatabase(stem, variant.WordType);
-
-                                Console.WriteLine($"{stem}: {string.Join(", ", types)}");
 
                                 if (types.Any())
                                 {
@@ -158,12 +136,9 @@ namespace HLP.Parsing
                         }
                     }
 
-                    Console.WriteLine($"AltVariants:\n{string.Join("\n\t", alternativeVariants)}");
-
                     // TODO: for every variant in altenative variants search possible suffixes
                     foreach (var v in alternativeVariants)
                     {
-                        Console.WriteLine($"AltVariant: {v}");
                         var removableSuffixes = v.PossibleSuffixes();
 
                         if (!removableSuffixes.Any())
@@ -171,15 +146,12 @@ namespace HLP.Parsing
                             variants.Remove(v);
                         }
 
-                        Console.WriteLine($"Removable suffixes: {string.Join(", ", removableSuffixes)}");
-
                         // TODO: for every suffix in possible suffixes:
                         foreach (var suffix in removableSuffixes)
                         {
                             // TODO: create new variant and remove suffix
                             var newVariant = new MAVariant(v);
                             newVariant.RemoveSuffix(suffix);
-                            Console.WriteLine($"{suffix} removed: {newVariant}");
                             variants.Add(newVariant);
 
                             // TODO: create new variant and remove suffix with prevowel
@@ -190,7 +162,6 @@ namespace HLP.Parsing
                                 var preVowel = newVariant.CurrentText.GetLastLetter();
                                 var preVowelVariant = new MAVariant(v);
                                 preVowelVariant.RemoveSuffix(suffix.GetWithPreVowel(preVowel));
-                                Console.WriteLine($"{suffix} removed with prevowel: {preVowelVariant}");
                                 variants.Add(preVowelVariant);
                             }
                         }
@@ -198,8 +169,6 @@ namespace HLP.Parsing
                     variants.Remove(currVariant);
                 }
             }
-
-            Console.WriteLine("End remove suffixes");
         }
 
         private void RemoveSuffixes(MAVariant variant, MAResult result, int level)

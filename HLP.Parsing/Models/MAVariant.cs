@@ -18,7 +18,6 @@ namespace HLP.Parsing.Models
         public List<Affix> Prefixes { get; }
         public List<Affix> Suffixes { get; }
         public List<int> ContainedAffixGroups { get; }
-        public bool IgekotoChecked { get; set; }
 
         public MAVariant(string word, string type = "")
         {
@@ -30,7 +29,6 @@ namespace HLP.Parsing.Models
             Prefixes = new List<Affix>();
             Suffixes = new List<Affix>();
             ContainedAffixGroups = new List<int>();
-            IgekotoChecked = false;
         }
 
         public MAVariant(MAVariant other)
@@ -43,7 +41,6 @@ namespace HLP.Parsing.Models
             Prefixes = new List<Affix>(other.Prefixes);
             Suffixes = new List<Affix>(other.Suffixes);
             ContainedAffixGroups = new List<int>(other.ContainedAffixGroups);
-            IgekotoChecked = other.IgekotoChecked;
         }
 
         public List<Affix> PossiblePrefixes()
@@ -161,6 +158,30 @@ namespace HLP.Parsing.Models
             var fromPrefixes = string.Join("", Prefixes.Select(p => p.Info.Code + "."));
             var fromSuffixes = string.Join("", Suffixes.Select(s => "." + s.Info.Code));
             return fromPrefixes + WordType + fromSuffixes;
+        }
+
+        public bool Equals(MAVariant other)
+        {
+            if (WordType != other.WordType ||
+                OriginalText != other.OriginalText ||
+                CurrentText != other.CurrentText ||
+                Prefixes.Count != other.Prefixes.Count ||
+                Suffixes.Count != other.Suffixes.Count)
+                return false;
+
+            for (var i = 0; i < Prefixes.Count; ++i)
+            {
+                if (!Prefixes[i].Equals(other.Prefixes[i]))
+                    return false;
+            }
+
+            for (var i = 0; i < Suffixes.Count; ++i)
+            {
+                if (!Suffixes[i].Equals(other.Suffixes[i]))
+                    return false;
+            }
+
+            return true;
         }
 
         public override string ToString()

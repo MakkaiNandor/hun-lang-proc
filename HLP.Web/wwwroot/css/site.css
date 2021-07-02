@@ -181,3 +181,82 @@ app {
         display: block;
     }
 }
+
+/* Saját stílusok */
+
+.front {
+    z-index: 1000;
+}
+
+.square-icon {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+.tooltip-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-wrapper span {
+    visibility: hidden;
+    position: absolute;
+    width: 120px;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+    background-color: #363636;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    z-index: 1;
+}
+
+.tooltip-wrapper span::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip-wrapper:hover span {
+    visibility: visible;
+}
+
+#tree-list, #tree-list ul {
+    list-style-type: none;
+}
+
+#tree-list {
+    margin: 0;
+    padding: 0;
+}
+
+.clickable {
+    cursor: pointer;
+    color: blue;
+}
+
+.scrollable {
+    height: 70vh;
+    overflow-y: auto;
+}
+
+.indent {
+    text-indent: 4em;
+}
+
+.flipped {
+    direction: rtl;
+}
+
+.flipped > * {
+    direction: ltr;
+}

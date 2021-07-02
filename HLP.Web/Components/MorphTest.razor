@@ -1,0 +1,51 @@
+﻿@using System.Diagnostics
+
+<div>
+    <button class="btn btn-primary" @onclick="async (e) => await TestAnalyzer()" disabled="@(TestInProgress || State)">@(TestInProgress ? "Tesztelés folyamatban" : "Elemző tesztelése")</button>
+    @if (NumberOfGoods >= 0 && NumberOfWrongs >= 0)
+    {
+        <span class="ml-2 text-info font-weight-bold">@NumberOfGoods helyes és @NumberOfWrongs helytelen elemzés a @(NumberOfGoods + NumberOfWrongs) elemzésből!</span>
+    }
+    <p class="m-2 text-info font-weight-bold">@TestMessage</p>
+</div>
+
+@code {
+    [Parameter]
+    public bool State { get; set; } = false;
+
+    private bool TestInProgress = false;
+    private int NumberOfGoods = -1;
+    private int NumberOfWrongs = -1;
+    private string TestMessage = null;
+
+    private PerformanceTesting Tester { get; set; }
+    private Timer MyTimer { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Tester = new PerformanceTesting();
+        MyTimer = new Timer(1000);
+    }
+
+    private void OnTimerElapsed(Object source, ElapsedEventArgs e)
+    {
+        InvokeAsync(() => StateHasChanged());
+    }
+
+    private async Task TestAnalyzer()
+    {
+        MyTimer.Elapsed += OnTimerElapsed;
+        MyTimer.Enabled = true;
+
+        await Task.Run(() =>
+        {
+            TestInProgress = true;
+            var elapsedTime = Tester.TestMorpAnalyzer(out NumberOfGoods, out NumberOfWrongs);
+            TestInProgress = false;
+            TestMessage = $"Az tesztelés {elapsedTime} másodpercig tartott!";
+        });
+
+        MyTimer.Enabled = false;
+        MyTimer.Elapsed -= OnTimerElapsed;
+    }
+}

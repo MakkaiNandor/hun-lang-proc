@@ -33,15 +33,16 @@ namespace HLP.Database
         {
             if (Instance != null)
             {
-                Instance.Words.Clear();
-                Instance.Affixes.Clear();
-                Instance.WordTypes.Clear();
-                Instance.AffixInfos.Clear();
-                Instance.OrderRules.Clear();
-                Instance.MorphTests.Clear();
+                Instance.Words = null;
+                Instance.Affixes = null;
+                Instance.WordTypes = null;
+                Instance.AffixInfos = null;
+                Instance.OrderRules = null;
+                Instance.MorphTests = null;
                 Instance = null;
             }
         }
+
         public List<string> SearchWordInDatabase(string word, string type)
         {
             var wordResult = Words.Find(w => w.Text == word);
@@ -67,7 +68,7 @@ namespace HLP.Database
 
             type.IncludedWordTypes.ForEach(t => result.AddRange(GetCompatibleWordTypes(t)));
 
-            result.AddRange(WordTypes.Where(t => t.IncludedWordTypes.Contains(typeCode)).Select(t => t.Code));
+            //result.AddRange(WordTypes.Where(t => t.IncludedWordTypes.Contains(typeCode)).Select(t => t.Code));
 
             return result.Distinct().ToList();
         }

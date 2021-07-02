@@ -14,7 +14,6 @@ namespace HLP.Parsing.Utils
         public ResultReducer()
         {
             dbContext = DatabaseContext.GetInstance();
-            Console.WriteLine($"Rules:\n\t{string.Join("\n\t", dbContext.OrderRules)}");
         }
 
         public void ReduceResults(MAResult result)
@@ -22,24 +21,18 @@ namespace HLP.Parsing.Utils
             var count = 0;
             foreach (var variant in new List<MAVariant>(result.Variants))
             {
-                GetLemmaAndType(variant, out string lemma, out string type);
+                GetLemmaAndType(variant, out string type);
 
-                Console.WriteLine($"Check variant: {variant}");
-                Console.WriteLine($"lemma: {lemma}, type: {type}");
-
-                if (!CheckRequirements(variant) ||
-                    !CheckOrder(variant, lemma, type))
+                if (!CheckRequirements(variant) || 
+                    !CheckOrder(variant, type))
                 {
-                    Console.WriteLine($"Remove!");
                     result.Variants.Remove(variant);
                     ++count;
                 }
             }
-
-            Console.WriteLine($"Removed: {count}");
         }
 
-        private bool CheckOrder(MAVariant variant, string lemma, string type)
+        private bool CheckOrder(MAVariant variant, string type)
         {
             type = dbContext.GetCompatibleWordTypes("NSZ").Contains(type) ? "NSZ" : type;
 
@@ -52,7 +45,6 @@ namespace HLP.Parsing.Utils
             foreach (var prefix in variant.Prefixes)
             {
                 var newPos = SearchCode(prefix.Info.Code, order.RulesBeforeRoot, offset);
-                Console.WriteLine($"offset: {offset}, new position: {newPos}");
                 if (newPos == -1)
                 {
                     return false;
@@ -64,7 +56,6 @@ namespace HLP.Parsing.Utils
             foreach (var suffix in variant.Suffixes.Where(s => s.Info.Type != "K"))
             {
                 var newPos = SearchCode(suffix.Info.Code, order.RulesAfterRoot, offset);
-                Console.WriteLine($"offset: {offset}, new position: {newPos}");
                 if (newPos == -1)
                 {
                     return false;
@@ -89,30 +80,25 @@ namespace HLP.Parsing.Utils
             return -1;
         }
 
-        private void GetLemmaAndType(MAVariant variant, out string lemma, out string type)
+        private void GetLemmaAndType(MAVariant variant, out string type)
         {
-            var currLemma = variant.OriginalText;
             var currType = variant.WordType;
             foreach(var suffix in variant.Suffixes)
             {
                 if (suffix.Info.Type != "K") break;
-                currLemma += suffix.OriginalText;
                 currType = suffix.Info.WordTypeAfter;
             }
-            lemma = currLemma;
             type = currType;
         }
 
         private bool CheckRequirements(MAVariant variant)
         {
-            Console.WriteLine("Check requirements!");
             var prevAffixCode = "";
             foreach (var suffix in variant.Suffixes)
             {
                 var req = suffix.Requirements;
                 if (req.Any() && prevAffixCode != req[0])
                 {
-                    Console.WriteLine($"{req[0]} != {prevAffixCode}");
                     return false;
                 }
                 prevAffixCode = suffix.Info.Code;
@@ -123,7 +109,6 @@ namespace HLP.Parsing.Utils
                 !persAffix.Requirements.Any() &&
                 variant.Suffixes.Exists(s => s.Info.GroupNumber == 3))
             {
-                Console.WriteLine($"Pers");
                 return false;
             }
 

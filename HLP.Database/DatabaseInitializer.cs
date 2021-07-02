@@ -29,32 +29,32 @@ namespace HLP.Database
             Console.WriteLine("Start");
 
             // Szavak beolvasása, ha üres
-            if (!dbContext.Words.Any())
+            if (dbContext.Words == null || !dbContext.Words.Any())
             {
                 dbContext.Words = await LoadWordsAsync();
             }
             // Toldalék kódok beolvasása, ha üres
-            if (!dbContext.AffixInfos.Any())
+            if (dbContext.AffixInfos == null || !dbContext.AffixInfos.Any())
             {
                 dbContext.AffixInfos = await LoadAffixInfosAsync();
             }
             // Szófajok beolvasása, ha üres
-            if (!dbContext.WordTypes.Any())
+            if (dbContext.WordTypes == null || !dbContext.WordTypes.Any())
             {
                 dbContext.WordTypes = await LoadWordTypesAsync();
             }
             // Toldalékok beolvasása, ha üres
-            if (!dbContext.Affixes.Any())
+            if (dbContext.Affixes == null || !dbContext.Affixes.Any())
             {
                 dbContext.Affixes = await LoadAffixesAsync();
             }
             // Sorrendi szabályok beolvasása, ha üres
-            if (!dbContext.OrderRules.Any())
+            if (dbContext.OrderRules == null || !dbContext.OrderRules.Any())
             {
                 dbContext.OrderRules = await LoadOrderRulesAsync();
             }
             // Teszt adatok beolvasása, ha üres
-            if (!dbContext.MorphTests.Any())
+            if (dbContext.MorphTests == null || !dbContext.MorphTests.Any())
             {
                 dbContext.MorphTests = await LoadMorphTestsAsync();
             }
@@ -222,7 +222,7 @@ namespace HLP.Database
                     morphTests.Add(new MorphTest
                     {
                         Word = values[0],
-                        Stem = items[index],
+                        Stem = items[index].Remove(0, 1),
                         MorphCode = values[2],
                         Prefixes = items.Take(index).ToList(),
                         Suffixes = items.TakeLast(items.Count() - index - 1).ToList()

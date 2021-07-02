@@ -9,6 +9,7 @@ namespace HLP.Parsing.Utils
 {
     static class StemChecker
     {
+
         public static List<string> CheckStems(string word, string type)
         {
             var dbContext = DatabaseContext.GetInstance();
@@ -24,8 +25,6 @@ namespace HLP.Parsing.Utils
             {
                 result.AddRange(CheckNomenStem(word));
             }
-
-            Console.WriteLine($"{word} -> {string.Join(", ", result)} (type: {type})");
 
             return result;
         }
