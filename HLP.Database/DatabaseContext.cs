@@ -69,43 +69,7 @@ namespace HLP.Database
 
             type.IncludedWordTypes.ForEach(t => result.AddRange(GetCompatibleWordTypes(t)));
 
-            //result.AddRange(WordTypes.Where(t => t.IncludedWordTypes.Contains(typeCode)).Select(t => t.Code));
-
             return result.Distinct().ToList();
         }
-
-        /*protected override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            options.UseSqlite($"Data Source={DbPath}");
-        }
-
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            builder.Entity<WordEntity>().ToTable("Words");
-            builder.Entity<WordEntity>().HasKey(e => e.Id);
-            builder.Entity<WordEntity>().Property(e => e.Id).ValueGeneratedOnAdd();
-            builder.Entity<WordEntity>().HasIndex(e => e.Text);
-
-            builder.Entity<AffixEntity>().ToTable("Affixes");
-            builder.Entity<AffixEntity>().HasKey(e => e.Id);
-            builder.Entity<AffixEntity>().Property(e => e.Id).ValueGeneratedOnAdd();
-            builder.Entity<AffixEntity>().HasIndex(a => a.Text);
-
-            builder.Entity<WordTypeEntity>().ToTable("WordTypes");
-            builder.Entity<WordTypeEntity>().HasKey(e => e.Id);
-            builder.Entity<WordTypeEntity>().Property(e => e.Id).ValueGeneratedOnAdd();
-
-            builder.Entity<AffixInfoEntity>().ToTable("AffixInfos");
-            builder.Entity<AffixInfoEntity>().HasKey(e => e.Id);
-            builder.Entity<AffixInfoEntity>().Property(e => e.Id).ValueGeneratedOnAdd();
-
-            builder.Entity<OrderRuleEntity>().ToTable("OrderRules");
-            builder.Entity<OrderRuleEntity>().HasKey(e => e.Id);
-            builder.Entity<OrderRuleEntity>().Property(e => e.Id).ValueGeneratedOnAdd();
-
-            builder.Entity<MorphTestEntity>().ToTable("MorphTests");
-            builder.Entity<MorphTestEntity>().HasKey(e => e.Id);
-            builder.Entity<MorphTestEntity>().Property(e => e.Id).ValueGeneratedOnAdd();
-        }*/
     }
 }
