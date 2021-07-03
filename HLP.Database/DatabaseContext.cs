@@ -21,14 +21,14 @@ namespace HLP.Database
             return Instance;
         }
 
+        private DatabaseContext() { }
+
         public List<Word> Words { get; set; } = new List<Word>();
         public List<Affix> Affixes { get; set; } = new List<Affix>();
         public List<WordType> WordTypes { get; set; } = new List<WordType>();
         public List<AffixInfo> AffixInfos { get; set; } = new List<AffixInfo>();
         public List<OrderRule> OrderRules { get; set; } = new List<OrderRule>();
         public List<MorphTest> MorphTests { get; set; } = new List<MorphTest>();
-
-        private DatabaseContext() { }
 
         public static void Dispose()
         {
