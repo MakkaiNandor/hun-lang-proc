@@ -26,6 +26,11 @@ namespace HLP.Database
         {
             var dbContext = DatabaseContext.GetInstance();
 
+            ++DatabaseContext.Users;
+
+            if (dbContext != null)
+                await Task.Delay(500);
+
             Console.WriteLine("Start");
 
             // Szavak beolvasása, ha üres
@@ -222,10 +227,10 @@ namespace HLP.Database
                     morphTests.Add(new MorphTest
                     {
                         Word = values[0],
-                        Stem = items[index].Remove(0, 1),
+                        Stem = new MyPair(items[index].Remove(0, 1).Split("=").ToList()),
                         MorphCode = values[2],
-                        Prefixes = items.Take(index).ToList(),
-                        Suffixes = items.TakeLast(items.Count() - index - 1).ToList()
+                        Prefixes = items.Take(index).Select(it => new MyPair(it.Split("=").ToList())).ToList(),
+                        Suffixes = items.TakeLast(items.Count() - index - 1).Select(it => new MyPair(it.Split("=").ToList())).ToList()
                     });
                 }
             }

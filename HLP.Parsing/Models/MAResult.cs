@@ -36,32 +36,13 @@ namespace HLP.Parsing.Models
             {
                 for (var j = i - 1; j >= 0; --j)
                 {
-                    Console.WriteLine($"check {i}. and {j}. items");
                     if (Variants[i].Equals(Variants[j]))
                     {
-                        Console.WriteLine($"we should delete: {Variants[i]} at {i}");
                         Variants.RemoveAt(i);
                         j = -1;
                     }
                 }
             }
-
-            /*var variants = new List<MAVariant>();
-
-            foreach (var v1 in Variants)
-            {
-                var unique = true;
-                foreach (var v2 in variants)
-                {
-                    if (v1 == v2)
-                        unique = false;
-                }
-                if (unique)
-                    variants.Add(v1);
-            }
-
-            Variants.Clear();
-            Variants.AddRange(variants);*/
         }
 
         public override string ToString()

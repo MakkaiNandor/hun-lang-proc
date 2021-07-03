@@ -1,0 +1,86 @@
+﻿@page "/testyourself"
+
+<h1>Mérd fel a tudásod!</h1>
+
+<p>Válaszd ki, hogy miben szeretnéd tesztelni magad. A <b>szóelemző teszt</b> során 10 szót kell felbontanod alkotóelemeire. A <b>mondatelemző teszt</b> során 10 mondatban kell felismerned a mondatrészeket. A megoldásaid helyességét a teszt végén egy pontszám jelzi.</p>
+
+<div class="row">
+    <div class="col text-right">
+        <button class="btn btn-primary" @onclick="async (e) => await TestSelected(TestType.WordTest)">Szóelemző teszt</button>
+    </div>
+    <div class="col text-left">
+        <button class="btn btn-primary" @onclick="async (e) => await TestSelected(TestType.SentenceTest)">Mondatelemző teszt</button>
+    </div>
+</div>
+
+@if (SelectedTestType != TestType.Nothing)
+{
+    <hr/>
+    <div>
+        @if (DataIsLoading)
+        {
+            <p class="text-center text-info font-weight-bold">Tesztadatok betöltése!</p>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col text-right h6 text-success font-weight-bold">@CorrectTest helyes</div>
+                <div class="col-2 text-center h4 font-weight-bold">@CurrentTest / @NumberOfTests</div>
+                <div class="col text-left h6 text-danger font-weight-bold">@WrongTest helytelen</div>
+            </div>
+            <div class="row">
+                <div class="col text-right">
+                    <button class="btn btn-success" @onclick="(e) => { ++CorrectTest; ++CurrentTest; }">Helyes</button>
+                </div>
+                <div class="col text-left">
+                    <button class="btn btn-danger" @onclick="(e) => { ++WrongTest; ++CurrentTest; }">Helytelen</button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    enum TestType { Nothing = 0, WordTest = 1, SentenceTest = 2}
+
+    private TestType SelectedTestType = TestType.Nothing;
+    private bool DataIsLoading = false;
+    private List<MorphTest> TestData = new List<MorphTest>();
+
+    private int CorrectTest = 0;
+    private int WrongTest = 0;
+    private int NumberOfTests = 10;
+    private int CurrentTest = 0;
+
+    private async Task TestSelected(TestType type)
+    {
+        SelectedTestType = type;
+        DataIsLoading = true;
+        await DatabaseInitializer.InitializeAsync();
+        if (type == TestType.WordTest)
+        {
+            TestData = await LoadRandomTestData(NumberOfTests);
+        }
+        else
+        {
+
+        }
+        DatabaseContext.Dispose();
+        DataIsLoading = false;
+    }
+
+    private Task<List<MorphTest>> LoadRandomTestData(int numberOfTests)
+    {
+        var db = DatabaseContext.GetInstance();
+        var indices = Enumerable.Range(0, db.MorphTests.Count).ToList();
+        var result = new List<MorphTest>();
+        var rng = new Random();
+        while (result.Count < numberOfTests)
+        {
+            var index = rng.Next(0, indices.Count());
+            result.Add(db.MorphTests[indices[index]]);
+            indices.RemoveAt(index);
+        }
+        return Task.FromResult(result);
+    }
+}

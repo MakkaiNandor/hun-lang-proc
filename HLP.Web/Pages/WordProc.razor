@@ -1,11 +1,12 @@
 ﻿@page "/wordproc"
 @implements IDisposable
+@inject NavigationManager NavManager
 
 <h1>Szóelemzés</h1>
 
 <p><i>Morfológiai elemző modul</i></p>
 
-<p class="my-2">A <b>morfológiai elemző</b> modul egy vagy több szót vár bemenetként. Csak azokat a szavakat képes helyesen felbontani, amelyek megfelelnek a helyesírási szabályoknak. Minden szóra elvégzi az elemzést és visszatéríti a lehetséges megoldásokat. A legtöbb esetben egynél több felbontási változatot talál, amelyekből a felhasználó kiválaszthatja a szerinte legmegfelelőbbnek vélt megoldást. Ehhez segítséget nyújt a rendelkezésre álló elméleti anyag.</p>
+<p class="my-2">A <b>morfológiai elemző</b> modul egy vagy több szót vár bemenetként. Csak azokat a szavakat képes helyesen felbontani, amelyek megfelelnek a helyesírási szabályoknak. Minden szóra elvégzi az elemzést és visszatéríti a lehetséges megoldásokat. A legtöbb esetben egynél több felbontási változatot talál, amelyekből a felhasználó kiválaszthatja a szerinte legmegfelelőbbnek vélt megoldást. Ehhez segítséget nyújt a rendelkezésre álló <span class="clickable"@onclick="RedirectToTheory">elméleti anyag</span>.</p>
 <p>A megoldások tartalmazzák a szótövet, valamint az ehhez kapcsolódó toldalékokat, prefixumokat és szuffixumokat. Egy megoldás kiválasztásával további információk jelennek meg a szótőről (szófaj, alakváltozat vagy szótári alak) és a toldalékokról (típus, rövid leírás).</p>
 
 <hr />
@@ -47,7 +48,7 @@
     </div>
 }
 
-<MorphTest State="@DataIsLoading"/>
+<MorphTestComponent State="@DataIsLoading"/>
 
 @code {
     private bool AnalyzeInProgress = false;
@@ -64,8 +65,6 @@
     {
         InfoMessage = "Szükséges adatok betöltése ...";
         DataIsLoading = true;
-        if (DatabaseContext.GetInstance() != null)
-            await Task.Delay(500);
         await DatabaseInitializer.InitializeAsync();
         DataIsLoading = false;
         Analyzer = new MorphologicalAnalyzer();
@@ -77,6 +76,11 @@
     {
         DatabaseContext.Dispose();
         Console.WriteLine("(wordproc) Database disposed!");
+    }
+
+    private void RedirectToTheory()
+    {
+        NavManager.NavigateTo("/theory");
     }
 
     private async Task CheckIfEnterPressed(KeyboardEventArgs e)

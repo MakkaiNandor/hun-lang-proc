@@ -59,7 +59,8 @@ namespace HLP.Parsing.Testing
 
         private bool Equals(MorphTest test, MAVariant variant)
         {
-            if (test.Stem != variant.CurrentText ||
+            if (test.Stem.RealText != variant.CurrentText ||
+                test.Stem.Text != variant.OriginalText ||
                 test.Prefixes.Count != variant.Prefixes.Count ||
                 test.Suffixes.Count != variant.Suffixes.Count ||
                 test.MorphCode != variant.GetMorphCode())
@@ -69,7 +70,8 @@ namespace HLP.Parsing.Testing
 
             for (var i = 0; i < test.Prefixes.Count; ++i)
             {
-                if (test.Prefixes[i] != variant.Prefixes[i].OriginalText)
+                if (test.Prefixes[i].Text != variant.Prefixes[i].OriginalText ||
+                    test.Prefixes[i].RealText != variant.Prefixes[i].Text)
                 {
                     return false;
                 }
@@ -77,7 +79,8 @@ namespace HLP.Parsing.Testing
 
             for (var i = 0; i < test.Suffixes.Count; ++i)
             {
-                if (test.Suffixes[i] != variant.Suffixes[i].OriginalText)
+                if (test.Suffixes[i].Text != variant.Suffixes[i].OriginalText ||
+                    test.Suffixes[i].RealText != variant.Suffixes[i].Text)
                 {
                     return false;
                 }

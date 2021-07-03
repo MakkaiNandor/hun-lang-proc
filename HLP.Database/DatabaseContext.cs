@@ -10,6 +10,7 @@ namespace HLP.Database
     public class DatabaseContext
     {
         private static DatabaseContext Instance = null;
+        public static int Users = 0;
 
         public static DatabaseContext GetInstance()
         {
@@ -31,7 +32,7 @@ namespace HLP.Database
 
         public static void Dispose()
         {
-            if (Instance != null)
+            if (Instance != null && --Users == 0)
             {
                 Instance.Words = null;
                 Instance.Affixes = null;

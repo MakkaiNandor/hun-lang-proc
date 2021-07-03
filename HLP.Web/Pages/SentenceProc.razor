@@ -64,8 +64,6 @@
     {
         InfoMessage = "Szükséges adatok betöltése ...";
         DataIsLoading = true;
-        if (DatabaseContext.GetInstance() != null)
-            await Task.Delay(500);
         await DatabaseInitializer.InitializeAsync();
         DataIsLoading = false;
         Analyzer = new SyntacticAnalyzer();
