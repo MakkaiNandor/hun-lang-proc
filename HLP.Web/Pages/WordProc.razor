@@ -27,17 +27,20 @@
 <div class="text-info font-weight-bold mt-3 pl-3">@InfoMessage</div>
 
 <hr />
-
-<div>
-    <p class="mt-2 font-weight-bold">Elemzés eredménye:</p>
-</div>
+@if (Result.Any()) 
+{
+    <div>
+        <p class="mt-2 font-weight-bold">Elemzés eredménye:</p>
+    </div>
+}
 
 @foreach (var result in Result)
 {
     <hr />
     <div class="row">
         <div class="col-2">
-            @result.OriginalWord
+            <p>@result.OriginalWord</p>
+            <p><i>@result.Variants.Count megoldás</i></p>
         </div>
         <div class="col">
             @foreach (var variant in result.Variants)

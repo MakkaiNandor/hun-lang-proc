@@ -55,6 +55,11 @@ namespace HLP.Parsing.Utils
 
             result.Add(stem + "szik");
 
+            if (stem == "vol")
+            {
+                result.Add("van");
+            }
+
             //'s'-ben végződik 
             if (lastLetter == "s")
             {

@@ -26,26 +26,17 @@
 
 <hr />
 
-<div>
-    <p class="mt-2 font-weight-bold">Elemzés eredménye:</p>
-</div>
-
 @if (Result != null)
 {
-    @foreach (var result in Result.WordResults)
+    <div>
+        <p class="mt-2 font-weight-bold">Elemzés eredménye:</p>
+    </div>
+
+    @foreach (var item in Result.Result)
     {
-        <hr />
-        <div class="row">
-            <div class="col-2">
-                @result.OriginalWord
-            </div>
-            <div class="col">
-                @foreach (var variant in result.Variants)
-                {
-                    <MorphVariant Variant="@variant" />
-                }
-            </div>
-        </div>
+        <span class="mr-3">
+            @item.Text (@item.TypeToString())
+        </span>
     }
 }
 

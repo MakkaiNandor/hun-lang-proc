@@ -17,17 +17,17 @@ F;J;2;IGE;IGE;feltételes mód, jelen idő
 P;J;2;IGE;IGE;felszólító mód, jelen idő
 PL;J;3;NSZ;NSZ;többesszám jele
 FAM;J;3;NSZ;NSZ;heterogén többesjel
-PSi;J;0;NSZ;NSZ;birtoktöbbesítő jel
-POS;J;0;FN;FN;birtokjel
-POSi;J;0;FN;FN;birtokjel birtoktöbbesítő jellel
+PSi;J;7;NSZ;NSZ;birtoktöbbesítő jel
+POS;J;8;FN;FN;birtokjel
+POSi;J;8;FN;FN;birtokjel birtoktöbbesítő jellel
 PSe1;J;4;FN;FN;birtokos személyjel, egyes szám első személy
 PSe2;J;4;FN;FN;birtokos személyjel, egyes szám második személy
 PSe3;J;4;FN;FN;birtokos személyjel, egyes szám harmadik személy
 PSt1;J;4;FN;FN;birtokos személyjel, többes szám első személy
 PSt2;J;4;FN;FN;birtokos személyjel, többes szám második személy
 PSt3;J;4;FN;FN;birtokos személyjel, többes szám harmadik személy
-FOK;J;0;MN;MN;fokjel
-KI;J;0;MN;MN;kiemelőjel
+FOK;J;9;MN;MN;fokjel
+KI;J;10;MN;MN;kiemelőjel
 ACC;R;5;NSZ;NSZ;tárgyrag (accusativus)
 DAT;R;5;NSZ;NSZ;esetrag (dativus)
 ILL;R;5;NSZ;NSZ;esetrag (illativus)

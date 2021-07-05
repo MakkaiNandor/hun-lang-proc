@@ -195,6 +195,10 @@ app {
     cursor: pointer;
 }
 
+.square-icon:hover {
+    color: green;
+}
+
 .tooltip-wrapper {
     position: relative;
     display: inline-block;
