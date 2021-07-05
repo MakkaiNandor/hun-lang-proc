@@ -21,15 +21,16 @@ namespace HLP.Database
 
         private static readonly char[] separators = new[] { ';', '|', '.', '+' };
 
-        // Adatok beolvasásaa fájlokból
+        // Adatok beolvasása a fájlokból
         public static async Task InitializeAsync()
         {
             var dbContext = DatabaseContext.GetInstance();
 
             ++DatabaseContext.Users;
 
-            if (dbContext != null)
-                await Task.Delay(500);
+            if (DatabaseContext.Users != 1)
+                return;
+                //await Task.Delay(500);
 
             Console.WriteLine("Start");
 

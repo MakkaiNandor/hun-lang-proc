@@ -1,0 +1,105 @@
+﻿<div class="text-center">
+    <div class="font-weight-bolder m-4 h4">@Test.Word</div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-5">
+            <input type="text" class="form-control mb-2" value="@Input" @oninput="InputChanged" placeholder="Ide írja be a szó felbontását" />
+            <hr />
+            <div class="m-3">Felbontás: @string.Join(" + ", Morphemes)</div>
+            <hr />
+            <div class="row">
+                <div class="col text-right">Válaszd ki a szótövet:</div>
+                <div class="col">
+                    <select class="form-control mb-2" @onchange="OnStemSelected">
+                        <option selected>-</option>
+                        @foreach (var m in Morphemes)
+                        {
+                            <option value="@m">@m</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <hr />
+            @if (Stem != null)
+            {
+                <div class="row my-2">
+                    <div class="col text-right">Szótő:</div>
+                    <div class="col text-left">@Stem.Text</div>
+                </div>
+                <div class="row my-2">
+                    <div class="col text-right">Szótő szótári alakja:</div>
+                    <div class="col">
+                        <input type="text" class="form-control" value="@Stem.RealText" @oninput="(e) => Stem.RealText = e.Value.ToString()" />
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col"></div>
+    </div>
+    <button class="btn btn-primary mt-2" @onclick="(e) => OnSubmit.InvokeAsync(CheckInput())" disabled="@(Input == null || Input.Length == 0 || Stem == null)">Tovább</button>
+</div>
+
+@code {
+    [Parameter]
+    public MorphTest Test { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnSubmit { get; set; }
+
+    private string Input { get; set; } = null;
+
+    private List<string> Morphemes { get; set; } = new List<string>();
+
+    private MyPair Stem { get; set; } = null;
+
+    private void InputChanged(ChangeEventArgs args)
+    {
+        Input = args.Value.ToString();
+        Morphemes = Regex.Split(Input, @"\s+").ToList();
+    }
+
+    private void OnStemSelected(ChangeEventArgs args)
+    {
+        var value = args.Value.ToString();
+        if (value == "-")
+            Stem = null;
+        else
+            Stem = new MyPair(value);
+    }
+
+    private bool CheckInput()
+    {
+        var result = true;
+
+        if (Morphemes.Count != Test.Prefixes.Count + Test.Suffixes.Count + 1)
+        {
+            result = false;
+        }
+        else
+        {
+            var morphemeList = new List<MyPair>(Test.Prefixes);
+            morphemeList.Add(Test.Stem);
+            morphemeList.AddRange(Test.Suffixes);
+            var index = 0;
+            foreach (var morpheme in morphemeList)
+            {
+                if (morpheme.Text != Morphemes[index])
+                {
+                    result = false;
+                    break;
+                }
+                ++index;
+            }
+
+            if (Test.Stem.Text != Stem.Text ||
+                Test.Stem.RealText != Stem.RealText)
+                result = false;
+        }
+
+        Input = null;
+        Morphemes = new List<string>();
+        Stem = null;
+
+        return result;
+    }
+}

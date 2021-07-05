@@ -19,6 +19,17 @@ namespace HLP.Database.Models
             RealText = list[1];
         }
 
+        public MyPair(string text, string realText)
+        {
+            Text = text;
+            RealText = realText;
+        }
+
+        public MyPair(string text)
+        {
+            Text = RealText = text;
+        }
+
         public override string ToString()
         {
             if (Text == RealText)

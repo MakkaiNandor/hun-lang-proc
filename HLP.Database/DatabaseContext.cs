@@ -21,15 +21,6 @@ namespace HLP.Database
             return Instance;
         }
 
-        private DatabaseContext() { }
-
-        public List<Word> Words { get; set; } = new List<Word>();
-        public List<Affix> Affixes { get; set; } = new List<Affix>();
-        public List<WordType> WordTypes { get; set; } = new List<WordType>();
-        public List<AffixInfo> AffixInfos { get; set; } = new List<AffixInfo>();
-        public List<OrderRule> OrderRules { get; set; } = new List<OrderRule>();
-        public List<MorphTest> MorphTests { get; set; } = new List<MorphTest>();
-
         public static void Dispose()
         {
             if (Instance != null && --Users == 0)
@@ -43,6 +34,15 @@ namespace HLP.Database
                 Instance = null;
             }
         }
+
+        private DatabaseContext() { }
+
+        public List<Word> Words { get; set; } = new List<Word>();
+        public List<Affix> Affixes { get; set; } = new List<Affix>();
+        public List<WordType> WordTypes { get; set; } = new List<WordType>();
+        public List<AffixInfo> AffixInfos { get; set; } = new List<AffixInfo>();
+        public List<OrderRule> OrderRules { get; set; } = new List<OrderRule>();
+        public List<MorphTest> MorphTests { get; set; } = new List<MorphTest>();
 
         public List<string> SearchWordInDatabase(string word, string type)
         {

@@ -1,5 +1,4 @@
 using HLP.Database;
-using HLP.Web.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;

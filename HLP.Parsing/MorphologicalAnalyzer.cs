@@ -82,17 +82,16 @@ namespace HLP.Parsing
         {
             var variants = new List<MAVariant> { variant };
 
-            while (true)
+            while (variants.Any())
             {
-                if (!variants.Any()) break;
                 var variantList = new List<MAVariant>(variants);
                 foreach (var currVariant in variantList)
                 {
-                    // TODO: search in db
+                    // search in db
                     var alternativeVariants = new List<MAVariant>();
                     var commonTypes = dbContext.SearchWordInDatabase(currVariant.CurrentText, currVariant.WordType);
 
-                    // TODO: if in db, get common types and create new variants
+                    // if in db, get common types and create new variants
                     if (commonTypes.Any())
                     {
                         alternativeVariants.AddRange(commonTypes.Select(t => new MAVariant(currVariant)
@@ -102,7 +101,7 @@ namespace HLP.Parsing
                         result.Variants.AddRange(alternativeVariants);
                         variants.Remove(currVariant);
                     }
-                    // TODO: if not in db, search for stem variants and create new variants
+                    // if not in db, search for stem variants and create new variants
                     else
                     {
                         if (currVariant.Suffixes.Any())
@@ -136,7 +135,7 @@ namespace HLP.Parsing
                         }
                     }
 
-                    // TODO: for every variant in altenative variants search possible suffixes
+                    // for every variant in altenative variants search possible suffixes
                     foreach (var v in alternativeVariants)
                     {
                         var removableSuffixes = v.PossibleSuffixes();
@@ -146,15 +145,15 @@ namespace HLP.Parsing
                             variants.Remove(v);
                         }
 
-                        // TODO: for every suffix in possible suffixes:
+                        // for every suffix in possible suffixes:
                         foreach (var suffix in removableSuffixes)
                         {
-                            // TODO: create new variant and remove suffix
+                            // create new variant and remove suffix
                             var newVariant = new MAVariant(v);
                             newVariant.RemoveSuffix(suffix);
                             variants.Add(newVariant);
 
-                            // TODO: create new variant and remove suffix with prevowel
+                            // create new variant and remove suffix with prevowel
                             if (suffix.Prevowel &&
                                 newVariant.CurrentText.HasVowel(2) &&
                                 newVariant.CurrentText.EndsWithPreVowel())
@@ -169,124 +168,6 @@ namespace HLP.Parsing
                     variants.Remove(currVariant);
                 }
             }
-        }
-
-        private void RemoveSuffixes(MAVariant variant, MAResult result, int level)
-        {/*
-            //Console.WriteLine($"Lvl {level}. {variant}");
-
-            var commonTypes = context.SearchInDatabase(variant.CurrentText, variant.WordType);
-            var alternativeVariants = new List<MAVariant>();
-
-            //Console.WriteLine($"Common types: {string.Join(", ", commonTypes)}");
-
-            // Megvan az adatbázisban
-            if (commonTypes.Any())
-            {
-                if (commonTypes.Contains("IGE") && !variant.IgekotoChecked)
-                {
-                    // Igekötők ellenőrzése
-                    variant.IgekotoChecked = true;
-                    var igekotok = context.Words.Where(w => w.Types.Contains("IK") && variant.OriginalText.StartsWith(w.Text)).Select(w => ConvertWordToAffix(w, "IK")).OrderByDescending(a => a.OriginalText.Length);
-                    foreach (var igekoto in igekotok)
-                    {
-                        var newVariant = new MAVariant(variant)
-                        {
-                            WordType = "IGE"
-                        };
-                        newVariant.RemovePrefix(igekoto);
-                        alternativeVariants.Add(newVariant);
-                    }
-                }
-
-                //Console.WriteLine($"In database!");
-
-                // Hozzáadjuka megoldásokhoz az elemzéseket
-                alternativeVariants.AddRange(commonTypes.Select(t => new MAVariant(variant)
-                {
-                    WordType = t
-                }));
-                result.Variants.AddRange(alternativeVariants);
-            }
-            // Nincs meg az adatbázisban
-            else
-            {
-                if (variant.Suffixes.Any())
-                {
-                    // Megvizsgáljuk az esetleges tőváltozásokat
-                    var stemVariants = StemChecker.CheckStems(variant.CurrentText, variant.WordType);
-
-                    // Visszaállítjuk az eredeti tövet
-                    foreach (var stem in stemVariants)
-                    {
-                        var types = context.SearchInDatabase(stem, variant.WordType);
-                        //Console.WriteLine($"{stem}: {string.Join(", ", types)}");
-                        if (types.Any())
-                        {
-                            alternativeVariants.AddRange(types.Select(t => new MAVariant(variant)
-                            {
-                                CurrentText = stem,
-                                WordType = t
-                            }));
-                        }
-                    }
-                }
-
-                //Console.WriteLine($"Alternative stems: {string.Join(", ", alternativeVariants.Select(v => v.CurrentText))}");
-
-                if (alternativeVariants.Any())
-                {
-                    result.Variants.AddRange(alternativeVariants);
-                    return;
-                }
-                else
-                {
-                    alternativeVariants.Add(variant);
-                }
-            }
-            
-            foreach (var currVariant in alternativeVariants)
-            {
-                //Console.WriteLine($"Variant: {currVariant}");
-
-                foreach (var suffix in currVariant.PossibleSuffixes())
-                {
-                    //Console.WriteLine($"Suffix: {suffix}");
-                    // Levágjuk a toldalékot és meghívjuk újból a függvényt
-                    var newVariant = new MAVariant(currVariant);
-
-                    newVariant.RemoveSuffix(suffix);
-
-                    RemoveSuffixes(newVariant, result, level+1);
-
-                    // Előhangzó vizsgálata
-                    if (suffix.Prevowel &&
-                        newVariant.CurrentText.HasVowel(2) &&
-                        newVariant.CurrentText.EndsWithPreVowel())
-                    {
-                        var preVowel = newVariant.CurrentText.GetLastLetter();
-                        //Console.WriteLine($"Prevowel: {preVowel}");
-                        var preVowelVariant = new MAVariant(currVariant);
-
-                        preVowelVariant.RemoveSuffix(suffix.GetWithPreVowel(preVowel));
-
-                        RemoveSuffixes(preVowelVariant, result, level+1);
-                    }
-                }
-            }*/
-        }
-
-        private Affix ConvertWordToAffix(Word word, string code)
-        {
-            return new Affix()
-            {
-                OriginalText = word.Text,
-                Text = word.Text,
-                Prevowel = false,
-                Assimilation = false,
-                Info = dbContext.AffixInfos.Find(i => i.Code == code),
-                Requirements = new List<string>()
-            };
         }
     }
 }

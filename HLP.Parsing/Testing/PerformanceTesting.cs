@@ -52,7 +52,7 @@ namespace HLP.Parsing.Testing
                     ++nrOfGoods;
             }
 
-            log.Log($"MA performance testing stoped\tPerformance: {nrOfGoods} of {nrOfGoods+nrOfWrongs} ({(nrOfWrongs/(nrOfGoods+nrOfWrongs))*100}%)\tElapsed time: {elapsedTime} ms");
+            log.Log($"MA performance testing stoped\tPerformance: {nrOfGoods} of {nrOfGoods+nrOfWrongs} ({((double)nrOfGoods/(nrOfGoods+nrOfWrongs))*100}%)\tElapsed time: {elapsedTime} ms");
 
             return elapsedTime;
         }

@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\MorphAnalyzerTesting.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="my_database.db-shm" />
   </ItemGroup>
 

@@ -16,7 +16,7 @@ szótlan;!szó=szó+tlan=tlan;FN.NMN
 szavakból;!szav=szó+ak=k+ból=ból;FN.PL.ELA
 ujjnyi;!ujj=ujj+nyi=nyi;FN.NMN
 ötödikként;!öt=öt+ödik=dik+ként=ként;SZN.NSZN.FOR
-szándékosan;!szán=szán+dék=dék+os=s+an=an;IGE.VFN.NMN.MES
+szándékosan;!szándék=szándék+os=s+an=an;FN.NMN.MES
 szaladgálnak;!szalad=szalad+gál=gál+nak=nak;IGE.VV.t3
 beszélget;!beszél=beszél+get=get;IGE.VV
 kötözés;!köt=köt+öz=öz+és=és;IGE.VV.VFN

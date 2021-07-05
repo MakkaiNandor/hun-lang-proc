@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HLP.Web.Data
+namespace HLP.Web.Utils
 {
     public class TheoremNode
     {

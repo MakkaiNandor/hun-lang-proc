@@ -23,19 +23,11 @@
         }
         else
         {
-            <div class="row">
-                <div class="col text-right h6 text-success font-weight-bold">@CorrectTest helyes</div>
-                <div class="col-2 text-center h4 font-weight-bold">@CurrentTest / @NumberOfTests</div>
-                <div class="col text-left h6 text-danger font-weight-bold">@WrongTest helytelen</div>
-            </div>
-            <div class="row">
-                <div class="col text-right">
-                    <button class="btn btn-success" @onclick="(e) => { ++CorrectTest; ++CurrentTest; }">Helyes</button>
-                </div>
-                <div class="col text-left">
-                    <button class="btn btn-danger" @onclick="(e) => { ++WrongTest; ++CurrentTest; }">Helytelen</button>
-                </div>
-            </div>
+            <div class="text-center h4 font-weight-bold"><span class="text-success">@CorrectTest</span> / @CurrentTest</div>
+            @if (TestInProgress)
+            {
+                <MorphTestView Test="TestData[CurrentTest]" OnSubmit="OnSubmit" />
+            }
         }
     </div>
 }
@@ -46,6 +38,7 @@
     private TestType SelectedTestType = TestType.Nothing;
     private bool DataIsLoading = false;
     private List<MorphTest> TestData = new List<MorphTest>();
+    private bool TestInProgress = false;
 
     private int CorrectTest = 0;
     private int WrongTest = 0;
@@ -56,10 +49,14 @@
     {
         SelectedTestType = type;
         DataIsLoading = true;
+        CorrectTest = 0;
+        WrongTest = 0;
+        CurrentTest = 0;
         await DatabaseInitializer.InitializeAsync();
         if (type == TestType.WordTest)
         {
             TestData = await LoadRandomTestData(NumberOfTests);
+            TestInProgress = true;
         }
         else
         {
@@ -82,5 +79,15 @@
             indices.RemoveAt(index);
         }
         return Task.FromResult(result);
+    }
+
+    private void OnSubmit(bool result)
+    {
+        if (result)
+            ++CorrectTest;
+        else
+            ++WrongTest;
+        if (++CurrentTest == NumberOfTests)
+            TestInProgress = false;
     }
 }
