@@ -9,7 +9,6 @@ namespace HLP.Parsing.Models
     {
         public SParts Type { get; set; }
         public string Text { get; set; }
-        public string WordType { get; set; }
         public MAResult MorphResult { get; set; }
 
         // mondatrész kód -> mondatrész neve

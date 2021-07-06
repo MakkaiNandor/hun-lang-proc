@@ -52,7 +52,6 @@ namespace HLP.Parsing
             {
                 Text = it.OriginalWord,
                 Type = SParts.UNDEFINED,
-                WordType = "",
                 MorphResult = it
             }).ToList();
 
