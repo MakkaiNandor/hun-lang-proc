@@ -8,10 +8,5 @@ namespace HLP.Database.Models
     {
         public string Text { get; set; }
         public List<string> WordTypes { get; set; }
-
-        public override string ToString()
-        {
-            return $"<Word Text='{Text}' Types='{string.Join(", ", WordTypes)}'>";
-        }
     }
 }

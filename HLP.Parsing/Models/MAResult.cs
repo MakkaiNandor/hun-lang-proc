@@ -16,6 +16,7 @@ namespace HLP.Parsing.Models
             Variants = new List<MAVariant>();
         }
 
+        // képzők visszaillesztése a szótőre
         public void Lemmatize()
         {
             foreach (var variant in Variants)
@@ -30,6 +31,7 @@ namespace HLP.Parsing.Models
             }
         }
 
+        // ismétlődések törlése
         public void DeleteDuplicates()
         {
             for (var i = Variants.Count - 1; i > 0; --i)
@@ -43,11 +45,6 @@ namespace HLP.Parsing.Models
                     }
                 }
             }
-        }
-
-        public override string ToString()
-        {
-            return $"{OriginalWord}:\n{string.Join("\n", Variants)}";
         }
     }
 }

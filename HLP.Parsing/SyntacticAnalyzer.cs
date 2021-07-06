@@ -11,6 +11,7 @@ using HLP.Parsing.Extensions;
 
 namespace HLP.Parsing
 {
+    // mondatrészek
     public enum SParts
     {
         UNDEFINED = 0,
@@ -34,6 +35,7 @@ namespace HLP.Parsing
             context = DatabaseContext.GetInstance();
         }
 
+        // egy mondat szintaktikai elemzése
         public SAResult AnalyzeSentence(string sentence)
         {
             var result = new SAResult(sentence);
@@ -58,15 +60,16 @@ namespace HLP.Parsing
 
             DefineObjects(result);
 
-            DefineAdverbs(result);
-
             DefineAttributes(result);
+
+            DefineAdverbs(result);
 
             DefineSubjects(result);
 
             return result;
         }
 
+        // állítmány keresése
         private void DefinePredicate(SAResult result)
         {
             var resultsWithVerb = result.Result.Where(it => it.MorphResultContains("IGE")).ToList();
@@ -75,17 +78,22 @@ namespace HLP.Parsing
             if (resultsWithVerb.Count == 1)
             {
                 resultsWithVerb[0].Type = SParts.PREDICATE;
+                CheckNegate(resultsWithVerb[0], result, SParts.PREDICATE);
                 return;
             }
             var resultsWithOnlyVerb = resultsWithVerb.Where(it => it.HasOnlyOne()).ToList();
             if (!resultsWithOnlyVerb.Any())
             {
-                resultsWithVerb.Select(it => new { Item = it, Value = it.MorphResult.Variants.Where(v => v.WordType != "IGE").Count() }).OrderByDescending(it => it.Value).First().Item.Type = SParts.PREDICATE;
+                var item = resultsWithVerb.Select(it => new { Item = it, Value = it.MorphResult.Variants.Where(v => v.WordType != "IGE").Count() }).OrderByDescending(it => it.Value).First().Item;
+                item.Type = SParts.PREDICATE;
+                CheckNegate(item, result, SParts.PREDICATE);
                 return;
             }
             resultsWithOnlyVerb[0].Type = SParts.PREDICATE;
+            CheckNegate(resultsWithOnlyVerb[0], result, SParts.PREDICATE);
         }
 
+        // tárgyak keresése
         private void DefineObjects(SAResult result)
         {
             foreach (var item in result.Result.Where(it => it.Type == SParts.UNDEFINED))
@@ -96,16 +104,15 @@ namespace HLP.Parsing
                 {
                     item.Type = SParts.OBJECT;
                     CheckArticle(item, result, SParts.OBJECT);
-                    continue;
                 }
-                if (types.Contains("NM") || types.Contains("FIN"))
+                else if (types.Contains("NM") || types.Contains("FIN"))
                 {
                     item.Type = SParts.OBJECT;
-                    continue;
                 }
             }
         }
 
+        // határozók keresése
         private void DefineAdverbs(SAResult result)
         {
             foreach (var item in result.Result.Where(it => it.Type == SParts.UNDEFINED))
@@ -137,6 +144,7 @@ namespace HLP.Parsing
             }
         }
 
+        // alanyok keresése
         private void DefineSubjects(SAResult result)
         {
             foreach (var item in result.Result.Where(it => it.Type == SParts.UNDEFINED))
@@ -156,10 +164,28 @@ namespace HLP.Parsing
             }
         }
 
+        // jelzők keresése
         private void DefineAttributes(SAResult result)
         {
-            foreach (var item in result.Result.Where(it => it.Type == SParts.UNDEFINED)) 
+            foreach (var item in result.Result)
             {
+                var groups = item.AllGroups();
+                if (groups.Contains(4) || groups.Contains(7))
+                {
+                    var index = result.Result.IndexOf(item);
+                    if (index > 0)
+                    {
+                        var prevItem = result.Result[index - 1];
+                        var prevTypes = prevItem.GetTypes();
+                        if (prevTypes.Contains("FN"))
+                        {
+                            prevItem.Type = SParts.ATTRIBUTE;
+                            CheckArticle(prevItem, result, SParts.ATTRIBUTE);
+                            continue;
+                        }
+                    }
+                }
+                if (item.Type != SParts.UNDEFINED) continue;
                 var types = item.GetTypes();
                 var codes = item.LastCodes();
                 if ((types.Contains("NM") || types.Contains("FN")) && codes.Contains("DAT"))
@@ -168,7 +194,8 @@ namespace HLP.Parsing
                     CheckArticle(item, result, SParts.ATTRIBUTE);
                     continue;
                 }
-                if (types.Contains("MN"))
+                groups = item.LastGroups();
+                if (types.Contains("MN") && !groups.Contains(5))
                 {
                     var index = result.Result.IndexOf(item);
                     if (index == result.Result.Count - 1) continue;
@@ -182,6 +209,17 @@ namespace HLP.Parsing
             }
         }
 
+        // tagadószó ellenőrzése
+        private void CheckNegate(SAItem item, SAResult result, SParts type)
+        {
+            var index = result.Result.IndexOf(item);
+            if (index == 0) return;
+            var prevItem = result.Result[index - 1];
+            if (prevItem.Text.ToLower() == "nem" || prevItem.Text.ToLower() == "ne")
+                prevItem.Type = type;
+        }
+
+        // névelő ellenőrzése
         private void CheckArticle(SAItem item, SAResult result, SParts type)
         {
             var index = result.Result.IndexOf(item);
@@ -193,6 +231,7 @@ namespace HLP.Parsing
                 prevItem.Type = type;
         }
 
+        // helytelen morfológiai elemzések kiszűrése
         private void RemoveWrongResults(MAResult result)
         {
             var wordsNotInDB = result.Variants.Where(it => !context.SearchWordInDatabase(it.OriginalText, it.WordType).Any()).ToList();
@@ -208,8 +247,6 @@ namespace HLP.Parsing
                     wordsNotInDB.ForEach(it => result.Variants.Remove(it));
                 }
             }
-
-            Console.WriteLine($"variants:\n{string.Join("\n", result.Variants)}");
 
             var checkedWords = new List<string>();
             var varsWithSuffixes = result.Variants.Where(it => it.Suffixes.Any()).ToList();

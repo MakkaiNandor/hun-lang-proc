@@ -18,6 +18,7 @@ namespace HLP.Parsing.Models
         public List<Affix> Prefixes { get; }
         public List<Affix> Suffixes { get; }
         public List<int> ContainedAffixGroups { get; }
+
         public MAVariant(string word, string type = "")
         {
             OriginalText = word;
@@ -29,6 +30,8 @@ namespace HLP.Parsing.Models
             Suffixes = new List<Affix>();
             ContainedAffixGroups = new List<int>();
         }
+
+        // copy konstruktor
         public MAVariant(MAVariant other)
         {
             OriginalText = other.OriginalText;
@@ -40,6 +43,8 @@ namespace HLP.Parsing.Models
             Suffixes = new List<Affix>(other.Suffixes);
             ContainedAffixGroups = new List<int>(other.ContainedAffixGroups);
         }
+
+        // levágható prefixumok
         public List<Affix> PossiblePrefixes()
         {
             var prefixes = DatabaseContext.GetInstance().Affixes.Where(a =>
@@ -54,6 +59,8 @@ namespace HLP.Parsing.Models
 
             return prefixes;
         }
+
+        // levágható szuffixumok
         public List<Affix> PossibleSuffixes()
         {
             var suffixes = DatabaseContext.GetInstance().Affixes.Where(a =>
@@ -69,6 +76,8 @@ namespace HLP.Parsing.Models
 
             return suffixes;
         }
+
+        // prefixum levágása
         public void RemovePrefix(Affix prefix)
         {
             OriginalText = CurrentText = CurrentText.RemoveFromStart(prefix.OriginalText);
@@ -79,6 +88,8 @@ namespace HLP.Parsing.Models
             }
             PossiblePrefixTypes.Remove(prefix.Info.Type);
         }
+
+        // szuffixum levágása
         public void RemoveSuffix(Affix suffix)
         {
             if (CurrentText.EndsWith(suffix.OriginalText))
@@ -127,6 +138,8 @@ namespace HLP.Parsing.Models
                 ContainedAffixGroups.Add(suffix.Info.GroupNumber);
             }
         }
+
+        // hasonulás ellenőrzése
         private bool CheckAssimilation(string affix)
         {
             var remainder = affix.Remove(0, 1);
@@ -134,6 +147,8 @@ namespace HLP.Parsing.Models
             var word = CurrentText.RemoveFromEnd(remainder);
             return word.EndsWithLongConsonant() && word.HasVowel();
         }
+
+        // két szófaj összeférhetőségének ellenőrzése
         private bool AreCompatibles(string type1, string type2)
         {
             if (type2.Length == 0) return true;
@@ -144,6 +159,8 @@ namespace HLP.Parsing.Models
 
             return types1.Intersect(types2).Any();
         }
+
+        // összehasonlítás
         public bool Equals(MAVariant other)
         {
             if (WordType != other.WordType ||
@@ -167,15 +184,13 @@ namespace HLP.Parsing.Models
 
             return true;
         }
+
+        // morfológiai kód
         public string GetMorphCode()
         {
             var fromPrefixes = string.Join("", Prefixes.Select(p => p.Info.Code + "."));
             var fromSuffixes = string.Join("", Suffixes.Select(s => "." + s.Info.Code));
             return fromPrefixes + WordType + fromSuffixes;
-        }
-        public override string ToString()
-        {
-            return $"{(Prefixes.Any() ? $"{string.Join(" + ", Prefixes)} + " : null)}{OriginalText}({WordType}){(CurrentText != OriginalText ? $"={CurrentText}" : null)}{(Suffixes.Any() ? $" + {string.Join(" + ", Suffixes)}" : null)}\n\t{GetMorphCode()}";
         }
     }
 }

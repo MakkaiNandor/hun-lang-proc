@@ -45,9 +45,5 @@ namespace HLP.Database.Models
         public string MorphCode { get; set; }
         public List<MyPair> Prefixes { get; set; }
         public List<MyPair> Suffixes { get; set; }
-        public override string ToString()
-        {
-            return $"{Word}: {(Prefixes.Any() ? $"{string.Join("+", Prefixes)} + " : null)}{Stem}{(Suffixes.Any() ? $" + {string.Join("+", Suffixes)}" : null)} ({MorphCode})";
-        }
     }
 }

@@ -18,8 +18,9 @@ namespace HLP.Database
         private static readonly string infoFilePath = @"Data\kodok.txt";
         private static readonly string orderRulesFilePath = @"Data\sorrend.txt";
         private static readonly string morphTestDataFilePath = @"Data\morph_teszt.txt";
+        private static readonly string syntTestDataFilePath = @"Data\synt_teszt.txt";
 
-        private static readonly char[] separators = new[] { ';', '|', '.', '+' };
+        private static readonly char[] separators = new[] { ';', '|', '.', '+', '=' };
 
         // Adatok beolvasása a fájlokból
         public static async Task InitializeAsync()
@@ -59,10 +60,15 @@ namespace HLP.Database
             {
                 dbContext.OrderRules = await LoadOrderRulesAsync();
             }
-            // Teszt adatok beolvasása, ha üres
+            // Morfológiai tesztadatok beolvasása, ha üres
             if (dbContext.MorphTests == null || !dbContext.MorphTests.Any())
             {
                 dbContext.MorphTests = await LoadMorphTestsAsync();
+            }
+            // Szintaktikai tesztadatok beolvasása, ha üres
+            if (dbContext.SyntTests == null || !dbContext.SyntTests.Any())
+            {
+                dbContext.SyntTests = await LoadSyntTestsAsync();
             }
 
             Console.WriteLine("End");
@@ -239,6 +245,42 @@ namespace HLP.Database
             Console.WriteLine($"Morph tests: {morphTests.Count}");
 
             return morphTests;
+        }
+
+        // A szintaktikai elemző tesztelési adatainak beolvasása fájlból
+        private static async Task<List<SyntTest>> LoadSyntTestsAsync()
+        {
+            var syntTests = new List<SyntTest>();
+
+            Console.WriteLine("Loading synt tests!");
+
+            using (var reader = new StreamReader(syntTestDataFilePath))
+            {
+                await reader.ReadLineAsync(); // Skip the header
+                while (!reader.EndOfStream)
+                {
+                    var values = (await reader.ReadLineAsync()).Split(separators[3]).ToList();
+                    var words = new List<string>();
+                    var types = new List<int>();
+
+                    values.ForEach(it =>
+                    {
+                        var items = it.Split(separators[4]);
+                        words.Add(items[0]);
+                        types.Add(int.Parse(items[1]));
+                    });
+
+                    syntTests.Add(new SyntTest
+                    {
+                        Words = words,
+                        Types = types
+                    });
+                }
+            }
+
+            Console.WriteLine($"Synt tests: {syntTests.Count}");
+
+            return syntTests;
         }
     }
 }

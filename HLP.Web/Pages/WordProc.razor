@@ -6,8 +6,9 @@
 
 <p><i>Morfológiai elemző modul</i></p>
 
-<p class="my-2">A <b>morfológiai elemző</b> modul egy vagy több szót vár bemenetként. Csak azokat a szavakat képes helyesen felbontani, amelyek megfelelnek a helyesírási szabályoknak. Minden szóra elvégzi az elemzést és visszatéríti a lehetséges megoldásokat. A legtöbb esetben egynél több felbontási változatot talál, amelyekből a felhasználó kiválaszthatja a szerinte legmegfelelőbbnek vélt megoldást. Ehhez segítséget nyújt a rendelkezésre álló <span class="clickable"@onclick="RedirectToTheory">elméleti anyag</span>.</p>
-<p>A megoldások tartalmazzák a szótövet, valamint az ehhez kapcsolódó toldalékokat, prefixumokat és szuffixumokat. Egy megoldás kiválasztásával további információk jelennek meg a szótőről (szófaj, alakváltozat vagy szótári alak) és a toldalékokról (típus, rövid leírás).</p>
+<p class="my-1">A <b>morfológiai elemző</b> modul egy vagy több szót vár bemenetként. Csak azokat a szavakat képes helyesen felbontani, amelyek megfelelnek a helyesírási szabályoknak. Nem képes az összetett szavak felbontására, a tulajdonneveg elemzésére és az igekötők levágására.</p>
+<p class="my-1">Minden szóra elvégzi az elemzést és visszatéríti a lehetséges megoldásokat. A legtöbb esetben egynél több felbontási változatot talál, amelyekből a felhasználó kiválaszthatja a szerinte legmegfelelőbbnek vélt megoldást. Ehhez segítséget nyújt a rendelkezésre álló <span class="clickable"@onclick="RedirectToTheory">elméleti anyag</span>.</p>
+<p class="my-1">A megoldások tartalmazzák a szótövet, valamint az ehhez kapcsolódó toldalékokat, prefixumokat és szuffixumokat. Egy megoldás kiválasztásával további információk jelennek meg a szótőről (szófaj, alakváltozat vagy szótári alak) és a toldalékokról (típus, rövid leírás).</p>
 
 <hr />
 
@@ -50,8 +51,6 @@
         </div>
     </div>
 }
-
-<!--<MorphAnalyzerTesting State="@DataIsLoading"/>-->
 
 @code {
     private bool AnalyzeInProgress = false;

@@ -264,3 +264,66 @@ app {
 .flipped > * {
     direction: ltr;
 }
+
+.predicate {
+    border-bottom: 5px double black;
+}
+
+.subject {
+    border-bottom: 2px solid black;
+}
+
+.object {
+    border-bottom: 2px dashed black;
+}
+
+.attribute {
+    border-bottom: 2px dotted black;
+}
+
+.adverb {
+    position: relative;
+}
+
+.adverb::before,
+.adverb::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -5px;
+    height: 10px;
+    background: url(../images/wavy_line.png);
+    background-size: 25px 5px;
+    background-position: 0 6px;
+    background-repeat: repeat-x;
+}
+
+.spart {
+    cursor: pointer;
+}
+
+.spart:hover {
+    background-color: wheat;
+}
+
+.gif {
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.vcenter {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.fit-content {
+    width: min-content;
+}
+
+.hcenter {
+    margin-left: auto;
+    margin-right: auto;
+}

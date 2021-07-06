@@ -26,6 +26,7 @@ namespace HLP.Parsing
             log = new Logging();
         }
 
+        // szöveg szavainak morfológiai elemzése
         public List<MAResult> AnalyzeText(string text)
         {
             var result = new List<MAResult>();
@@ -50,6 +51,7 @@ namespace HLP.Parsing
             return result;
         }
 
+        // egy szó morfológiai elemzése
         public MAResult AnalyzeWord(string word)
         {
             var result = new MAResult(word);
@@ -78,6 +80,7 @@ namespace HLP.Parsing
             return result;
         }
 
+        // szuffixumok elkülönítése
         private void RemoveSuffixes(MAVariant variant, MAResult result)
         {
             var variants = new List<MAVariant> { variant };
@@ -87,11 +90,11 @@ namespace HLP.Parsing
                 var variantList = new List<MAVariant>(variants);
                 foreach (var currVariant in variantList)
                 {
-                    // search in db
+                    // keresés az adatbázisban
                     var alternativeVariants = new List<MAVariant>();
                     var commonTypes = dbContext.SearchWordInDatabase(currVariant.CurrentText, currVariant.WordType);
 
-                    // if in db, get common types and create new variants
+                    // ha az adatbázisban megtalálható, a közös szófajok alapján új elemzésváltozatok készítése
                     if (commonTypes.Any())
                     {
                         alternativeVariants.AddRange(commonTypes.Select(t => new MAVariant(currVariant)
@@ -101,7 +104,7 @@ namespace HLP.Parsing
                         result.Variants.AddRange(alternativeVariants);
                         variants.Remove(currVariant);
                     }
-                    // if not in db, search for stem variants and create new variants
+                    // ha nincs az adatbázisban, szótári alak keresése és új elemzésváltozatok készítése
                     else
                     {
                         if (currVariant.Suffixes.Any())
@@ -135,7 +138,7 @@ namespace HLP.Parsing
                         }
                     }
 
-                    // for every variant in altenative variants search possible suffixes
+                    // levágható toldalékok keresése
                     foreach (var v in alternativeVariants)
                     {
                         var removableSuffixes = v.PossibleSuffixes();
@@ -145,19 +148,18 @@ namespace HLP.Parsing
                             variants.Remove(v);
                         }
 
-                        // for every suffix in possible suffixes:
                         foreach (var suffix in removableSuffixes)
                         {
-                            // create new variant and remove suffix
+                            // toldalék levágása
                             var newVariant = new MAVariant(v);
                             newVariant.RemoveSuffix(suffix);
                             variants.Add(newVariant);
 
-                            // create new variant and remove suffix with prevowel
                             if (suffix.Prevowel &&
                                 newVariant.CurrentText.HasVowel(2) &&
                                 newVariant.CurrentText.EndsWithPreVowel())
                             {
+                                // toldalék levágása előhangzóval
                                 var preVowel = newVariant.CurrentText.GetLastLetter();
                                 var preVowelVariant = new MAVariant(v);
                                 preVowelVariant.RemoveSuffix(suffix.GetWithPreVowel(preVowel));

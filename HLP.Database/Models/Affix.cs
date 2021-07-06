@@ -15,6 +15,7 @@ namespace HLP.Database.Models
 
         public Affix() { }
 
+        // copy konstruktor
         public Affix(Affix other)
         {
             OriginalText = other.OriginalText;
@@ -25,6 +26,7 @@ namespace HLP.Database.Models
             Requirements = new List<string>(other.Requirements);
         }
 
+        // toldalék másolása a megadott előhangzóval
         public Affix GetWithPreVowel(string preVowel)
         {
             return new Affix()
@@ -38,16 +40,12 @@ namespace HLP.Database.Models
             };
         }
 
+        // összehasonlítás
         public bool Equals(Affix other)
         {
             return !(Info.Code != other.Info.Code ||
                 OriginalText != other.OriginalText ||
                 Text != other.Text);
-        }
-
-        public override string ToString()
-        {
-            return $"{OriginalText}[{Info.Type}]({Info.Code}){(OriginalText != Text ? $"={Text}" : null)}";
         }
     }
 }

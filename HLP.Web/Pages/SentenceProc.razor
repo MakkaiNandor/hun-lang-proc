@@ -5,7 +5,7 @@
 
 <p><i>Szintaktikai elemző modul</i></p>
 
-<p class="my-2">A <b>szintaktikai elemző</b> modul még nincs kész.</p>
+<p class="my-2">A <b>szintaktikai elemző</b> modul bemenete egy egyszerű mondat. Nem képes az összetett mondatok elemzésére. A bemenetként kapott mondat szavainak a mondatban betöltött szerepét határozza meg.</p>
 
 <hr />
 
@@ -32,13 +32,16 @@
         <p class="mt-2 font-weight-bold">Elemzés eredménye:</p>
     </div>
 
-    @foreach (var item in Result.Result)
-    {
-        <span class="mr-3">
-            @item.Text (@item.TypeToString())
-        </span>
-    }
+    <div>
+        @foreach (var item in Result.Result)
+        {
+            <span class="mr-3 spart @GetClass(item.Type)"><ToolTip Text="@item.TypeToString()">@item.Text</ToolTip></span>
+        }
+    </div>
 }
+
+<!--<button class="btn btn-primary" @onclick="OnTestClicked">Tesztelés</button>
+<p class="text-info">@TestInfo</p>-->
 
 @code {
     private bool AnalyzeInProgress = false;
@@ -47,6 +50,7 @@
     private string Input = "";
     private string State = "";
     private string InfoMessage = "";
+    private string TestInfo = null;
 
     private SAResult Result = null;
     private SyntacticAnalyzer Analyzer;
@@ -94,11 +98,50 @@
         InfoMessage = State;
     }
 
+    private string GetClass(SParts type)
+    {
+        string result;
+        switch (type)
+        {
+            case SParts.PREDICATE:
+                result = "predicate";
+                break;
+            case SParts.SUBJECT:
+                result = "subject";
+                break;
+            case SParts.OBJECT:
+                result = "object";
+                break;
+            case SParts.ADVERB:
+                result = "adverb";
+                break;
+            case SParts.ATTRIBUTE:
+                result = "attribute";
+                break;
+            default:
+                result = null;
+                break;
+        }
+        return result;
+    }
+
     private void OnResetClicked()
     {
         Input = "";
         Result = null;
         AnalyzeInProgress = false;
         InfoMessage = State;
+    }
+
+    private async Task OnTestClicked()
+    {
+        var tester = new PerformanceTesting();
+        int corrects, wrongs;
+        await Task.Run(() =>
+        {
+            TestInfo = "Tesztelés folyamatban!";
+            var time = tester.TestSyntAnalyzer(out corrects, out wrongs);
+            TestInfo = $"{corrects} helyes és {wrongs} helytelen elemzés született {time} milliszekundum alatt!";
+        });
     }
 }

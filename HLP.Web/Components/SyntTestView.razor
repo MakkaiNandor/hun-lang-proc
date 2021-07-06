@@ -1,0 +1,61 @@
+﻿<div class="text-center">
+    <div class="row">
+        @foreach (var item in UserResponse)
+        {
+            <div class="col text-center">
+                <p>@item.Word</p>
+                <p>
+                    <select @bind="item.Type">
+                        <option value="@SParts.UNDEFINED">-</option>
+                        <option value="@SParts.PREDICATE">állítmány</option>
+                        <option value="@SParts.SUBJECT">alany</option>
+                        <option value="@SParts.OBJECT">tárgy</option>
+                        <option value="@SParts.ADVERB">határozó</option>
+                        <option value="@SParts.ATTRIBUTE">jelző</option>
+                    </select>
+                </p>
+            </div>
+        }
+    </div>
+
+    <button class="btn btn-primary mt-2" @onclick="(e) => OnSubmit.InvokeAsync(CheckInput())">Tovább</button>
+</div>
+
+@code {
+    class MyItem
+    {
+        public string Word { get; set; }
+        public SParts Type { get; set; }
+    }
+
+    [Parameter]
+    public SyntTest Test { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnSubmit { get; set; }
+
+    private List<MyItem> UserResponse {get; set;} = new List<MyItem>();
+
+    protected override Task OnParametersSetAsync()
+    {
+        UserResponse = new List<MyItem>();
+        Test.Words.ForEach(it => UserResponse.Add(new MyItem
+        {
+            Word = it,
+            Type = SParts.UNDEFINED
+        }));
+        return Task.CompletedTask;
+    }
+
+    private bool CheckInput()
+    {
+        for (var i = 0; i < UserResponse.Count; ++i)
+        {
+            var tType = Test.Types[i];
+            var uType = UserResponse[i].Type;
+            if (uType != (SParts)tType)
+                return false;
+        }
+        return true;
+    }
+}

@@ -8,17 +8,20 @@ namespace HLP.Parsing.Extensions
 {
     public static class StringExtensions
     {
+        // string utolsó betűje
         public static string GetLastLetter(this string text)
         {
             var lastLetter = Alphabet.Letters.FirstOrDefault(l => text.EndsWith(l));
             return lastLetter ?? "";
         }
 
+        // eltávolítás a végéről
         public static string RemoveFromEnd(this string text, string str)
         {
             return text.Substring(0, text.Length - str.Length);
         }
 
+        // eltávolítás az elejéről
         public static string RemoveFromStart(this string text, string str)
         {
             return text.Substring(str.Length);
@@ -44,23 +47,11 @@ namespace HLP.Parsing.Extensions
             return mode < 0 ? count <= required : mode > 0 ? count >= required : count == required;
         }
 
-        // A szó tartalmaz-e rövid magánhangzót
-        public static bool HasShortVowel(this string text)
-        {
-            return Alphabet.ShortVowels.Any(v => text.Contains(v));
-        }
-
         // A szó magánhangzóval kezdődik-e
         public static bool StartsWithVowel(this string text)
         {
             var result = Alphabet.Vowels.Contains(text[0].ToString());
             return result;
-        }
-
-        // A szó magánhangzóval végződik-e
-        public static bool EndsWithVowel(this string text)
-        {
-            return Alphabet.Vowels.Contains(text.Last().ToString());
         }
 
         // A szó előhangzóval végződik-e
@@ -73,26 +64,6 @@ namespace HLP.Parsing.Extensions
         public static bool EndsWithLongConsonant(this string text)
         {
             return Alphabet.LongConsonants.Any(c => text.EndsWith(c));
-        }
-
-        // A szó mássalhangzóval végződik-e
-        public static bool EndsWithConsonant(this string text)
-        {
-            return Alphabet.Consonants.Any(c => text.EndsWith(c));
-        }
-
-        // A szó két mássalhangzóval végződik-e
-        public static bool EndsWithTwoConsonants(this string text)
-        {
-            var last = text.GetLastLetter();
-            var preLast = text.RemoveFromEnd(last).GetLastLetter();
-            return Alphabet.Consonants.Contains(last) && Alphabet.Consonants.Contains(preLast);
-        }
-
-        // A szó hosszú magánhangzóval végződik-e
-        public static bool EndsWithLongVowel(this string text)
-        {
-            return Alphabet.LongVowels.Any(v => text.EndsWith(v));
         }
 
         // Magánhangzó rövidítése vagy hosszabbítása
@@ -108,19 +79,6 @@ namespace HLP.Parsing.Extensions
             {
                 result = result.Remove(index, 1).Insert(index, Alphabet.ShortVowels[Alphabet.LongVowels.IndexOf(vowel)]);
             }
-            return result;
-        }
-
-        // Magánhangzók pozíciójai
-        public static List<int> IndexOfShortVowels(this string text)
-        {
-            var result = new List<int>();
-
-            foreach (var vowel in Alphabet.ShortVowels)
-            {
-                result.AddRange(text.Select((b, i) => b == vowel[0] ? i : -1).Where(i => i >= 0));
-            }
-
             return result;
         }
     }

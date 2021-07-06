@@ -15,16 +15,19 @@ namespace HLP.Parsing.Testing
     public class PerformanceTesting
     {
         private DatabaseContext dbContext;
-        private MorphologicalAnalyzer Analyzer;
+        private MorphologicalAnalyzer MAnalyzer;
+        private SyntacticAnalyzer SAnalyzer;
         private Logging log;
 
         public PerformanceTesting()
         {
             dbContext = DatabaseContext.GetInstance();
-            Analyzer = new MorphologicalAnalyzer();
+            MAnalyzer = new MorphologicalAnalyzer();
+            SAnalyzer = new SyntacticAnalyzer();
             log = new Logging();
         }
 
+        // morfológiai elemző tesztelése
         public long TestMorpAnalyzer(out int nrOfGoods, out int nrOfWrongs)
         {
             // Változók inicializálása
@@ -39,7 +42,7 @@ namespace HLP.Parsing.Testing
             {
                 // Elemzés és időmérés
                 stopper.Restart();
-                var analysisResult = Analyzer.AnalyzeWord(item.Word);
+                var analysisResult = MAnalyzer.AnalyzeWord(item.Word);
                 stopper.Stop();
                 log.Log(analysisResult, stopper.ElapsedMilliseconds);
                 elapsedTime += stopper.ElapsedMilliseconds;
@@ -57,6 +60,40 @@ namespace HLP.Parsing.Testing
             return elapsedTime;
         }
 
+        // szintaktikai elemző tesztelése
+        public long TestSyntAnalyzer(out int nrOfGoods, out int nrOfWrongs)
+        {
+            // Változók inicializálása
+            long elapsedTime = 0;
+            nrOfGoods = 0;
+            nrOfWrongs = 0;
+            var stopper = new Stopwatch();
+
+            // Tesztelés indítása
+            log.Log("SA performance testing started");
+            foreach (var item in dbContext.SyntTests)
+            {
+                var sentence = string.Join(" ", item.Words);
+                // Elemzés és időmérés
+                stopper.Restart();
+                var analysisResult = SAnalyzer.AnalyzeSentence(sentence);
+                stopper.Stop();
+                log.Log(analysisResult, stopper.ElapsedMilliseconds);
+                elapsedTime += stopper.ElapsedMilliseconds;
+
+                // Helyes elemzés-e
+                if (Equals(item, analysisResult))
+                    ++nrOfGoods;
+                else
+                    ++nrOfWrongs;
+            }
+
+            log.Log($"SA performance testing stoped\tPerformance: {nrOfGoods} of {nrOfGoods + nrOfWrongs} ({((double)nrOfGoods / (nrOfGoods + nrOfWrongs)) * 100}%)\tElapsed time: {elapsedTime} ms");
+
+            return elapsedTime;
+        }
+
+        // morfológiai elemzés összehasonlítása az elvárt kimenettel
         private bool Equals(MorphTest test, MAVariant variant)
         {
             if (test.Stem.RealText != variant.CurrentText ||
@@ -86,6 +123,24 @@ namespace HLP.Parsing.Testing
                 }
             }
 
+            return true;
+        }
+
+        // szintaktikai elemzés összehasonlítása az elvárt kimenettel
+        private bool Equals(SyntTest test, SAResult result)
+        {
+            if (test.Words.Count != result.Result.Count)
+                return false;
+            for (var i = 0; i < test.Words.Count; ++i)
+            {
+                var tWord = test.Words[i];
+                var tType = test.Types[i];
+                var rWord = result.Result[i];
+                if (tWord != rWord.Text)
+                    return false;
+                if (rWord.Type != (SParts)tType)
+                    return false;
+            }
             return true;
         }
     }

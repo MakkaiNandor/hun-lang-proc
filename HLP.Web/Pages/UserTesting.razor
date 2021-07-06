@@ -1,8 +1,9 @@
 ﻿@page "/testyourself"
+@inject IJSRuntime JsRuntime
 
 <h1>Mérd fel a tudásod!</h1>
 
-<p>Válaszd ki, hogy miben szeretnéd tesztelni magad. A <b>szóelemző teszt</b> során 10 szót kell felbontanod alkotóelemeire. A <b>mondatelemző teszt</b> során 10 mondatban kell felismerned a mondatrészeket. A megoldásaid helyességét a teszt végén egy pontszám jelzi.</p>
+<p>Válaszd ki, hogy miben szeretnéd tesztelni magad. A <b>szóelemző teszt</b> során @NumberOfTests szót kell felbontanod alkotóelemeire, a szavakat alkotó morfémákat szóközzel válaszd el, majd válaszd ki, hogy melyik morféma a szótő és ha szükséges add meg a szótári alakját. A <b>mondatelemző teszt</b> során 10 mondatban kell felismerned a mondatrészeket. A megoldásaid helyességét egy pontszám jelzi.</p>
 
 <div class="row">
     <div class="col text-right">
@@ -23,10 +24,21 @@
         }
         else
         {
-            <div class="text-center h4 font-weight-bold"><span class="text-success">@CorrectTest</span> / @CurrentTest</div>
+            <div class="text-center h4 font-weight-bold"><span class="text-success">@CorrectTest</span> / @(TestData.Count)</div>
             @if (TestInProgress)
             {
-                <MorphTestView Test="TestData[CurrentTest]" OnSubmit="OnSubmit" />
+                @if (SelectedTestType == TestType.WordTest)
+                {
+                    <MorphTestView Test="(MorphTest)TestData[CurrentTest]" OnSubmit="OnSubmit" />
+                }
+                else
+                {
+                    <SyntTestView Test="(SyntTest)TestData[CurrentTest]" OnSubmit="OnSubmit" />
+                }
+            }
+            else if (TestDone)
+            {
+                <p class="text-center mt-5 h5 text-info">A @TestData.Count elemzésből @CorrectTest-t helyesen oldottál meg!</p>
             }
         }
     </div>
@@ -37,8 +49,9 @@
 
     private TestType SelectedTestType = TestType.Nothing;
     private bool DataIsLoading = false;
-    private List<MorphTest> TestData = new List<MorphTest>();
+    private List<object> TestData = new List<object>();
     private bool TestInProgress = false;
+    private bool TestDone = false;
 
     private int CorrectTest = 0;
     private int WrongTest = 0;
@@ -47,35 +60,41 @@
 
     private async Task TestSelected(TestType type)
     {
+        if (TestInProgress)
+        {
+            bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Biztos félbeszakítod a tesztet?");
+            if (!confirmed)
+                return;
+        }
         SelectedTestType = type;
         DataIsLoading = true;
         CorrectTest = 0;
         WrongTest = 0;
         CurrentTest = 0;
+        TestInProgress = false;
+        TestDone = false;
         await DatabaseInitializer.InitializeAsync();
-        if (type == TestType.WordTest)
-        {
-            TestData = await LoadRandomTestData(NumberOfTests);
-            TestInProgress = true;
-        }
-        else
-        {
-
-        }
+        TestData = await LoadRandomTestData(NumberOfTests);
+        TestInProgress = true;
         DatabaseContext.Dispose();
         DataIsLoading = false;
     }
 
-    private Task<List<MorphTest>> LoadRandomTestData(int numberOfTests)
+    private Task<List<object>> LoadRandomTestData(int numberOfTests)
     {
         var db = DatabaseContext.GetInstance();
-        var indices = Enumerable.Range(0, db.MorphTests.Count).ToList();
-        var result = new List<MorphTest>();
+        var indices = SelectedTestType == TestType.WordTest ? Enumerable.Range(0, db.MorphTests.Count).ToList() : Enumerable.Range(0, db.SyntTests.Count).ToList();
+        if (numberOfTests > indices.Count)
+            numberOfTests = indices.Count;
+        var result = new List<object>();
         var rng = new Random();
         while (result.Count < numberOfTests)
         {
             var index = rng.Next(0, indices.Count());
-            result.Add(db.MorphTests[indices[index]]);
+            if (SelectedTestType == TestType.WordTest)
+                result.Add(db.MorphTests[indices[index]]);
+            else
+                result.Add(db.SyntTests[indices[index]]);
             indices.RemoveAt(index);
         }
         return Task.FromResult(result);
@@ -87,7 +106,10 @@
             ++CorrectTest;
         else
             ++WrongTest;
-        if (++CurrentTest == NumberOfTests)
+        if (++CurrentTest == TestData.Count)
+        {
             TestInProgress = false;
+            TestDone = true;
+        }
     }
 }

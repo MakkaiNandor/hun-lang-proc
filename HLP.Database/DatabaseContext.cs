@@ -31,6 +31,7 @@ namespace HLP.Database
                 Instance.AffixInfos = null;
                 Instance.OrderRules = null;
                 Instance.MorphTests = null;
+                Instance.SyntTests = null;
                 Instance = null;
             }
         }
@@ -43,7 +44,9 @@ namespace HLP.Database
         public List<AffixInfo> AffixInfos { get; set; } = new List<AffixInfo>();
         public List<OrderRule> OrderRules { get; set; } = new List<OrderRule>();
         public List<MorphTest> MorphTests { get; set; } = new List<MorphTest>();
+        public List<SyntTest> SyntTests { get; set; } = new List<SyntTest>();
 
+        // szó keresése az adatbázisban, visszatéríti a közös szófajokat
         public List<string> SearchWordInDatabase(string word, string type)
         {
             var wordResult = Words.Find(w => w.Text == word);
@@ -57,6 +60,7 @@ namespace HLP.Database
             return new List<string>(wordResult.WordTypes.Intersect(types));
         }
 
+        // szófajjal kompatibilis szófajok
         public List<string> GetCompatibleWordTypes(string typeCode)
         {
             var result = new List<string>();

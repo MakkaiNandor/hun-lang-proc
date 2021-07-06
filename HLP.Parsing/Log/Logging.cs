@@ -9,6 +9,7 @@ namespace HLP.Parsing.Log
 {
     public class Logging
     {
+        // naplófájl
         private static readonly string outFilePath = @".\logs.txt";
 
         public void Log(string message)
@@ -19,19 +20,19 @@ namespace HLP.Parsing.Log
             }
         }
 
+        public void Log(SAResult result, long time)
+        {
+            using (var writer = new StreamWriter(outFilePath, true))
+            {
+                writer.WriteLine($"{DateTime.Now}\tElapsed time: {time} ms\tAnalyzed sentence: {result.OriginalSentence}");
+            }
+        }
+
         public void Log(MAResult result, long time)
         {
             using (var writer = new StreamWriter(outFilePath, true))
             {
                 writer.WriteLine($"{DateTime.Now}\tElapsed time: {time} ms\tAnalyzed word: {result.OriginalWord} ({result.Variants.Count})");
-            }
-        }
-
-        public async Task LogAsync(MAResult result, long time)
-        {
-            using (var writer = new StreamWriter(outFilePath, true))
-            {
-                await writer.WriteLineAsync($"{DateTime.Now}\tElapsed: {time}\tAnalyzed word: {result.OriginalWord} ({result.Variants.Count})");
             }
         }
     }

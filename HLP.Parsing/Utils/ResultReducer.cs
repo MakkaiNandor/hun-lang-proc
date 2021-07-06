@@ -16,6 +16,7 @@ namespace HLP.Parsing.Utils
             dbContext = DatabaseContext.GetInstance();
         }
 
+        // eredmények szűrése, csökkentése
         public void ReduceResults(MAResult result)
         {
             var count = 0;
@@ -32,6 +33,7 @@ namespace HLP.Parsing.Utils
             }
         }
 
+        // helyes-e a sorrend
         private bool CheckOrder(MAVariant variant, string type)
         {
             type = dbContext.GetCompatibleWordTypes("NSZ").Contains(type) ? "NSZ" : type;
@@ -66,6 +68,7 @@ namespace HLP.Parsing.Utils
             return true;
         }
 
+        // elem keresése listában
         private int SearchCode(string item, List<List<string>> list, int offset)
         {
             var pos = offset;
@@ -80,6 +83,7 @@ namespace HLP.Parsing.Utils
             return -1;
         }
 
+        // lemma (képzős szó) és szófaj meghatározása
         private void GetLemmaAndType(MAVariant variant, out string type)
         {
             var currType = variant.WordType;
@@ -91,6 +95,7 @@ namespace HLP.Parsing.Utils
             type = currType;
         }
 
+        // toldalékok előfeltételeinek ellenőrzése
         private bool CheckRequirements(MAVariant variant)
         {
             var prevAffixCode = "";

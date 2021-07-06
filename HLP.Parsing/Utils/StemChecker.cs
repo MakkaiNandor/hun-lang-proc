@@ -9,7 +9,7 @@ namespace HLP.Parsing.Utils
 {
     static class StemChecker
     {
-
+        // szótári alak keresése
         public static List<string> CheckStems(string word, string type)
         {
             var dbContext = DatabaseContext.GetInstance();
@@ -42,8 +42,6 @@ namespace HLP.Parsing.Utils
             var lastLetter = stem.GetLastLetter();
             temp = temp.RemoveFromEnd(lastLetter);
             var preLastLetter = temp.GetLastLetter();
-
-            //Console.WriteLine($"last: {lastLetter}, prelast: {preLastLetter}");
 
             // 6 ige van, amelyek szótári tőalakjuk magánhangzóban végződik: fő, lő, nő, nyű, ró, sző
             // ezeknek a tőváltozata 'v'-vel végződik és a magánhangzó rövidül
@@ -124,8 +122,6 @@ namespace HLP.Parsing.Utils
                 // kicseréljük az utolsó két betűt 'szik'-re
                 result.Add(temp.Substring(0, temp.Length - preLastLetter.Length) + "szik");
             }
-
-            //Console.WriteLine($"({preLastLetter}, {lastLetter}) {string.Join(", ", result)}");
 
             return result.Distinct().Intersect(verbs).ToList();
         }
