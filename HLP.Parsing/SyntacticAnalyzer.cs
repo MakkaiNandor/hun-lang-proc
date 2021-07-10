@@ -12,7 +12,7 @@ using HLP.Parsing.Extensions;
 namespace HLP.Parsing
 {
     // mondatrészek
-    public enum SParts
+    public enum SPart
     {
         UNDEFINED = 0,
         PREDICATE = 1,
@@ -43,7 +43,7 @@ namespace HLP.Parsing
 
             foreach (var wordResult in wordResults)
             {
-                wordResult.Lemmatize();
+                wordResult.ExpandWord();
                 wordResult.DeleteDuplicates();
                 RemoveWrongResults(wordResult);
             }
@@ -51,7 +51,7 @@ namespace HLP.Parsing
             result.Result = wordResults.Select(it => new SAItem
             {
                 Text = it.OriginalWord,
-                Type = SParts.UNDEFINED,
+                Type = SPart.UNDEFINED,
                 MorphResult = it
             }).ToList();
 
@@ -76,37 +76,37 @@ namespace HLP.Parsing
                 return;
             if (resultsWithVerb.Count == 1)
             {
-                resultsWithVerb[0].Type = SParts.PREDICATE;
-                CheckNegate(resultsWithVerb[0], result, SParts.PREDICATE);
+                resultsWithVerb[0].Type = SPart.PREDICATE;
+                CheckNegate(resultsWithVerb[0], result, SPart.PREDICATE);
                 return;
             }
             var resultsWithOnlyVerb = resultsWithVerb.Where(it => it.HasOnlyOne()).ToList();
             if (!resultsWithOnlyVerb.Any())
             {
                 var item = resultsWithVerb.Select(it => new { Item = it, Value = it.MorphResult.Variants.Where(v => v.WordType != "IGE").Count() }).OrderByDescending(it => it.Value).First().Item;
-                item.Type = SParts.PREDICATE;
-                CheckNegate(item, result, SParts.PREDICATE);
+                item.Type = SPart.PREDICATE;
+                CheckNegate(item, result, SPart.PREDICATE);
                 return;
             }
-            resultsWithOnlyVerb[0].Type = SParts.PREDICATE;
-            CheckNegate(resultsWithOnlyVerb[0], result, SParts.PREDICATE);
+            resultsWithOnlyVerb[0].Type = SPart.PREDICATE;
+            CheckNegate(resultsWithOnlyVerb[0], result, SPart.PREDICATE);
         }
 
         // tárgyak keresése
         private void DefineObjects(SAResult result)
         {
-            foreach (var item in result.Result.Where(it => it.Type == SParts.UNDEFINED))
+            foreach (var item in result.Result.Where(it => it.Type == SPart.UNDEFINED))
             {
                 var types = item.GetTypes();
                 var codes = item.LastCodes();
                 if ((types.Contains("FN") || types.Contains("NM")) && codes.Contains("ACC"))
                 {
-                    item.Type = SParts.OBJECT;
-                    CheckArticle(item, result, SParts.OBJECT);
+                    item.Type = SPart.OBJECT;
+                    CheckArticle(item, result, SPart.OBJECT);
                 }
                 else if (types.Contains("NM") || types.Contains("FIN"))
                 {
-                    item.Type = SParts.OBJECT;
+                    item.Type = SPart.OBJECT;
                 }
             }
         }
@@ -114,20 +114,20 @@ namespace HLP.Parsing
         // határozók keresése
         private void DefineAdverbs(SAResult result)
         {
-            foreach (var item in result.Result.Where(it => it.Type == SParts.UNDEFINED))
+            foreach (var item in result.Result.Where(it => it.Type == SPart.UNDEFINED))
             {
                 var types = item.GetTypes();
                 if (types.Contains("HA"))
                 {
-                    item.Type = SParts.ADVERB;
-                    CheckArticle(item, result, SParts.ADVERB);
+                    item.Type = SPart.ADVERB;
+                    CheckArticle(item, result, SPart.ADVERB);
                     continue;
                 }
                 var lastGroups = item.LastGroups();
                 if ((types.Contains("FN") || types.Contains("MN") || types.Contains("NM") || types.Contains("SZN")) && lastGroups.Contains(5))
                 {
-                    item.Type = SParts.ADVERB;
-                    CheckArticle(item, result, SParts.ADVERB);
+                    item.Type = SPart.ADVERB;
+                    CheckArticle(item, result, SPart.ADVERB);
                     continue;
                 }
                 var index = result.Result.IndexOf(item);
@@ -136,9 +136,9 @@ namespace HLP.Parsing
                 var nextItemTypes = result.Result[index + 1].GetTypes();
                 if (nextItemTypes.Contains("NU"))
                 {
-                    item.Type = SParts.ADVERB;
-                    result.Result[index + 1].Type = SParts.ADVERB;
-                    CheckArticle(item, result, SParts.ADVERB);
+                    item.Type = SPart.ADVERB;
+                    result.Result[index + 1].Type = SPart.ADVERB;
+                    CheckArticle(item, result, SPart.ADVERB);
                 }
             }
         }
@@ -146,19 +146,19 @@ namespace HLP.Parsing
         // alanyok keresése
         private void DefineSubjects(SAResult result)
         {
-            foreach (var item in result.Result.Where(it => it.Type == SParts.UNDEFINED))
+            foreach (var item in result.Result.Where(it => it.Type == SPart.UNDEFINED))
             {
                 var typesWithoutRags = item.MorphResult.Variants.Where(it => !it.Suffixes.Any(s => s.Info.Type == "R")).Select(it => it.WordType).ToList();
                 if (typesWithoutRags.Contains("FN"))
                 {
-                    item.Type = SParts.SUBJECT;
-                    CheckArticle(item, result, SParts.SUBJECT);
+                    item.Type = SPart.SUBJECT;
+                    CheckArticle(item, result, SPart.SUBJECT);
                     continue;
                 }
                 var types = item.GetTypes();
                 if (types.Contains("FIN") || types.Contains("NM"))
                 {
-                    item.Type = SParts.SUBJECT;
+                    item.Type = SPart.SUBJECT;
                 }
             }
         }
@@ -178,19 +178,19 @@ namespace HLP.Parsing
                         var prevTypes = prevItem.GetTypes();
                         if (prevTypes.Contains("FN"))
                         {
-                            prevItem.Type = SParts.ATTRIBUTE;
-                            CheckArticle(prevItem, result, SParts.ATTRIBUTE);
+                            prevItem.Type = SPart.ATTRIBUTE;
+                            CheckArticle(prevItem, result, SPart.ATTRIBUTE);
                             continue;
                         }
                     }
                 }
-                if (item.Type != SParts.UNDEFINED) continue;
+                if (item.Type != SPart.UNDEFINED) continue;
                 var types = item.GetTypes();
                 var codes = item.LastCodes();
                 if ((types.Contains("NM") || types.Contains("FN")) && codes.Contains("DAT"))
                 {
-                    item.Type = SParts.ATTRIBUTE;
-                    CheckArticle(item, result, SParts.ATTRIBUTE);
+                    item.Type = SPart.ATTRIBUTE;
+                    CheckArticle(item, result, SPart.ATTRIBUTE);
                     continue;
                 }
                 groups = item.LastGroups();
@@ -201,15 +201,15 @@ namespace HLP.Parsing
                     var nextTypes = result.Result[index + 1].GetTypes();
                     if (nextTypes.Contains("FN"))
                     {
-                        item.Type = SParts.ATTRIBUTE;
-                        CheckArticle(item, result, SParts.ATTRIBUTE);
+                        item.Type = SPart.ATTRIBUTE;
+                        CheckArticle(item, result, SPart.ATTRIBUTE);
                     }
                 }
             }
         }
 
         // tagadószó ellenőrzése
-        private void CheckNegate(SAItem item, SAResult result, SParts type)
+        private void CheckNegate(SAItem item, SAResult result, SPart type)
         {
             var index = result.Result.IndexOf(item);
             if (index == 0) return;
@@ -219,7 +219,7 @@ namespace HLP.Parsing
         }
 
         // névelő ellenőrzése
-        private void CheckArticle(SAItem item, SAResult result, SParts type)
+        private void CheckArticle(SAItem item, SAResult result, SPart type)
         {
             var index = result.Result.IndexOf(item);
             if (index == 0) return;

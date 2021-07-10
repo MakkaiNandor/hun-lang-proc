@@ -40,9 +40,6 @@
     </div>
 }
 
-<!--<button class="btn btn-primary" @onclick="OnTestClicked">Tesztelés</button>
-<p class="text-info">@TestInfo</p>-->
-
 @code {
     private bool AnalyzeInProgress = false;
     private bool DataIsLoading = false;
@@ -98,24 +95,24 @@
         InfoMessage = State;
     }
 
-    private string GetClass(SParts type)
+    private string GetClass(SPart type)
     {
         string result;
         switch (type)
         {
-            case SParts.PREDICATE:
+            case SPart.PREDICATE:
                 result = "predicate";
                 break;
-            case SParts.SUBJECT:
+            case SPart.SUBJECT:
                 result = "subject";
                 break;
-            case SParts.OBJECT:
+            case SPart.OBJECT:
                 result = "object";
                 break;
-            case SParts.ADVERB:
+            case SPart.ADVERB:
                 result = "adverb";
                 break;
-            case SParts.ATTRIBUTE:
+            case SPart.ATTRIBUTE:
                 result = "attribute";
                 break;
             default:

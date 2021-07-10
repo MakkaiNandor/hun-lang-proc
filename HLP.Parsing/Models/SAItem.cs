@@ -7,7 +7,7 @@ namespace HLP.Parsing.Models
 {
     public class SAItem
     {
-        public SParts Type { get; set; }
+        public SPart Type { get; set; }
         public string Text { get; set; }
         public MAResult MorphResult { get; set; }
 
@@ -17,19 +17,19 @@ namespace HLP.Parsing.Models
             string result;
             switch (Type)
             {
-                case SParts.PREDICATE:
+                case SPart.PREDICATE:
                     result = "állítmány";
                     break;
-                case SParts.SUBJECT:
+                case SPart.SUBJECT:
                     result = "alany";
                     break;
-                case SParts.OBJECT:
+                case SPart.OBJECT:
                     result = "tárgy";
                     break;
-                case SParts.ADVERB:
+                case SPart.ADVERB:
                     result = "határozó";
                     break;
-                case SParts.ATTRIBUTE:
+                case SPart.ATTRIBUTE:
                     result = "jelző";
                     break;
                 default:

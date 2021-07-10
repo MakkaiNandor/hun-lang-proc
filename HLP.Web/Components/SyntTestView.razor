@@ -6,12 +6,12 @@
                 <p>@item.Word</p>
                 <p>
                     <select @bind="item.Type">
-                        <option value="@SParts.UNDEFINED">-</option>
-                        <option value="@SParts.PREDICATE">állítmány</option>
-                        <option value="@SParts.SUBJECT">alany</option>
-                        <option value="@SParts.OBJECT">tárgy</option>
-                        <option value="@SParts.ADVERB">határozó</option>
-                        <option value="@SParts.ATTRIBUTE">jelző</option>
+                        <option value="@SPart.UNDEFINED">-</option>
+                        <option value="@SPart.PREDICATE">állítmány</option>
+                        <option value="@SPart.SUBJECT">alany</option>
+                        <option value="@SPart.OBJECT">tárgy</option>
+                        <option value="@SPart.ADVERB">határozó</option>
+                        <option value="@SPart.ATTRIBUTE">jelző</option>
                     </select>
                 </p>
             </div>
@@ -25,7 +25,7 @@
     class MyItem
     {
         public string Word { get; set; }
-        public SParts Type { get; set; }
+        public SPart Type { get; set; }
     }
 
     [Parameter]
@@ -42,7 +42,7 @@
         Test.Words.ForEach(it => UserResponse.Add(new MyItem
         {
             Word = it,
-            Type = SParts.UNDEFINED
+            Type = SPart.UNDEFINED
         }));
         return Task.CompletedTask;
     }
@@ -53,7 +53,7 @@
         {
             var tType = Test.Types[i];
             var uType = UserResponse[i].Type;
-            if (uType != (SParts)tType)
+            if (uType != (SPart)tType)
                 return false;
         }
         return true;

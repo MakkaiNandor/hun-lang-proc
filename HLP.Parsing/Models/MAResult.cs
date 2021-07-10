@@ -17,7 +17,7 @@ namespace HLP.Parsing.Models
         }
 
         // képzők visszaillesztése a szótőre
-        public void Lemmatize()
+        public void ExpandWord()
         {
             foreach (var variant in Variants)
             {

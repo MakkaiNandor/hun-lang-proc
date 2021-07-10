@@ -138,7 +138,7 @@ namespace HLP.Parsing.Testing
                 var rWord = result.Result[i];
                 if (tWord != rWord.Text)
                     return false;
-                if (rWord.Type != (SParts)tType)
+                if (rWord.Type != (SPart)tType)
                     return false;
             }
             return true;
